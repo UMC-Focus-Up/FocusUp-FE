@@ -95,7 +95,7 @@
                                 <buttonConfiguration key="configuration" style="plain" image="end_btn"/>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HwO-z6-MaE">
-                                <rect key="frame" x="66" y="233" width="261" height="260"/>
+                                <rect key="frame" x="67" y="233" width="260" height="260"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="42E-Us-jQi">
                                         <rect key="frame" x="111" y="150" width="50" height="60"/>
@@ -126,7 +126,6 @@
                             <constraint firstItem="mGh-5E-zQK" firstAttribute="leading" secondItem="1rP-NO-tkl" secondAttribute="leading" id="H4x-eU-pAI"/>
                             <constraint firstItem="1rP-NO-tkl" firstAttribute="top" secondItem="PZE-dV-Bkd" secondAttribute="top" constant="20" id="ID0-ch-Chc"/>
                             <constraint firstItem="2n4-HO-bqj" firstAttribute="top" secondItem="mGh-5E-zQK" secondAttribute="bottom" constant="50" id="J6R-g6-gqo"/>
-                            <constraint firstItem="HwO-z6-MaE" firstAttribute="leading" secondItem="PZE-dV-Bkd" secondAttribute="leading" constant="66" id="RBZ-Kb-prm"/>
                             <constraint firstItem="PZE-dV-Bkd" firstAttribute="trailing" secondItem="1rP-NO-tkl" secondAttribute="trailing" id="RdJ-YI-m0m"/>
                             <constraint firstItem="GWn-kM-kFn" firstAttribute="top" secondItem="PZE-dV-Bkd" secondAttribute="top" constant="500" id="VlU-kT-0wf"/>
                             <constraint firstItem="zO6-91-04J" firstAttribute="top" secondItem="mGh-5E-zQK" secondAttribute="bottom" constant="50" id="Vw0-8q-JEk"/>
