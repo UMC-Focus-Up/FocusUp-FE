@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		232B79122C47E278001D2934 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232B79112C47E278001D2934 /* LoginViewController.swift */; };
 		23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D6E2C466B6B0099C44B /* AppDelegate.swift */; };
 		23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D702C466B6B0099C44B /* SceneDelegate.swift */; };
 		23E51D762C466B6B0099C44B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D752C466B6B0099C44B /* Base */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		232B79112C47E278001D2934 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		23E51D6B2C466B6B0099C44B /* FocusUp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusUp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E51D6E2C466B6B0099C44B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23E51D702C466B6B0099C44B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				23E51D6E2C466B6B0099C44B /* AppDelegate.swift */,
 				23E51D702C466B6B0099C44B /* SceneDelegate.swift */,
 				23E51D742C466B6B0099C44B /* Main.storyboard */,
+				232B79112C47E278001D2934 /* LoginViewController.swift */,
 				23E51D992C46DD2F0099C44B /* NavBar */,
 				23E51D772C466B6C0099C44B /* Assets.xcassets */,
 				23E51D792C466B6C0099C44B /* LaunchScreen.storyboard */,
@@ -190,6 +193,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				232B79122C47E278001D2934 /* LoginViewController.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
@@ -270,7 +274,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -327,7 +331,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

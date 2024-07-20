@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "character_btn_after.png",
+      "filename" : "character_btn_after.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -19,6 +19,7 @@
     "version" : 1
   },
   "properties" : {
+    "preserves-vector-representation" : true,
     "template-rendering-intent" : "original"
   }
 }

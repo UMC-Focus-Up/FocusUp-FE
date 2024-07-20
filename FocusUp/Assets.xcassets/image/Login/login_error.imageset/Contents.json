@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "login_error.png",
+      "filename" : "login_error.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -17,5 +17,9 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "original"
   }
 }
