@@ -23,6 +23,8 @@
 		23E51D952C4678580099C44B /* Pretendard-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D8C2C4678580099C44B /* Pretendard-Light.otf */; };
 		23E51D962C4678580099C44B /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */; };
 		23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D972C46DD210099C44B /* CustomTabBarController.swift */; };
+		9761A02D2C4CD74E004D20E6 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9761A02C2C4CD74E004D20E6 /* Home.swift */; };
+		9761A0312C4CE46F004D20E6 /* LevelModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9761A0302C4CE46F004D20E6 /* LevelModal.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,8 @@
 		23E51D8C2C4678580099C44B /* Pretendard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Light.otf"; sourceTree = "<group>"; };
 		23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		23E51D972C46DD210099C44B /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
+		9761A02C2C4CD74E004D20E6 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
+		9761A0302C4CE46F004D20E6 /* LevelModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelModal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,7 @@
 				23E51D702C466B6B0099C44B /* SceneDelegate.swift */,
 				23E51D742C466B6B0099C44B /* Main.storyboard */,
 				232B79112C47E278001D2934 /* LoginViewController.swift */,
+				9761A0322C4CE475004D20E6 /* HomeVC */,
 				23E51D992C46DD2F0099C44B /* NavBar */,
 				23E51D772C466B6C0099C44B /* Assets.xcassets */,
 				23E51D792C466B6C0099C44B /* LaunchScreen.storyboard */,
@@ -111,6 +116,15 @@
 				23E51D972C46DD210099C44B /* CustomTabBarController.swift */,
 			);
 			path = NavBar;
+			sourceTree = "<group>";
+		};
+		9761A0322C4CE475004D20E6 /* HomeVC */ = {
+			isa = PBXGroup;
+			children = (
+				9761A02C2C4CD74E004D20E6 /* Home.swift */,
+				9761A0302C4CE46F004D20E6 /* LevelModal.swift */,
+			);
+			path = HomeVC;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +209,8 @@
 			files = (
 				232B79122C47E278001D2934 /* LoginViewController.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
+				9761A0312C4CE46F004D20E6 /* LevelModal.swift in Sources */,
+				9761A02D2C4CD74E004D20E6 /* Home.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
 			);
