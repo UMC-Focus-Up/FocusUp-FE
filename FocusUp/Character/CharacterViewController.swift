@@ -7,6 +7,7 @@
 
 import UIKit
 import Alamofire
+import UserNotifications
 
 class CharacterViewController: UIViewController {
     @IBOutlet var shellfishView: UIView!
@@ -26,6 +27,7 @@ class CharacterViewController: UIViewController {
         shopButton.configureButtonWithTitleBelowImage(spacing: 6.0)
         
         fetchDataFromURL()
+        scheduleCharacterNotification()
     }
     
     private func setupBottomButtonBorder() {
@@ -104,6 +106,21 @@ class CharacterViewController: UIViewController {
 
             if let data = response.data, let responseString = String(data: data, encoding: .utf8) {
                 print("Response Data: \(responseString)")
+            }
+        }
+    }
+    
+    private func scheduleCharacterNotification() {
+        // 알림 예약 예제: 현재 시간에서 10초 후
+        let now = Date()
+        let futureDate = Calendar.current.date(byAdding: .second, value: 5, to: now)!
+        
+        // UNUserNotificationCenter 인스턴스를 가져옴
+        UNUserNotificationCenter.current().addNotificationRequest(date: futureDate) { error in
+            if let error = error {
+                print("Error adding notification request: \(error.localizedDescription)")
+            } else {
+                print("Notification scheduled for \(futureDate)")
             }
         }
     }
