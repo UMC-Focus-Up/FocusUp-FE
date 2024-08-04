@@ -6,16 +6,20 @@
 //
 
 import UIKit
+import KakaoSDKAuth
+import KakaoSDKUser
+import NaverThirdPartyLogin
 
 class SettingViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var levelManageButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
     
-    
+    let naverLoginInstance = NaverThirdPartyLoginConnection.getSharedInstance()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        naverLoginInstance?.delegate = self
 
         self.navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationController?.navigationBar.topItem?.title = ""
@@ -48,7 +52,22 @@ class SettingViewController: UIViewController {
         alert.addAction(Cancel)
         Cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
-        let logout = UIAlertAction(title: "로그아웃", style: .default, handler: { (action) -> Void in})
+        let logout = UIAlertAction(title: "로그아웃", style: .default, handler: { (action) in
+            self.naverLoginInstance?.requestDeleteToken()
+            
+            UserApi.shared.logout {(error) in
+                if let error = error {
+                    print(error)
+                } else {
+                    guard let loginVC = self.storyboard?.instantiateViewController(identifier: "LoginViewController") as? LoginViewController else { return }
+                    loginVC.modalTransitionStyle = .coverVertical
+                    loginVC.modalPresentationStyle = .fullScreen
+                    self.present(loginVC, animated: true, completion: nil)
+                    
+                    print("Kakao logout Success.")
+                }
+            }
+        })
         alert.addAction(logout)
         logout.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -76,4 +95,31 @@ class SettingViewController: UIViewController {
     @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
         self.navigationController?.popViewController(animated: true)
     }
+}
+
+// MARK: - extension
+extension SettingViewController: NaverThirdPartyLoginConnectionDelegate {
+    func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
+        print("Naver login Success.")
+    }
+    
+    func oauth20ConnectionDidFinishRequestACTokenWithRefreshToken() {
+        naverLoginInstance?.accessToken
+    }
+    
+    func oauth20ConnectionDidFinishDeleteToken() {
+        guard let loginVC = self.storyboard?.instantiateViewController(identifier: "LoginViewController") as? LoginViewController else { return }
+        loginVC.modalTransitionStyle = .coverVertical
+        loginVC.modalPresentationStyle = .fullScreen
+        self.present(loginVC, animated: true, completion: nil)
+        
+        print("Naver logout Success.")
+    }
+    
+    func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: (any Error)!) {
+        print("error = \(error.localizedDescription)")
+        self.naverLoginInstance?.requestDeleteToken()
+    }
+    
+    
 }

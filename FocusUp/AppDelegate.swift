@@ -6,12 +6,31 @@
 //
 
 import UIKit
+import KakaoSDKCommon
+import KakaoSDKAuth
+import NaverThirdPartyLogin
 import UserNotifications
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        sleep(1)
+        
+        // 카카오 로그인
+        KakaoSDK.initSDK(appKey: "4bf2dc9dbd23d101f02b42c884ed24ed")
+        
+        // 네이버 로그인
+        let instance = NaverThirdPartyLoginConnection.getSharedInstance()
+        instance?.isNaverAppOauthEnable = true
+        instance?.isInAppOauthEnable = true
+        instance?.isOnlyPortraitSupportedInIphone()
+        instance?.serviceUrlScheme = "com.UMC.FocusUp"
+        instance?.consumerKey = "aCAJxzpiOBMeygRXRO2x"
+        instance?.consumerSecret = "2J3YoE5ItV"
+        instance?.appName = "FocusUp"
+        
         // 앱 실행 시 사용자에게 알림 허용 권한을 받음
         UNUserNotificationCenter.current().delegate = self
         
@@ -29,7 +48,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 }
             }
         )
+        
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            return AuthController.handleOpenUrl(url: url)
+        }
+
+        return false
     }
 
     // MARK: UISceneSession Lifecycle
@@ -64,4 +92,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         }
         completionHandler()
     }
+    
 }

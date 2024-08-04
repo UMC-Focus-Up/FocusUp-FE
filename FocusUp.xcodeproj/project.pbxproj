@@ -33,12 +33,12 @@
 		23E51D952C4678580099C44B /* Pretendard-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D8C2C4678580099C44B /* Pretendard-Light.otf */; };
 		23E51D962C4678580099C44B /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */; };
 		23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D972C46DD210099C44B /* CustomTabBarController.swift */; };
+		52AECD5E71F4D31D350CF7DF /* Pods_FocusUp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E598D0F7E520D0720143B7A3 /* Pods_FocusUp.framework */; };
 		8BB17DD22C5A28D300D6F6E4 /* LevelControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */; };
 		8BBD00802C50DB99008E1E0C /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */; };
 		8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */; };
 		8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */; };
 		8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */; };
-		A2976B3D7E9AF48D6B546DF2 /* Pods_FocusUp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9223F7AACC3AAE4DC0BCC9A9 /* Pods_FocusUp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,14 +70,14 @@
 		23E51D8C2C4678580099C44B /* Pretendard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Light.otf"; sourceTree = "<group>"; };
 		23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		23E51D972C46DD210099C44B /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
-		681D61088C21307186F6C7CA /* Pods-FocusUp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.debug.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.debug.xcconfig"; sourceTree = "<group>"; };
-		68BCC6391660372A0497B43C /* Pods-FocusUp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.release.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.release.xcconfig"; sourceTree = "<group>"; };
 		8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelControlViewController.swift; sourceTree = "<group>"; };
 		8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineListViewController.swift; sourceTree = "<group>"; };
 		8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineSettingViewController.swift; sourceTree = "<group>"; };
 		8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
-		9223F7AACC3AAE4DC0BCC9A9 /* Pods_FocusUp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FocusUp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.release.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.release.xcconfig"; sourceTree = "<group>"; };
+		983A7CBBEE3C961D2D4A307B /* Pods-FocusUp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.debug.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.debug.xcconfig"; sourceTree = "<group>"; };
+		E598D0F7E520D0720143B7A3 /* Pods_FocusUp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FocusUp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2976B3D7E9AF48D6B546DF2 /* Pods_FocusUp.framework in Frameworks */,
+				52AECD5E71F4D31D350CF7DF /* Pods_FocusUp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,7 +116,7 @@
 				23E51D6D2C466B6B0099C44B /* FocusUp */,
 				23E51D6C2C466B6B0099C44B /* Products */,
 				4C02D7D1F0674B9D40BE1588 /* Pods */,
-				2C17B525046BC13B81C6B9CC /* Frameworks */,
+				77F6E807A4CE5EBC0DF0830F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,21 +173,21 @@
 			path = NavBar;
 			sourceTree = "<group>";
 		};
-		2C17B525046BC13B81C6B9CC /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				9223F7AACC3AAE4DC0BCC9A9 /* Pods_FocusUp.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		4C02D7D1F0674B9D40BE1588 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				681D61088C21307186F6C7CA /* Pods-FocusUp.debug.xcconfig */,
-				68BCC6391660372A0497B43C /* Pods-FocusUp.release.xcconfig */,
+				983A7CBBEE3C961D2D4A307B /* Pods-FocusUp.debug.xcconfig */,
+				8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		77F6E807A4CE5EBC0DF0830F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E598D0F7E520D0720143B7A3 /* Pods_FocusUp.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		8BE3FC0C2C50058700B2AF0D /* MyPage */ = {
@@ -213,11 +213,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 23E51D7F2C466B6C0099C44B /* Build configuration list for PBXNativeTarget "FocusUp" */;
 			buildPhases = (
-				A8C231B5BB22A57D4D579D90 /* [CP] Check Pods Manifest.lock */,
+				7FA7AE07573CF9F482D5C1D6 /* [CP] Check Pods Manifest.lock */,
 				23E51D672C466B6B0099C44B /* Sources */,
 				23E51D682C466B6B0099C44B /* Frameworks */,
 				23E51D692C466B6B0099C44B /* Resources */,
-				DF30F48B8F824F8C9FEF100C /* [CP] Embed Pods Frameworks */,
+				CE4B2C20D14F50A3C5A40FAB /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -284,7 +284,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A8C231B5BB22A57D4D579D90 /* [CP] Check Pods Manifest.lock */ = {
+		7FA7AE07573CF9F482D5C1D6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,7 +306,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DF30F48B8F824F8C9FEF100C /* [CP] Embed Pods Frameworks */ = {
+		CE4B2C20D14F50A3C5A40FAB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -495,13 +495,13 @@
 		};
 		23E51D802C466B6C0099C44B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 681D61088C21307186F6C7CA /* Pods-FocusUp.debug.xcconfig */;
+			baseConfigurationReference = 983A7CBBEE3C961D2D4A307B /* Pods-FocusUp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G8X4BWGTSS;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FocusUp/Info.plist;
@@ -510,12 +510,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = UMC.FocusUp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UMC.FocusUp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -525,13 +526,13 @@
 		};
 		23E51D812C466B6C0099C44B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 68BCC6391660372A0497B43C /* Pods-FocusUp.release.xcconfig */;
+			baseConfigurationReference = 8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G8X4BWGTSS;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FocusUp/Info.plist;
@@ -540,12 +541,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = UMC.FocusUp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UMC.FocusUp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

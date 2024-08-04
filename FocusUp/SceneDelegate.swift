@@ -1,4 +1,6 @@
 import UIKit
+import KakaoSDKAuth
+import NaverThirdPartyLogin
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -14,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
         // 기본 뷰 컨트롤러 설정
-        let initialViewController = storyboard.instantiateViewController(withIdentifier: "CustomTabBarController")
+        let initialViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
         window?.rootViewController = initialViewController
         window?.makeKeyAndVisible()
 
@@ -27,6 +29,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let alarmViewController = storyboard.instantiateViewController(withIdentifier: "AlarmViewController")
         window?.rootViewController = alarmViewController
         window?.makeKeyAndVisible()
+    }
+    
+    // 로그인
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
+            }
+        }
+        
+        NaverThirdPartyLoginConnection.getSharedInstance().receiveAccessToken(URLContexts.first?.url)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
