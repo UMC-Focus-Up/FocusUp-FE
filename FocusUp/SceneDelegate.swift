@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
         // 기본 뷰 컨트롤러 설정
-        let initialViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+        let initialViewController = storyboard.instantiateInitialViewController()
         window?.rootViewController = initialViewController
         window?.makeKeyAndVisible()
 
