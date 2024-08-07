@@ -1,5 +1,9 @@
 import UIKit
 
+protocol RoutineDeleteDelegate: AnyObject {
+    func didDeleteRoutine(at index: Int)
+}
+
 class GoalRoutineEditViewController: UIViewController {
     // MARK: - Properties
     @IBOutlet weak var goalRoutineLabel: UILabel!
@@ -18,6 +22,9 @@ class GoalRoutineEditViewController: UIViewController {
     @IBOutlet weak var deleteButton: UIButton!
     
     var routineData: (String, [Int], String, String)?
+    
+    weak var delegate: RoutineDeleteDelegate?
+    var routineIndex: Int?
 
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -184,6 +191,25 @@ class GoalRoutineEditViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    @IBAction func deleteButtonTapped(_ sender: Any) {
+        let alert = UIAlertController(title: "해당 목표 루틴을 삭제하시겠습니까?", message: "", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+        alert.addAction(cancelAction)
+        cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
+        
+        let confirmAction = UIAlertAction(title: "삭제", style: .default) { _ in
+            if let index = self.routineIndex {
+                self.delegate?.didDeleteRoutine(at: index)
+            }
+            self.navigationController?.popViewController(animated: true)
+        }
+        alert.addAction(confirmAction)
+        confirmAction.setValue(UIColor(named: "EmphasizeError"), forKey: "titleTextColor")
+        
+        alert.preferredAction = confirmAction
+        
+        present(alert, animated: true, completion: nil)
+    }
+        
 }
-
-// MARK: - extension
