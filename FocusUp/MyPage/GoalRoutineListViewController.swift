@@ -92,7 +92,8 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            
+            guard let GoalRoutineEditVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineEditViewController") else { return }
+            self.navigationController?.pushViewController(GoalRoutineEditVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
             self.navigationController?.pushViewController(GoalRoutineSettingVC, animated: true)
