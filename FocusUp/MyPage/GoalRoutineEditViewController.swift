@@ -1,9 +1,5 @@
 import UIKit
 
-protocol RoutineDeleteDelegate: AnyObject {
-    func didDeleteRoutine(at index: Int)
-}
-
 class GoalRoutineEditViewController: UIViewController {
     // MARK: - Properties
     @IBOutlet weak var goalRoutineLabel: UILabel!
@@ -94,16 +90,6 @@ class GoalRoutineEditViewController: UIViewController {
         let backButton = UIImage(named: "arrow_left")
         let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(backButtonDidTap))
         self.navigationItem.leftBarButtonItem = leftBarButton
-        
-        let rightBarButton: UIBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
-        
-        if let buttonFont = UIFont(name: "Pretendard-Medium", size: 16) {
-            rightBarButton.setTitleTextAttributes([.font: buttonFont], for: .normal)
-            rightBarButton.setTitleTextAttributes([.font: buttonFont], for: .highlighted)
-        }
-        
-        rightBarButton.tintColor = UIColor(named: "Primary4")
-        self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
     func customTitleView() {
@@ -157,24 +143,6 @@ class GoalRoutineEditViewController: UIViewController {
     
     @objc func backButtonDidTap(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "목표 루틴 설정을 취소하시겠습니까?", message: "작성 중인 내용은 저장되지 않습니다.", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
-        alert.addAction(cancelAction)
-        cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
-        
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
-            self.navigationController?.popViewController(animated: true)
-        }
-        alert.addAction(confirmAction)
-        confirmAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
-        
-        alert.preferredAction = confirmAction
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "새로운 루틴을 추가하시겠습니까?", message: "", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         alert.addAction(cancelAction)

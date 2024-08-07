@@ -18,6 +18,8 @@
 		23163CD12C63BE7100961A1C /* GoalRoutineEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */; };
 		232B79122C47E278001D2934 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232B79112C47E278001D2934 /* LoginViewController.swift */; };
 		2377EFE32C639E720094055E /* GoalRoutineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2377EFE12C639E720094055E /* GoalRoutineTableViewCell.xib */; };
+		239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239304322C6424B000AE9DDC /* RoutineDataModel.swift */; };
+		239304352C64256900AE9DDC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239304342C64256900AE9DDC /* Protocols.swift */; };
 		23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */; };
 		23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */; };
 		23C9F9012C5A4ED60052B213 /* CustomGoalTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */; };
@@ -56,6 +58,8 @@
 		23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineEditViewController.swift; sourceTree = "<group>"; };
 		232B79112C47E278001D2934 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		2377EFE12C639E720094055E /* GoalRoutineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoalRoutineTableViewCell.xib; sourceTree = "<group>"; };
+		239304322C6424B000AE9DDC /* RoutineDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineDataModel.swift; sourceTree = "<group>"; };
+		239304342C64256900AE9DDC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStartTimePickerView.swift; sourceTree = "<group>"; };
 		23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGoalTimePickerView.swift; sourceTree = "<group>"; };
@@ -210,15 +214,17 @@
 		8BE3FC0C2C50058700B2AF0D /* MyPage */ = {
 			isa = PBXGroup;
 			children = (
+				2377EFE42C639E840094055E /* GoalRoutineTabel */,
 				8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */,
 				8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */,
 				8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */,
 				8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */,
+				239304322C6424B000AE9DDC /* RoutineDataModel.swift */,
 				8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */,
 				23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */,
 				23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */,
 				23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */,
-				2377EFE42C639E840094055E /* GoalRoutineTabel */,
+				239304342C64256900AE9DDC /* Protocols.swift */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";
@@ -352,10 +358,12 @@
 				8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */,
 				194EDB4F2C5D25E500FA43E7 /* AlarmViewController.swift in Sources */,
 				232B79122C47E278001D2934 /* LoginViewController.swift in Sources */,
+				239304352C64256900AE9DDC /* Protocols.swift in Sources */,
 				8BB17DD22C5A28D300D6F6E4 /* LevelControlViewController.swift in Sources */,
 				1961F9492C511474000D9652 /* BottomSheetViewController.swift in Sources */,
 				19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */,
 				23163CCF2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift in Sources */,
+				239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
 				23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,

@@ -16,6 +16,7 @@ class GoalRoutineSettingViewController: UIViewController {
     @IBOutlet weak var goalTimeButton: UIButton!
     
     weak var delegate: RoutineDataDelegate?
+    weak var updateDelegate: RoutineUpdateDelegate?
     
     var goalRoutine: String = ""
     var repeatPeriodTags: [Int] = []
@@ -34,7 +35,7 @@ class GoalRoutineSettingViewController: UIViewController {
             delegate = listVC
         }
         if let myPageListVC = navigationController?.viewControllers.first(where: {$0 is MyPageViewController}) as? MyPageViewController {
-            delegate = myPageListVC
+            updateDelegate = myPageListVC
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -214,7 +215,10 @@ class GoalRoutineSettingViewController: UIViewController {
             self.startTime = self.startTimeLabel.text ?? ""
             self.goalTime = self.goalTimeLabel.text ?? ""
             let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
-            self.delegate?.didReceiveData(data)
+            
+            RoutineDataModel.shared.routineData.insert(data, at: 0)
+            
+            self.updateDelegate?.didUpdateRoutine()
             self.navigationController?.popViewController(animated: true)
         }
         alert.addAction(confirmAction)
@@ -224,6 +228,7 @@ class GoalRoutineSettingViewController: UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
+
     
     @objc func customButtonDidTap(_ sender: UIButton) {
         print("Information.")
@@ -303,5 +308,12 @@ extension GoalRoutineSettingViewController: CustomGoalTimePickerDelegate {
     
     func didSelectGoalTimeAndUpdateUI() {
         updateGoalTimeUI()
+    }
+}
+
+extension GoalRoutineListViewController: RoutineUpdateDelegate {
+    func didUpdateRoutine() {
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
     }
 }

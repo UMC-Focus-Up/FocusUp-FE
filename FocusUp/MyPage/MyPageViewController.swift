@@ -113,6 +113,15 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         super.viewWillAppear(animated)
         configureNavigationBar()
         configureTabBar()
+        
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
+    }
+    
+    func didDeleteRoutine(at index: Int) {
+        RoutineDataModel.shared.deleteRoutine(at: index)
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
     }
     
     deinit {
@@ -452,10 +461,12 @@ extension MyPageViewController: RoutineDataDelegate {
 }
 
 extension MyPageViewController: RoutineDeleteDelegate {
-    func didDeleteRoutine(at index: Int) {
-        guard index >= 0 && index < routineData.count else { return }  // 인덱스가 유효한지 확인
-        routineData.remove(at: index)
+
+}
+
+extension MyPageViewController: RoutineUpdateDelegate {
+    func didUpdateRoutine() {
+        routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
     }
 }
-

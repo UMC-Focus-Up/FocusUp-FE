@@ -1,9 +1,5 @@
 import UIKit
 
-protocol RoutineDataDelegate: AnyObject {
-    func didReceiveData(_ data: (String, [Int], String, String))
-}
-
 class GoalRoutineListViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var goalRoutineLabel2: UILabel!
@@ -32,6 +28,9 @@ class GoalRoutineListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
         
         if let customFont = UIFont(name: "Pretendard-Regular", size: 18) {
             let textAttributes = [
@@ -112,19 +111,17 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
     }
 }
 
-extension GoalRoutineListViewController: RoutineDataDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String)) {
-        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
-        routineData.append(data)  // 배열에 데이터 추가
-        routineTableView.reloadData()  // 테이블 뷰 리로드
-    }
-}
 
-extension GoalRoutineListViewController: RoutineDeleteDelegate {
+extension GoalRoutineListViewController: RoutineDataDelegate, RoutineDeleteDelegate {
+    func didReceiveData(_ data: (String, [Int], String, String)) {
+        RoutineDataModel.shared.addRoutine(data)
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
+    }
+    
     func didDeleteRoutine(at index: Int) {
-        guard index >= 0 && index < routineData.count else { return }  // 인덱스가 유효한지 확인
-        routineData.remove(at: index)
+        RoutineDataModel.shared.deleteRoutine(at: index)
+        routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
     }
 }
-
