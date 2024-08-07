@@ -21,8 +21,6 @@
 		23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */; };
 		23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */; };
 		23C9F9012C5A4ED60052B213 /* CustomGoalTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */; };
-		23C9F9052C5AD7B10052B213 /* CustomAlertCancelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */; };
-		23C9F9072C5AE41E0052B213 /* CustomAlertAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */; };
 		23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D6E2C466B6B0099C44B /* AppDelegate.swift */; };
 		23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D702C466B6B0099C44B /* SceneDelegate.swift */; };
 		23E51D762C466B6B0099C44B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D752C466B6B0099C44B /* Base */; };
@@ -61,8 +59,6 @@
 		23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStartTimePickerView.swift; sourceTree = "<group>"; };
 		23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGoalTimePickerView.swift; sourceTree = "<group>"; };
-		23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertCancelViewController.swift; sourceTree = "<group>"; };
-		23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertAddViewController.swift; sourceTree = "<group>"; };
 		23E51D6B2C466B6B0099C44B /* FocusUp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusUp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E51D6E2C466B6B0099C44B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23E51D702C466B6B0099C44B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -222,8 +218,6 @@
 				23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */,
 				23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */,
 				23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */,
-				23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */,
-				23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */,
 				2377EFE42C639E840094055E /* GoalRoutineTabel */,
 			);
 			path = MyPage;
@@ -366,13 +360,11 @@
 				23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,
 				1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */,
-				23C9F9072C5AE41E0052B213 /* CustomAlertAddViewController.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
 				8BBD00802C50DB99008E1E0C /* SettingViewController.swift in Sources */,
 				23163CC92C63A3EF00961A1C /* GoalRoutineTableViewCell.swift in Sources */,
 				1955828D2C5D6FBD003F7A86 /* UIView+Extension.swift in Sources */,
 				8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */,
-				23C9F9052C5AD7B10052B213 /* CustomAlertCancelViewController.swift in Sources */,
 				23163CD12C63BE7100961A1C /* GoalRoutineEditViewController.swift in Sources */,
 				23C9F9012C5A4ED60052B213 /* CustomGoalTimePickerView.swift in Sources */,
 				8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */,
