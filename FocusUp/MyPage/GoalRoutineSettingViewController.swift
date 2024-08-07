@@ -1,10 +1,3 @@
-//
-//  GoalRoutineSettingViewController.swift
-//  FocusUp
-//
-//  Created by 성호은 on 7/24/24.
-//
-
 import UIKit
 
 class GoalRoutineSettingViewController: UIViewController {
@@ -22,6 +15,13 @@ class GoalRoutineSettingViewController: UIViewController {
     @IBOutlet weak var goalTimeLabel: UILabel!
     @IBOutlet weak var goalTimeButton: UIButton!
     
+    weak var delegate: RoutineDataDelegate?
+    weak var updateDelegate: RoutineUpdateDelegate?
+    
+    var goalRoutine: String = ""
+    var repeatPeriodTags: [Int] = []
+    var startTime: String = ""
+    var goalTime: String = ""
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -31,6 +31,12 @@ class GoalRoutineSettingViewController: UIViewController {
         setWeekStackViewButton()
         
         goalRoutineTextField.delegate = self
+        if let listVC = navigationController?.viewControllers.first(where: {$0 is GoalRoutineListViewController}) as? GoalRoutineListViewController {
+            delegate = listVC
+        }
+        if let myPageListVC = navigationController?.viewControllers.first(where: {$0 is MyPageViewController}) as? MyPageViewController {
+            updateDelegate = myPageListVC
+        }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
@@ -82,7 +88,7 @@ class GoalRoutineSettingViewController: UIViewController {
         }
         
         let backButton = UIImage(named: "arrow_left")
-        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
+        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(backButtonDidTap))
         self.navigationItem.leftBarButtonItem = leftBarButton
         
         let rightBarButton: UIBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
@@ -156,27 +162,73 @@ class GoalRoutineSettingViewController: UIViewController {
         button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
     }
     
+    @objc private func buttonTapped(_ sender: UIButton) {
+        UIView.performWithoutAnimation {
+            if sender.isSelected {
+                sender.isSelected = false
+                sender.backgroundColor = UIColor.white
+                sender.layer.borderColor = UIColor.blueGray4.cgColor
+                sender.setTitleColor(UIColor.black, for: .normal)
+                
+                if let index = repeatPeriodTags.firstIndex(of: sender.tag) {
+                    repeatPeriodTags.remove(at: index)
+                }
+            } else {
+                sender.isSelected = true
+                sender.backgroundColor = UIColor.primary4
+                sender.layer.borderColor = UIColor.clear.cgColor
+                sender.setTitleColor(UIColor.white, for: .normal)
+                
+                repeatPeriodTags.append(sender.tag)
+            }
+            sender.layoutIfNeeded()
+        }
+    }
+    
     @objc func backButtonDidTap(_ sender: UIBarButtonItem) {
-        guard let customAlertCancelViewController = self.storyboard?.instantiateViewController(identifier: "CustomAlertCancelViewController") as? CustomAlertCancelViewController else { return }
-
-        customAlertCancelViewController.delegate = self
+        let alert = UIAlertController(title: "목표 루틴 설정을 취소하시겠습니까?", message: "작성 중인 내용은 저장되지 않습니다.", preferredStyle: .alert)
         
-        customAlertCancelViewController.modalPresentationStyle = .overFullScreen
-        customAlertCancelViewController.modalTransitionStyle = .crossDissolve
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+        alert.addAction(cancelAction)
+        cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
-        self.present(customAlertCancelViewController, animated: true, completion: nil)
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
+        alert.addAction(confirmAction)
+        confirmAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+        
+        alert.preferredAction = confirmAction
+        
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
-        guard let customAlertAddViewController = self.storyboard?.instantiateViewController(identifier: "CustomAlertAddViewController") as? CustomAlertAddViewController else { return }
-
-        customAlertAddViewController.delegate = self
+        let alert = UIAlertController(title: "새로운 루틴을 추가하시겠습니까?", message: "", preferredStyle: .alert)
         
-        customAlertAddViewController.modalPresentationStyle = .overFullScreen
-        customAlertAddViewController.modalTransitionStyle = .crossDissolve
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+        alert.addAction(cancelAction)
+        cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
-        self.present(customAlertAddViewController, animated: true, completion: nil)
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            self.goalRoutine = self.goalRoutineTextField.text ?? ""
+            self.startTime = self.startTimeLabel.text ?? ""
+            self.goalTime = self.goalTimeLabel.text ?? ""
+            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
+            
+            RoutineDataModel.shared.routineData.insert(data, at: 0)
+            
+            self.updateDelegate?.didUpdateRoutine()
+            self.navigationController?.popViewController(animated: true)
+        }
+        alert.addAction(confirmAction)
+        confirmAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+        
+        alert.preferredAction = confirmAction
+        
+        present(alert, animated: true, completion: nil)
     }
+
     
     @objc func customButtonDidTap(_ sender: UIButton) {
         print("Information.")
@@ -186,23 +238,6 @@ class GoalRoutineSettingViewController: UIViewController {
         let bottomSheetViewController = BottomSheetViewController(contentViewController: contentViewController, defaultHeight: 230, cornerRadius: 26, dimmedAlpha: 1, isPannedable: false)
         
         self.present(bottomSheetViewController, animated: true, completion: nil)
-    }
-    
-    @objc private func buttonTapped(_ sender: UIButton) {
-        UIView.performWithoutAnimation {
-            if sender.isSelected {
-                sender.isSelected = false
-                sender.backgroundColor = UIColor.white
-                sender.layer.borderColor = UIColor.blueGray4.cgColor
-                sender.setTitleColor(UIColor.black, for: .normal)
-            } else {
-                sender.isSelected = true
-                sender.backgroundColor = UIColor.primary4
-                sender.layer.borderColor = UIColor.clear.cgColor
-                sender.setTitleColor(UIColor.white, for: .normal)
-            }
-            sender.layoutIfNeeded()
-        }
     }
     
     @IBAction func setRoutineStartTime(_ sender: Any) {
@@ -276,11 +311,9 @@ extension GoalRoutineSettingViewController: CustomGoalTimePickerDelegate {
     }
 }
 
-extension GoalRoutineSettingViewController: CustomAlertCancelDelegate, CustomAlertAddDelegate {
-    func action() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    func exit() {
+extension GoalRoutineListViewController: RoutineUpdateDelegate {
+    func didUpdateRoutine() {
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
     }
 }
