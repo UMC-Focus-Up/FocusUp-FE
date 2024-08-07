@@ -1,10 +1,3 @@
-//
-//  GoalRoutineTableViewCell.swift
-//  FocusUp
-//
-//  Created by 김미주 on 07/08/2024.
-//
-
 import UIKit
 
 class GoalRoutineTableViewCell: UITableViewCell {

@@ -1,16 +1,15 @@
-//
-//  GoalRoutineListViewController.swift
-//  FocusUp
-//
-//  Created by 성호은 on 7/24/24.
-//
-
 import UIKit
+
+protocol RoutineDataDelegate: AnyObject {
+    func didReceiveData(_ data: (String, [Int], String, String))
+}
 
 class GoalRoutineListViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var goalRoutineLabel2: UILabel!
     @IBOutlet weak var routineTableView: UITableView!
+    
+    var routineData: [(String, [Int], String, String)] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +63,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 5
+            return routineData.count
         } else {
             return 1
         }
@@ -73,6 +72,8 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = routineTableView.dequeueReusableCell(withIdentifier: "GoalRoutineTableViewCell", for: indexPath) as? GoalRoutineTableViewCell else { return UITableViewCell() }
+            let data = routineData[indexPath.row]
+            cell.titleLabel.text = data.0
             cell.selectionStyle = .none
             return cell
         } else {
@@ -98,5 +99,13 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
             self.navigationController?.pushViewController(GoalRoutineSettingVC, animated: true)
         }
+    }
+}
+
+extension GoalRoutineListViewController: RoutineDataDelegate {
+    func didReceiveData(_ data: (String, [Int], String, String)) {
+        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
+        routineData.append(data)  // 배열에 데이터 추가
+        routineTableView.reloadData()  // 테이블 뷰 리로드
     }
 }

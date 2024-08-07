@@ -785,7 +785,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nRH-d1-DyB">
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nRH-d1-DyB">
                                         <rect key="frame" x="50.333333333333329" y="0.0" width="42" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="9Jb-SI-XNe"/>
@@ -800,7 +800,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZHe-aw-Tls">
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZHe-aw-Tls">
                                         <rect key="frame" x="100.33333333333333" y="0.0" width="41.999999999999986" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="c7h-gy-Pva"/>
@@ -815,7 +815,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dzo-e6-7Jb">
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dzo-e6-7Jb">
                                         <rect key="frame" x="150.66666666666666" y="0.0" width="42" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="8SS-pX-9ey"/>
@@ -830,7 +830,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OBv-tM-9rF">
+                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OBv-tM-9rF">
                                         <rect key="frame" x="200.66666666666666" y="0.0" width="42" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="VwM-Vt-Ulk"/>
@@ -841,11 +841,11 @@
                                         <state key="normal" title="목">
                                             <color key="titleColor" systemColor="labelColor"/>
                                         </state>
-                                        <state key="selected" title="목">
+                                        <state key="selected">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2x2-zM-5Y1">
+                                    <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2x2-zM-5Y1">
                                         <rect key="frame" x="251" y="0.0" width="42" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="Xvo-ud-rfG"/>
@@ -860,7 +860,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZB8-wv-Zl6">
+                                    <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZB8-wv-Zl6">
                                         <rect key="frame" x="301" y="0.0" width="42" height="42"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="42" id="828-8h-hPh"/>

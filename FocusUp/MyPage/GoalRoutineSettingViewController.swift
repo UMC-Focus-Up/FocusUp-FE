@@ -15,6 +15,12 @@ class GoalRoutineSettingViewController: UIViewController {
     @IBOutlet weak var goalTimeLabel: UILabel!
     @IBOutlet weak var goalTimeButton: UIButton!
     
+    weak var delegate: RoutineDataDelegate?
+    
+    var goalRoutine: String = ""
+    var repeatPeriodTags: [Int] = []
+    var startTime: String = ""
+    var goalTime: String = ""
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -24,6 +30,9 @@ class GoalRoutineSettingViewController: UIViewController {
         setWeekStackViewButton()
         
         goalRoutineTextField.delegate = self
+        if let listVC = navigationController?.viewControllers.first(where: {$0 is GoalRoutineListViewController}) as? GoalRoutineListViewController {
+            delegate = listVC
+    }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
@@ -146,6 +155,30 @@ class GoalRoutineSettingViewController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.blueGray3.cgColor
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 13)
+        button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+    }
+    
+    @objc private func buttonTapped(_ sender: UIButton) {
+        UIView.performWithoutAnimation {
+            if sender.isSelected {
+                sender.isSelected = false
+                sender.backgroundColor = UIColor.white
+                sender.layer.borderColor = UIColor.blueGray4.cgColor
+                sender.setTitleColor(UIColor.black, for: .normal)
+                
+                if let index = repeatPeriodTags.firstIndex(of: sender.tag) {
+                    repeatPeriodTags.remove(at: index)
+                }
+            } else {
+                sender.isSelected = true
+                sender.backgroundColor = UIColor.primary4
+                sender.layer.borderColor = UIColor.clear.cgColor
+                sender.setTitleColor(UIColor.white, for: .normal)
+                
+                repeatPeriodTags.append(sender.tag)
+            }
+            sender.layoutIfNeeded()
+        }
     }
     
     @objc func backButtonDidTap(_ sender: UIBarButtonItem) {
@@ -165,7 +198,6 @@ class GoalRoutineSettingViewController: UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
-
     
     @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "새로운 루틴을 추가하시겠습니까?", message: "", preferredStyle: .alert)
@@ -175,6 +207,11 @@ class GoalRoutineSettingViewController: UIViewController {
         cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
         let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            self.goalRoutine = self.goalRoutineTextField.text ?? ""
+            self.startTime = self.startTimeLabel.text ?? ""
+            self.goalTime = self.goalTimeLabel.text ?? ""
+            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
+            self.delegate?.didReceiveData(data)
             self.navigationController?.popViewController(animated: true)
         }
         alert.addAction(confirmAction)
@@ -193,23 +230,6 @@ class GoalRoutineSettingViewController: UIViewController {
         let bottomSheetViewController = BottomSheetViewController(contentViewController: contentViewController, defaultHeight: 230, cornerRadius: 26, dimmedAlpha: 1, isPannedable: false)
         
         self.present(bottomSheetViewController, animated: true, completion: nil)
-    }
-    
-    @objc private func buttonTapped(_ sender: UIButton) {
-        UIView.performWithoutAnimation {
-            if sender.isSelected {
-                sender.isSelected = false
-                sender.backgroundColor = UIColor.white
-                sender.layer.borderColor = UIColor.blueGray4.cgColor
-                sender.setTitleColor(UIColor.black, for: .normal)
-            } else {
-                sender.isSelected = true
-                sender.backgroundColor = UIColor.primary4
-                sender.layer.borderColor = UIColor.clear.cgColor
-                sender.setTitleColor(UIColor.white, for: .normal)
-            }
-            sender.layoutIfNeeded()
-        }
     }
     
     @IBAction func setRoutineStartTime(_ sender: Any) {
