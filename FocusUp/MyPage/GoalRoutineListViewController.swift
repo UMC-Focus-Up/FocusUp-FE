@@ -10,20 +10,25 @@ import UIKit
 class GoalRoutineListViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var goalRoutineLabel2: UILabel!
-    @IBOutlet weak var addNewRoutineButton2: UIButton!
+    @IBOutlet weak var routineTableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // tableView
+        routineTableView.delegate = self
+        routineTableView.dataSource = self
+        let listNib = UINib(nibName: "GoalRoutineTableViewCell", bundle: nil)
+        routineTableView.register(listNib, forCellReuseIdentifier: "GoalRoutineTableViewCell")
+        let addNib = UINib(nibName: "GoalRoutineAddTableViewCell", bundle: nil)
+        routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
+        routineTableView.separatorStyle = .none
 
         self.navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationController?.navigationBar.topItem?.title = ""
         self.title = "목표 루틴 리스트"
         
         self.goalRoutineLabel2.font = UIFont(name: "Pretendard-Medium", size: 15)
-        
-        self.addNewRoutineButton2.layer.cornerRadius = 8
-        self.addNewRoutineButton2.layer.borderWidth = 1
-        self.addNewRoutineButton2.layer.borderColor = UIColor(named: "BlueGray3")?.cgColor
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,14 +50,52 @@ class GoalRoutineListViewController: UIViewController {
     }
     
     // MARK: - action
-    @IBAction func didTapAddNewRoutineBtn2(_ sender: Any) {
-        guard let toGoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
-        self.navigationController?.pushViewController(toGoalRoutineSettingVC, animated: true)
-    }
-    
-    
     @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
         self.navigationController?.popViewController(animated: true)
     }
 
+}
+
+// MARK: - extension
+extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return 5
+        } else {
+            return 1
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            guard let cell = routineTableView.dequeueReusableCell(withIdentifier: "GoalRoutineTableViewCell", for: indexPath) as? GoalRoutineTableViewCell else { return UITableViewCell() }
+            cell.selectionStyle = .none
+            return cell
+        } else {
+            guard let cell = routineTableView.dequeueReusableCell(withIdentifier: "GoalRoutineAddTableViewCell", for: indexPath) as? GoalRoutineAddTableViewCell else { return UITableViewCell() }
+            cell.selectionStyle = .none
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 56
+        } else {
+            return 50
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            
+        } else {
+            guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
+            self.navigationController?.pushViewController(GoalRoutineSettingVC, animated: true)
+        }
+    }
 }

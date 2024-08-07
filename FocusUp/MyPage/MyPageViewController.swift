@@ -76,7 +76,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     @IBOutlet weak var settingButton: UIBarButtonItem!
     @IBOutlet weak var goalRoutineLabel: UILabel!
     @IBOutlet weak var moreButton: UIButton!
-    @IBOutlet weak var addNewRoutineButton: UIButton!
     @IBOutlet weak var levelStateLabel: UILabel!
     @IBOutlet weak var levelNoticeLabel: UILabel!
     @IBOutlet weak var presentLevelLabel: UILabel!
@@ -118,7 +117,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private func setupUI() {
         goalRoutineLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         addUnderlineToMoreButton()
-        addNewRoutineButton.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 15)
         levelStateLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         levelNoticeLabel.font = UIFont(name: "Pretendard-Regular", size: 12)
         
@@ -128,10 +126,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         setLevelLabel()
         calendarLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         calendarView.appearance.weekdayFont = UIFont(name: "Pretendard-Regular", size: 14)
-        
-        addNewRoutineButton.layer.cornerRadius = 8
-        addNewRoutineButton.layer.borderWidth = 1
-        addNewRoutineButton.layer.borderColor = UIColor(named: "BlueGray3")?.cgColor
         
         levelProgress.layer.cornerRadius = 5
         levelProgress.clipsToBounds = true

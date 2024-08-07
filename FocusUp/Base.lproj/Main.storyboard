@@ -487,20 +487,6 @@
                                                     <action selector="didTapMoreBtn:" destination="ivx-ep-J1P" eventType="touchUpInside" id="2ZY-sc-6eg"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pYA-xC-JvS">
-                                                <rect key="frame" x="25" y="60" width="343" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="50" id="pFo-SW-JjW"/>
-                                                </constraints>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="add_mypage" title="더보기" imagePadding="9">
-                                                    <fontDescription key="titleFontDescription" type="system" pointSize="15"/>
-                                                    <color key="baseForegroundColor" name="BlueGray3"/>
-                                                </buttonConfiguration>
-                                                <connections>
-                                                    <action selector="didTapAddNewRoutineBtn:" destination="ivx-ep-J1P" eventType="touchUpInside" id="Oha-J3-rBe"/>
-                                                </connections>
-                                            </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="레벨 현황" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UQ9-Tl-e2J">
                                                 <rect key="frame" x="27" y="272" width="57" height="18"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -592,14 +578,11 @@
                                             <constraint firstAttribute="height" constant="815" id="dYs-25-H2p"/>
                                             <constraint firstAttribute="trailing" secondItem="6wh-3S-byz" secondAttribute="trailing" constant="23" id="eTL-4Q-IHn"/>
                                             <constraint firstAttribute="trailing" secondItem="KdO-sb-syT" secondAttribute="trailing" constant="25" id="fDJ-PH-RRI"/>
-                                            <constraint firstItem="pYA-xC-JvS" firstAttribute="top" secondItem="z3c-J3-9Aa" secondAttribute="bottom" constant="10" id="fwj-rr-Lla"/>
                                             <constraint firstItem="6wh-3S-byz" firstAttribute="top" secondItem="KdO-sb-syT" secondAttribute="bottom" constant="11" id="gEK-4w-kIZ"/>
                                             <constraint firstItem="z3c-J3-9Aa" firstAttribute="centerY" secondItem="1LL-8D-zIg" secondAttribute="centerY" id="i2v-bl-9rO"/>
                                             <constraint firstItem="z3c-J3-9Aa" firstAttribute="top" secondItem="Uf4-Ok-XJY" secondAttribute="top" constant="32" id="inY-ax-I3N"/>
                                             <constraint firstAttribute="trailing" secondItem="mWH-SO-dPx" secondAttribute="trailing" constant="326" id="isu-GB-JWf"/>
                                             <constraint firstAttribute="trailing" secondItem="UQ9-Tl-e2J" secondAttribute="trailing" constant="309" id="iwh-1U-B1L"/>
-                                            <constraint firstItem="pYA-xC-JvS" firstAttribute="leading" secondItem="Uf4-Ok-XJY" secondAttribute="leading" constant="25" id="lJq-XL-iIB"/>
-                                            <constraint firstAttribute="trailing" secondItem="pYA-xC-JvS" secondAttribute="trailing" constant="25" id="o2Q-Fa-GyL"/>
                                             <constraint firstItem="z3c-J3-9Aa" firstAttribute="leading" secondItem="Uf4-Ok-XJY" secondAttribute="leading" constant="27" id="oCT-P5-cPF"/>
                                             <constraint firstItem="mWH-SO-dPx" firstAttribute="leading" secondItem="z3c-J3-9Aa" secondAttribute="leading" id="pUG-Og-zdX"/>
                                             <constraint firstAttribute="trailing" secondItem="BfA-Gi-1s8" secondAttribute="trailing" constant="16" id="sdB-zh-LYc"/>
@@ -639,7 +622,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="addNewRoutineButton" destination="pYA-xC-JvS" id="Clr-Oe-GCL"/>
                         <outlet property="calendarLabel" destination="mWH-SO-dPx" id="ojV-KA-Bfz"/>
                         <outlet property="calendarView" destination="BfA-Gi-1s8" id="42t-mh-rr4"/>
                         <outlet property="contentView" destination="Uf4-Ok-XJY" id="Fdc-Bb-U4A"/>
@@ -727,34 +709,25 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VBq-6h-YsF">
-                                <rect key="frame" x="25" y="119" width="343" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="HU7-YT-tqo"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="add_mypage" title="새 루틴 추가하기" imagePadding="9">
-                                    <fontDescription key="titleFontDescription" type="system" pointSize="15"/>
-                                    <color key="baseForegroundColor" name="BlueGray3"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="didTapAddNewRoutineBtn2:" destination="aGI-gY-8vH" eventType="touchUpInside" id="h8p-II-PgU"/>
-                                </connections>
-                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="XQh-lc-5cd">
+                                <rect key="frame" x="25" y="119" width="343" height="649"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="iGk-US-TVZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="r34-gz-qty" firstAttribute="top" secondItem="iGk-US-TVZ" secondAttribute="top" constant="32" id="1ke-K6-5h3"/>
                             <constraint firstItem="r34-gz-qty" firstAttribute="leading" secondItem="iGk-US-TVZ" secondAttribute="leading" constant="27" id="Rhy-5W-AqO"/>
-                            <constraint firstItem="iGk-US-TVZ" firstAttribute="trailing" secondItem="VBq-6h-YsF" secondAttribute="trailing" constant="25" id="b7f-Rg-qc9"/>
-                            <constraint firstItem="VBq-6h-YsF" firstAttribute="leading" secondItem="iGk-US-TVZ" secondAttribute="leading" constant="25" id="gGk-3U-LFb"/>
-                            <constraint firstItem="VBq-6h-YsF" firstAttribute="top" secondItem="r34-gz-qty" secondAttribute="bottom" constant="10" id="wtO-Pv-Nyj"/>
+                            <constraint firstItem="XQh-lc-5cd" firstAttribute="top" secondItem="r34-gz-qty" secondAttribute="bottom" constant="10" id="TyB-kK-mGG"/>
+                            <constraint firstItem="XQh-lc-5cd" firstAttribute="leading" secondItem="iGk-US-TVZ" secondAttribute="leading" constant="25" id="edp-zB-f1t"/>
+                            <constraint firstItem="iGk-US-TVZ" firstAttribute="bottom" secondItem="XQh-lc-5cd" secondAttribute="bottom" constant="50" id="oIX-eT-rvs"/>
+                            <constraint firstItem="iGk-US-TVZ" firstAttribute="trailing" secondItem="XQh-lc-5cd" secondAttribute="trailing" constant="25" id="yvz-3t-ZBw"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="addNewRoutineButton2" destination="VBq-6h-YsF" id="gQC-QH-5Yz"/>
                         <outlet property="goalRoutineLabel2" destination="r34-gz-qty" id="Nu1-cs-Puy"/>
+                        <outlet property="routineTableView" destination="XQh-lc-5cd" id="8kg-kJ-H1N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iDi-0T-9uf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1410,7 +1383,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="add_mypage" width="14" height="14"/>
         <image name="arrow_right_black" width="24" height="24"/>
         <image name="bg_alarm" width="392" height="852"/>
         <image name="bg_character" width="360" height="558"/>
@@ -1432,9 +1404,6 @@
         <image name="shell" width="36" height="34"/>
         <image name="shop" width="24" height="24"/>
         <image name="waterdrop" width="40" height="57"/>
-        <namedColor name="BlueGray3">
-            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <namedColor name="BlueGray7">
             <color red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
