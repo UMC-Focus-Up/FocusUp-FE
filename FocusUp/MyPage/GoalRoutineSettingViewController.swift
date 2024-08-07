@@ -82,7 +82,7 @@ class GoalRoutineSettingViewController: UIViewController {
         }
         
         let backButton = UIImage(named: "arrow_left")
-        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
+        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(backButtonDidTap))
         self.navigationItem.leftBarButtonItem = leftBarButton
         
         let rightBarButton: UIBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(completeButtonDidTap))
