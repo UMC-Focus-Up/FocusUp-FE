@@ -1,10 +1,3 @@
-//
-//  GoalRoutineEditViewController.swift
-//  FocusUp
-//
-//  Created by 김미주 on 07/08/2024.
-//
-
 import UIKit
 
 class GoalRoutineEditViewController: UIViewController {
@@ -24,14 +17,25 @@ class GoalRoutineEditViewController: UIViewController {
     @IBOutlet weak var goalTimeButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
     
-    let selectedButtonTags: Set<Int> = [1, 3]
-    
+    var routineData: (String, [Int], String, String)?
+
     // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         setAttribute()
         setFont()
         setWeekStackViewButton()
+        
+        // 데이터가 설정되었을 경우 UI 업데이트
+        if let routineData = routineData {
+            goalRoutineTextLabel.text = routineData.0
+            startTimeLabel.text = routineData.2
+            goalTimeLabel.text = routineData.3
+            // 버튼 태그 업데이트
+            for case let button as UIButton in weekStackButton.arrangedSubviews {
+                setButton(button, selectedTags: routineData.1)
+            }
+        }
     }
     
     
@@ -121,17 +125,17 @@ class GoalRoutineEditViewController: UIViewController {
     // MARK: - Action
     private func setWeekStackViewButton() {
         for case let button as UIButton in weekStackButton.arrangedSubviews {
-            setButton(button)
+            setButton(button, selectedTags: routineData?.1 ?? [])
         }
     }
     
-    private func setButton(_ button: UIButton) {
+    private func setButton(_ button: UIButton, selectedTags: [Int]) {
         button.layer.cornerRadius = 21
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.blueGray3.cgColor
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 13)
         
-        if selectedButtonTags.contains(button.tag) {
+        if selectedTags.contains(button.tag) {
             button.isSelected = true
             button.backgroundColor = UIColor.primary4
             button.layer.borderColor = UIColor.clear.cgColor

@@ -93,8 +93,13 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            guard let GoalRoutineEditVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineEditViewController") else { return }
-            self.navigationController?.pushViewController(GoalRoutineEditVC, animated: true)
+            guard let goalRoutineEditVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineEditViewController") as? GoalRoutineEditViewController else { return }
+            // 선택한 셀의 데이터 가져오기
+            let selectedData = routineData[indexPath.row]
+            // 데이터를 뷰컨트롤러에 전달
+            goalRoutineEditVC.routineData = selectedData
+            // 뷰컨트롤러로 이동
+            self.navigationController?.pushViewController(goalRoutineEditVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
             self.navigationController?.pushViewController(GoalRoutineSettingVC, animated: true)
