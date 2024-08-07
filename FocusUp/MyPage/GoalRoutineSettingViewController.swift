@@ -32,7 +32,10 @@ class GoalRoutineSettingViewController: UIViewController {
         goalRoutineTextField.delegate = self
         if let listVC = navigationController?.viewControllers.first(where: {$0 is GoalRoutineListViewController}) as? GoalRoutineListViewController {
             delegate = listVC
-    }
+        }
+        if let myPageListVC = navigationController?.viewControllers.first(where: {$0 is MyPageViewController}) as? MyPageViewController {
+            delegate = myPageListVC
+        }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)

@@ -563,6 +563,11 @@
                                                 <rect key="frame" x="16" y="458.66666666666663" width="361" height="296.33333333333337"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </view>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Fcv-Tt-XSA">
+                                                <rect key="frame" x="25" y="60" width="343" height="162"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            </tableView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
@@ -632,6 +637,7 @@
                         <outlet property="levelStateLabel" destination="UQ9-Tl-e2J" id="1Yx-Bc-XhF"/>
                         <outlet property="moreButton" destination="1LL-8D-zIg" id="b7Y-wd-oh7"/>
                         <outlet property="presentLevelLabel" destination="ix6-FM-mec" id="qdM-N2-KCC"/>
+                        <outlet property="routineTableView" destination="Fcv-Tt-XSA" id="puw-xd-MNt"/>
                         <outlet property="settingButton" destination="ooe-KR-T4x" id="xEe-6u-OJd"/>
                     </connections>
                 </viewController>
