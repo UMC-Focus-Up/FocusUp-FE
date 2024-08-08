@@ -79,6 +79,34 @@ class LoginViewController: UIViewController {
         }
     }
     
+    private func handleNaverLogin() {
+        guard let accessToken = naverLoginInstance?.accessToken else { return }
+        
+        let urlString = "https://openapi.naver.com/v1/nid/me"
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)"
+        ]
+        
+        AF.request(urlString, headers: headers).responseJSON { [weak self] response in
+            switch response.result{
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let response = json["response"] as? [String: Any],
+                   let id = response["id"] as? String {
+                    let socialType = "NAVER"
+                    self?.sendSocialInfo(socialType: socialType, id: id)
+                    
+                    guard let mainVC = self?.storyboard?.instantiateViewController(identifier: "CustomTabBarController") as? CustomTabBarController else { return }
+                    mainVC.modalTransitionStyle = .coverVertical
+                    mainVC.modalPresentationStyle = .fullScreen
+                    self?.present(mainVC, animated: true, completion: nil)
+                }
+            case .failure(let error):
+                print("Failed to get Naver user info: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     private func sendSocialInfo(socialType: String, id: String) {
         let parameters: [String: Any] = [
             "socialType": socialType,
@@ -112,11 +140,7 @@ class LoginViewController: UIViewController {
 // MARK: - extension
 extension LoginViewController: NaverThirdPartyLoginConnectionDelegate {
     func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
-        guard let mainVC = self.storyboard?.instantiateViewController(identifier: "CustomTabBarController") as? CustomTabBarController else { return }
-        mainVC.modalTransitionStyle = .coverVertical
-        mainVC.modalPresentationStyle = .fullScreen
-        self.present(mainVC, animated: true, completion: nil)
-        
+        handleNaverLogin()
         print("Naver login Success.")
     }
     
