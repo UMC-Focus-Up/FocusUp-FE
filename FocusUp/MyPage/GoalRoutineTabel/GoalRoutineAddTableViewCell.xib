@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" restorationIdentifier="GoalRoutineAddTableViewCell" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="GoalRoutineAddTableViewCell" customModule="FocusUp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="432" height="50"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="432" height="50"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="055-5h-q73">
+                        <rect key="frame" x="0.0" y="0.0" width="432" height="50"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="jVD-eK-FUM">
+                                <rect key="frame" x="155" y="18" width="122" height="14"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add_mypage" translatesAutoresizingMaskIntoConstraints="NO" id="uLe-Gb-WXC">
+                                        <rect key="frame" x="0.0" y="0.0" width="14" height="14"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="14" id="kw7-KV-XN4"/>
+                                            <constraint firstAttribute="height" constant="14" id="oMN-2k-UtS"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="새 루틴 추가하기" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ze-fu-uKO">
+                                        <rect key="frame" x="23" y="0.0" width="99" height="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" name="BlueGray3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="jVD-eK-FUM" firstAttribute="centerX" secondItem="055-5h-q73" secondAttribute="centerX" id="L7Q-NH-JAp"/>
+                            <constraint firstItem="jVD-eK-FUM" firstAttribute="centerY" secondItem="055-5h-q73" secondAttribute="centerY" id="cXb-Xk-NuN"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="055-5h-q73" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="Kd0-oJ-62G"/>
+                    <constraint firstAttribute="bottom" secondItem="055-5h-q73" secondAttribute="bottom" id="Mcx-zq-iy8"/>
+                    <constraint firstItem="055-5h-q73" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="bs9-KI-wZk"/>
+                    <constraint firstAttribute="trailing" secondItem="055-5h-q73" secondAttribute="trailing" id="p1o-Ep-o3w"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="routineAddLabel" destination="4Ze-fu-uKO" id="4Ed-wy-VKC"/>
+                <outlet property="routineAddView" destination="055-5h-q73" id="4Dp-GE-6l7"/>
+            </connections>
+            <point key="canvasLocation" x="88.549618320610676" y="-11.267605633802818"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="add_mypage" width="14" height="14"/>
+        <namedColor name="BlueGray3">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
