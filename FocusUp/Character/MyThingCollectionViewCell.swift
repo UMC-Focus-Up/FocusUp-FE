@@ -15,5 +15,8 @@ class MyThingCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        itemLabel.font = UIFont.pretendardMedium(size: 15)
+        categoryLabel.font = UIFont.pretendardRegular(size: 12)
     }
 }
