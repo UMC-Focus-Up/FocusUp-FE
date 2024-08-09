@@ -71,13 +71,26 @@ class CharacterViewController: UIViewController {
         self.showBottomSheet()
     }
     
+    @IBAction func configureShopButton(_ sender: Any) {
+        showShopBottomSheet()
+    }
+    
     private func showBottomSheet() {
         // MARK: Show BottomSheetViewController
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // 스토리보드 이름이 "Main"이라 가정
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // 스토리보드 이름 "Main"
         let contentViewController = storyboard.instantiateViewController(withIdentifier: "ContentViewController")
         
-//        let contentViewController = ContentViewController()
         let bottomSheetViewController = BottomSheetViewController(contentViewController: contentViewController, defaultHeight: 500, cornerRadius: 26, dimmedAlpha: 0.4, isPannedable: true)
+        
+        self.present(bottomSheetViewController, animated: true)
+    }
+    
+    private func showShopBottomSheet() {
+        // MARK: Show BottomSheetViewController
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // 스토리보드 이름 "Main"
+        let shopViewController = storyboard.instantiateViewController(withIdentifier: "ShopViewController")
+        
+        let bottomSheetViewController = BottomSheetViewController(contentViewController: shopViewController, defaultHeight: 500, cornerRadius: 26, dimmedAlpha: 0.4, isPannedable: true)
         
         self.present(bottomSheetViewController, animated: true)
     }

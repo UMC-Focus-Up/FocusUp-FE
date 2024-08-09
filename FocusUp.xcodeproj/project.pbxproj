@@ -7,17 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19322DCF2C6568CD00564C59 /* ShopCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19322DCE2C6568CD00564C59 /* ShopCollectionViewCell.xib */; };
+		19322DD02C6568CD00564C59 /* ShopCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19322DCD2C6568CD00564C59 /* ShopCollectionViewCell.swift */; };
 		194EDB4F2C5D25E500FA43E7 /* AlarmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194EDB4E2C5D25E500FA43E7 /* AlarmViewController.swift */; };
 		1955828D2C5D6FBD003F7A86 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */; };
 		1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1961F9462C5113FB000D9652 /* ContentViewController.swift */; };
 		1961F9492C511474000D9652 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1961F9482C511474000D9652 /* BottomSheetViewController.swift */; };
 		19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AC29F02C51002600CB8554 /* CharacterViewController.swift */; };
+		19F34E752C6549E900805942 /* MyRoomThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E742C6549E900805942 /* MyRoomThings.swift */; };
+		19F34E782C654F3F00805942 /* MyThingCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F34E772C654F3F00805942 /* MyThingCollectionViewCell.xib */; };
+		19F34E792C654F3F00805942 /* MyThingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E762C654F3F00805942 /* MyThingCollectionViewCell.swift */; };
+		19F34E7B2C655BD900805942 /* ShopThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E7A2C655BD900805942 /* ShopThings.swift */; };
+		19F34E7D2C655D0100805942 /* ShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E7C2C655D0100805942 /* ShopViewController.swift */; };
+		23163CC92C63A3EF00961A1C /* GoalRoutineTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23163CC82C63A3EF00961A1C /* GoalRoutineTableViewCell.swift */; };
+		23163CCC2C63B16E00961A1C /* GoalRoutineAddTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 23163CCB2C63B16E00961A1C /* GoalRoutineAddTableViewCell.xib */; };
+		23163CCF2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23163CCE2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift */; };
+		23163CD12C63BE7100961A1C /* GoalRoutineEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */; };
 		232B79122C47E278001D2934 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232B79112C47E278001D2934 /* LoginViewController.swift */; };
+		2377EFE32C639E720094055E /* GoalRoutineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2377EFE12C639E720094055E /* GoalRoutineTableViewCell.xib */; };
+		239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239304322C6424B000AE9DDC /* RoutineDataModel.swift */; };
+		239304352C64256900AE9DDC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239304342C64256900AE9DDC /* Protocols.swift */; };
 		23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */; };
 		23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */; };
 		23C9F9012C5A4ED60052B213 /* CustomGoalTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */; };
-		23C9F9052C5AD7B10052B213 /* CustomAlertCancelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */; };
-		23C9F9072C5AE41E0052B213 /* CustomAlertAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */; };
 		23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D6E2C466B6B0099C44B /* AppDelegate.swift */; };
 		23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D702C466B6B0099C44B /* SceneDelegate.swift */; };
 		23E51D762C466B6B0099C44B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D752C466B6B0099C44B /* Base */; };
@@ -39,20 +51,34 @@
 		8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */; };
 		8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */; };
 		8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */; };
+		97DD90912C65D90D0072C677 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DD90902C65D90D0072C677 /* HomeViewController.swift */; };
+		97DD90932C65D9250072C677 /* LevelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DD90922C65D9250072C677 /* LevelViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		19322DCD2C6568CD00564C59 /* ShopCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCollectionViewCell.swift; sourceTree = "<group>"; };
+		19322DCE2C6568CD00564C59 /* ShopCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShopCollectionViewCell.xib; sourceTree = "<group>"; };
 		194EDB4E2C5D25E500FA43E7 /* AlarmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmViewController.swift; sourceTree = "<group>"; };
 		1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		1961F9462C5113FB000D9652 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		1961F9482C511474000D9652 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
 		19AC29F02C51002600CB8554 /* CharacterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterViewController.swift; sourceTree = "<group>"; };
+		19F34E742C6549E900805942 /* MyRoomThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRoomThings.swift; sourceTree = "<group>"; };
+		19F34E762C654F3F00805942 /* MyThingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyThingCollectionViewCell.swift; sourceTree = "<group>"; };
+		19F34E772C654F3F00805942 /* MyThingCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyThingCollectionViewCell.xib; sourceTree = "<group>"; };
+		19F34E7A2C655BD900805942 /* ShopThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopThings.swift; sourceTree = "<group>"; };
+		19F34E7C2C655D0100805942 /* ShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewController.swift; sourceTree = "<group>"; };
+		23163CC82C63A3EF00961A1C /* GoalRoutineTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineTableViewCell.swift; sourceTree = "<group>"; };
+		23163CCB2C63B16E00961A1C /* GoalRoutineAddTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoalRoutineAddTableViewCell.xib; sourceTree = "<group>"; };
+		23163CCE2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineAddTableViewCell.swift; sourceTree = "<group>"; };
+		23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineEditViewController.swift; sourceTree = "<group>"; };
 		232B79112C47E278001D2934 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		2377EFE12C639E720094055E /* GoalRoutineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GoalRoutineTableViewCell.xib; sourceTree = "<group>"; };
+		239304322C6424B000AE9DDC /* RoutineDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineDataModel.swift; sourceTree = "<group>"; };
+		239304342C64256900AE9DDC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
 		23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStartTimePickerView.swift; sourceTree = "<group>"; };
 		23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGoalTimePickerView.swift; sourceTree = "<group>"; };
-		23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertCancelViewController.swift; sourceTree = "<group>"; };
-		23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertAddViewController.swift; sourceTree = "<group>"; };
 		23E51D6B2C466B6B0099C44B /* FocusUp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusUp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E51D6E2C466B6B0099C44B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23E51D702C466B6B0099C44B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +102,8 @@
 		8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineSettingViewController.swift; sourceTree = "<group>"; };
 		8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.release.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.release.xcconfig"; sourceTree = "<group>"; };
+		97DD90902C65D90D0072C677 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		97DD90922C65D9250072C677 /* LevelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelViewController.swift; sourceTree = "<group>"; };
 		983A7CBBEE3C961D2D4A307B /* Pods-FocusUp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.debug.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.debug.xcconfig"; sourceTree = "<group>"; };
 		E598D0F7E520D0720143B7A3 /* Pods_FocusUp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FocusUp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -106,8 +134,26 @@
 				1961F9482C511474000D9652 /* BottomSheetViewController.swift */,
 				19AC29F02C51002600CB8554 /* CharacterViewController.swift */,
 				1961F9462C5113FB000D9652 /* ContentViewController.swift */,
+				19F34E742C6549E900805942 /* MyRoomThings.swift */,
+				19F34E762C654F3F00805942 /* MyThingCollectionViewCell.swift */,
+				19F34E772C654F3F00805942 /* MyThingCollectionViewCell.xib */,
+				19F34E7C2C655D0100805942 /* ShopViewController.swift */,
+				19F34E7A2C655BD900805942 /* ShopThings.swift */,
+				19322DCD2C6568CD00564C59 /* ShopCollectionViewCell.swift */,
+				19322DCE2C6568CD00564C59 /* ShopCollectionViewCell.xib */,
 			);
 			path = Character;
+			sourceTree = "<group>";
+		};
+		2377EFE42C639E840094055E /* GoalRoutineTabel */ = {
+			isa = PBXGroup;
+			children = (
+				23163CC82C63A3EF00961A1C /* GoalRoutineTableViewCell.swift */,
+				2377EFE12C639E720094055E /* GoalRoutineTableViewCell.xib */,
+				23163CCE2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift */,
+				23163CCB2C63B16E00961A1C /* GoalRoutineAddTableViewCell.xib */,
+			);
+			path = GoalRoutineTabel;
 			sourceTree = "<group>";
 		};
 		23E51D622C466B6B0099C44B = {
@@ -138,6 +184,7 @@
 				23E51D742C466B6B0099C44B /* Main.storyboard */,
 				23C9F8FC2C57AA1F0052B213 /* InformationViewController.swift */,
 				232B79112C47E278001D2934 /* LoginViewController.swift */,
+				97DD90942C65D92C0072C677 /* Home */,
 				23E51D992C46DD2F0099C44B /* NavBar */,
 				19AC29EF2C50FB2E00CB8554 /* Character */,
 				194EDB4D2C5D25D000FA43E7 /* Alarm */,
@@ -193,17 +240,28 @@
 		8BE3FC0C2C50058700B2AF0D /* MyPage */ = {
 			isa = PBXGroup;
 			children = (
+				2377EFE42C639E840094055E /* GoalRoutineTabel */,
 				8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */,
 				8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */,
 				8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */,
 				8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */,
+				239304322C6424B000AE9DDC /* RoutineDataModel.swift */,
 				8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */,
 				23C9F8FE2C584D7D0052B213 /* CustomStartTimePickerView.swift */,
 				23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */,
-				23C9F9042C5AD7B10052B213 /* CustomAlertCancelViewController.swift */,
-				23C9F9062C5AE41E0052B213 /* CustomAlertAddViewController.swift */,
+				23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */,
+				239304342C64256900AE9DDC /* Protocols.swift */,
 			);
 			path = MyPage;
+			sourceTree = "<group>";
+		};
+		97DD90942C65D92C0072C677 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				97DD90902C65D90D0072C677 /* HomeViewController.swift */,
+				97DD90922C65D9250072C677 /* LevelViewController.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -266,14 +324,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19322DCF2C6568CD00564C59 /* ShopCollectionViewCell.xib in Resources */,
 				23E51D912C4678580099C44B /* Pretendard-Medium.otf in Resources */,
 				23E51D942C4678580099C44B /* Pretendard-Bold.otf in Resources */,
 				23E51D782C466B6C0099C44B /* Assets.xcassets in Resources */,
 				23E51D962C4678580099C44B /* Pretendard-SemiBold.otf in Resources */,
+				2377EFE32C639E720094055E /* GoalRoutineTableViewCell.xib in Resources */,
 				23E51D7B2C466B6C0099C44B /* Base in Resources */,
 				23E51D922C4678580099C44B /* Pretendard-Thin.otf in Resources */,
 				23E51D952C4678580099C44B /* Pretendard-Light.otf in Resources */,
 				23E51D932C4678580099C44B /* Pretendard-Regular.otf in Resources */,
+				19F34E782C654F3F00805942 /* MyThingCollectionViewCell.xib in Resources */,
+				23163CCC2C63B16E00961A1C /* GoalRoutineAddTableViewCell.xib in Resources */,
 				23E51D902C4678580099C44B /* Pretendard-ExtraBold.otf in Resources */,
 				23E51D8E2C4678580099C44B /* Pretendard-ExtraLight.otf in Resources */,
 				23E51D762C466B6B0099C44B /* Base in Resources */,
@@ -330,24 +392,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19F34E792C654F3F00805942 /* MyThingCollectionViewCell.swift in Sources */,
+				19322DD02C6568CD00564C59 /* ShopCollectionViewCell.swift in Sources */,
 				8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */,
 				194EDB4F2C5D25E500FA43E7 /* AlarmViewController.swift in Sources */,
 				232B79122C47E278001D2934 /* LoginViewController.swift in Sources */,
+				239304352C64256900AE9DDC /* Protocols.swift in Sources */,
 				8BB17DD22C5A28D300D6F6E4 /* LevelControlViewController.swift in Sources */,
+				97DD90932C65D9250072C677 /* LevelViewController.swift in Sources */,
 				1961F9492C511474000D9652 /* BottomSheetViewController.swift in Sources */,
+				19F34E752C6549E900805942 /* MyRoomThings.swift in Sources */,
 				19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */,
+				23163CCF2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift in Sources */,
+				239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
 				23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,
 				1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */,
-				23C9F9072C5AE41E0052B213 /* CustomAlertAddViewController.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
 				8BBD00802C50DB99008E1E0C /* SettingViewController.swift in Sources */,
+				23163CC92C63A3EF00961A1C /* GoalRoutineTableViewCell.swift in Sources */,
+				97DD90912C65D90D0072C677 /* HomeViewController.swift in Sources */,
 				1955828D2C5D6FBD003F7A86 /* UIView+Extension.swift in Sources */,
 				8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */,
-				23C9F9052C5AD7B10052B213 /* CustomAlertCancelViewController.swift in Sources */,
+				19F34E7B2C655BD900805942 /* ShopThings.swift in Sources */,
+				23163CD12C63BE7100961A1C /* GoalRoutineEditViewController.swift in Sources */,
 				23C9F9012C5A4ED60052B213 /* CustomGoalTimePickerView.swift in Sources */,
 				8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */,
+				19F34E7D2C655D0100805942 /* ShopViewController.swift in Sources */,
 				23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

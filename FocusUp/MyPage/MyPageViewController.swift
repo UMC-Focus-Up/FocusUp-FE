@@ -1,10 +1,3 @@
-//
-//  MyPageViewController.swift
-//  FocusUp
-//
-//  Created by 성호은 on 7/24/24.
-//
-
 import UIKit
 import FSCalendar
 
@@ -76,7 +69,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     @IBOutlet weak var settingButton: UIBarButtonItem!
     @IBOutlet weak var goalRoutineLabel: UILabel!
     @IBOutlet weak var moreButton: UIButton!
-    @IBOutlet weak var addNewRoutineButton: UIButton!
+    @IBOutlet weak var routineTableView: UITableView!
     @IBOutlet weak var levelStateLabel: UILabel!
     @IBOutlet weak var levelNoticeLabel: UILabel!
     @IBOutlet weak var presentLevelLabel: UILabel!
@@ -90,6 +83,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var levelDownLabel: UILabel?
     private var modifyNoticeLabel: UILabel?
     
+    var routineData: [(String, [Int], String, String)] = []
+    
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,6 +92,16 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         setupCalendar()
         setupNotifications()
         updateLevelLabel()
+        
+        // tableView
+        routineTableView.delegate = self
+        routineTableView.dataSource = self
+        let listNib = UINib(nibName: "GoalRoutineTableViewCell", bundle: nil)
+        routineTableView.register(listNib, forCellReuseIdentifier: "GoalRoutineTableViewCell")
+        let addNib = UINib(nibName: "GoalRoutineAddTableViewCell", bundle: nil)
+        routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
+        routineTableView.separatorStyle = .none
+        routineTableView.isScrollEnabled = false
     }
     
     override func viewDidLayoutSubviews() {
@@ -108,6 +113,15 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         super.viewWillAppear(animated)
         configureNavigationBar()
         configureTabBar()
+        
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
+    }
+    
+    func didDeleteRoutine(at index: Int) {
+        RoutineDataModel.shared.deleteRoutine(at: index)
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
     }
     
     deinit {
@@ -118,7 +132,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private func setupUI() {
         goalRoutineLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         addUnderlineToMoreButton()
-        addNewRoutineButton.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 15)
         levelStateLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         levelNoticeLabel.font = UIFont(name: "Pretendard-Regular", size: 12)
         
@@ -128,10 +141,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         setLevelLabel()
         calendarLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         calendarView.appearance.weekdayFont = UIFont(name: "Pretendard-Regular", size: 14)
-        
-        addNewRoutineButton.layer.cornerRadius = 8
-        addNewRoutineButton.layer.borderWidth = 1
-        addNewRoutineButton.layer.borderColor = UIColor(named: "BlueGray3")?.cgColor
         
         levelProgress.layer.cornerRadius = 5
         levelProgress.clipsToBounds = true
@@ -211,11 +220,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         navigationController?.pushViewController(toGoalRoutineListVC, animated: true)
     }
     
-    @IBAction func didTapAddNewRoutineBtn(_ sender: Any) {
-        guard let toGoalRoutineSettingVC = storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
-        navigationController?.pushViewController(toGoalRoutineSettingVC, animated: true)
-    }
-    
     @objc private func handleNotification(_ notification: Notification) {
         if let buttonType = notification.userInfo?["buttonType"] as? String, buttonType == "levelButton" {
             handleLevelSelectionCompletion()
@@ -281,6 +285,13 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     @objc private func didTapMyLevelButton() {
         handleLevelSelectionCompletion()
+    }
+    
+    func showEditViewController(forRoutineAt index: Int) {
+        let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
+        editVC.delegate = self  // 델리게이트 설정
+        editVC.routineIndex = index
+        navigationController?.pushViewController(editVC, animated: true)
     }
     
     // MARK: - Helper Methods
@@ -391,3 +402,71 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     }
 }
 
+// MARK: - extension
+extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return routineData.count
+        } else {
+            return 1
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            guard let cell = routineTableView.dequeueReusableCell(withIdentifier: "GoalRoutineTableViewCell", for: indexPath) as? GoalRoutineTableViewCell else { return UITableViewCell() }
+            let data = routineData[indexPath.row]
+            cell.titleLabel.text = data.0
+            cell.selectionStyle = .none
+            return cell
+        } else {
+            guard let cell = routineTableView.dequeueReusableCell(withIdentifier: "GoalRoutineAddTableViewCell", for: indexPath) as? GoalRoutineAddTableViewCell else { return UITableViewCell() }
+            cell.selectionStyle = .none
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 56
+        } else {
+            return 50
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
+            editVC.delegate = self
+            editVC.routineIndex = indexPath.row
+            editVC.routineData = routineData[indexPath.row]
+            navigationController?.pushViewController(editVC, animated: true)
+        } else {
+            guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
+            self.navigationController?.pushViewController(GoalRoutineSettingVC, animated: true)
+        }
+    }
+}
+
+extension MyPageViewController: RoutineDataDelegate {
+    func didReceiveData(_ data: (String, [Int], String, String)) {
+        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
+        routineData.insert(data, at: 0)  // 배열에 데이터 추가
+        routineTableView.reloadData()  // 테이블 뷰 리로드
+    }
+}
+
+extension MyPageViewController: RoutineDeleteDelegate {
+
+}
+
+extension MyPageViewController: RoutineUpdateDelegate {
+    func didUpdateRoutine() {
+        routineData = RoutineDataModel.shared.routineData
+        routineTableView.reloadData()
+    }
+}
