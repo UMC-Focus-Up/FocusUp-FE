@@ -1,33 +1,35 @@
 //
-//  ContentViewController.swift
+//  ShopViewController.swift
 //  FocusUp
 //
-//  Created by 김서윤 on 7/24/24.
+//  Created by 김서윤 on 8/9/24.
 //
 
 import UIKit
 
-class ContentViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class ShopViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     // 데이터 불러오기
-    let myList = MyThing.data
-    let cellName = "MyThingCollectionViewCell"
-    let cellReuseIdentifier = "itemCell"
+    let shopList = ShopThing.data
+    let cellName = "ShopCollectionViewCell"
+    let cellReuseIdentifier = "shopCell"
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        myList.count
+        shopList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as?
-                MyThingCollectionViewCell else {
+                ShopCollectionViewCell else {
                         return UICollectionViewCell()
                     }
-            let target = myList[indexPath.row]
+            let target = shopList[indexPath.row]
 
             let img = UIImage(named: "\(target.image).png")
             cell.itemImageView?.image = img
             cell.itemLabel?.text = target.title
             cell.categoryLabel?.text = target.category
+            cell.priceLabel?.text = target.price
 
             return cell
     }
@@ -47,28 +49,28 @@ class ContentViewController: UIViewController, UICollectionViewDataSource, UICol
     
     private func registerXib() {
         let nibName = UINib(nibName: cellName, bundle: nil)
-        ThingsCollection.register(nibName, forCellWithReuseIdentifier: cellReuseIdentifier)
+        ShopCollection.register(nibName, forCellWithReuseIdentifier: cellReuseIdentifier)
     }
-    
-    @IBOutlet var ThingsCollection: UICollectionView!
+
+    @IBOutlet var ShopCollection: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        ThingsCollection.delegate = self
-        ThingsCollection.dataSource = self
+
+        ShopCollection.delegate = self
+        ShopCollection.dataSource = self
         
         registerXib()
     }
-    
+
     // 셀 선택 시 호출되는 메서드
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let target = myList[indexPath.row]
+        let target = shopList[indexPath.row]
         didTapItem(withTitle: target.title)
     }
     
     func didTapItem(withTitle title: String) {
-        let alert = UIAlertController(title: "\(title)을(를) 넣으시겠습니까?", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "\(title)을(를) 구매하시겠습니까?", message: "", preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "아니오", style: .default, handler: nil)
         cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
