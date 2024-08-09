@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        // 기본 뷰 컨트롤러 설정
+        // 스토리보드에서 설정된 초기 뷰 컨트롤러를 가져옴
         let initialViewController = storyboard.instantiateInitialViewController()
         window?.rootViewController = initialViewController
         window?.makeKeyAndVisible()
