@@ -14,6 +14,7 @@ class CharacterViewController: UIViewController {
     @IBOutlet var bottomButton: UIButton!
     @IBOutlet var shopButton: UIButton!
     @IBOutlet var bgView: UIImageView!
+    @IBOutlet var firstBubbleView: UIImageView!
     
     @IBOutlet var shellNum: UILabel!
     @IBOutlet var fishNum: UILabel!
@@ -28,6 +29,20 @@ class CharacterViewController: UIViewController {
         
         fetchDataFromURL()
         scheduleCharacterNotification()
+        
+        shellNum.font = UIFont.pretendardMedium(size: 16)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
+        
+        // 앱이 실행될 때마다 firstBubbleView를 3초 동안 표시
+        firstBubbleView.isHidden = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.firstBubbleView.isHidden = true
+        }
+        
+        // bgView에 tap gesture recognizer 추가
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bgViewTapped))
+        bgView.isUserInteractionEnabled = true
+        bgView.addGestureRecognizer(tapGesture)
     }
     
     private func setupBottomButtonBorder() {
@@ -65,6 +80,7 @@ class CharacterViewController: UIViewController {
         
         shopButton.layer.cornerRadius = 12
         shopButton.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        shopButton.titleLabel?.font = UIFont.pretendardSemibold(size: 14)
     }
     
     @IBAction func configureButton(_ sender: Any) {
@@ -74,6 +90,11 @@ class CharacterViewController: UIViewController {
     @IBAction func configureShopButton(_ sender: Any) {
         showShopBottomSheet()
     }
+    
+    @objc private func bgViewTapped() {
+            // "조개껍데기"를 제목으로 didTapItem 호출
+            didTapItem(withTitle: "조개껍데기")
+        }
     
     private func showBottomSheet() {
         // MARK: Show BottomSheetViewController
@@ -136,6 +157,39 @@ class CharacterViewController: UIViewController {
                 print("Notification scheduled for \(futureDate)")
             }
         }
+    }
+    
+    func didTapItem(withTitle title: String) {
+        // "title" 부분은 Semibold 16px, "을(를) 삭제하시겠습니까?" 부분은 Medium 16px 폰트를 적용
+        let fullText = "\(title)을(를) 삭제하시겠습니까?"
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+        
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: title)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+        
+        // "을(를) 삭제하시겠습니까?"에 Medium 16px 적용
+        let messageRange = (fullText as NSString).range(of: "을(를) 삭제하시겠습니까?")
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardMedium(size: 16), range: messageRange)
+        
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+        cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
+        
+        let confirm = UIAlertAction(title: "삭제", style: .default) { action in
+            print("\(title) 삭제")
+        }
+        confirm.setValue(UIColor(named: "EmphasizeError"), forKey: "titleTextColor")
+        
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        
+        present(alert, animated: true, completion: nil)
     }
 }
 

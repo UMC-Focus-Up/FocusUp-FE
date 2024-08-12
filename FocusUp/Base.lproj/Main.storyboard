@@ -60,7 +60,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L5e-MF-Ifp">
-                                        <rect key="frame" x="54" y="23.666666666666671" width="11" height="21"/>
+                                        <rect key="frame" x="54" y="24" width="10" height="20.333333333333329"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -107,11 +107,8 @@
                                     <constraint firstItem="Z8y-gO-1ua" firstAttribute="centerY" secondItem="7pH-ej-vLA" secondAttribute="centerY" id="uQ6-yI-XdY"/>
                                 </constraints>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_character" translatesAutoresizingMaskIntoConstraints="NO" id="0Fk-ll-OJj">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ui_character" translatesAutoresizingMaskIntoConstraints="NO" id="0Fk-ll-OJj">
                                 <rect key="frame" x="16.666666666666657" y="143" width="360" height="570"/>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="character_character" translatesAutoresizingMaskIntoConstraints="NO" id="eQq-gn-RcX">
-                                <rect key="frame" x="16.666666666666657" y="331" width="360" height="300"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vkS-UC-VtB">
                                 <rect key="frame" x="353" y="159" width="40" height="98"/>
@@ -129,15 +126,18 @@
                                     <action selector="configureShopButton:" destination="qYc-NW-qEm" eventType="touchUpInside" id="Wp9-L9-6sp"/>
                                 </connections>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="speechBubble_letter" translatesAutoresizingMaskIntoConstraints="NO" id="msZ-T7-hpR">
+                                <rect key="frame" x="114.66666666666669" y="175" width="215" height="165"/>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="5wy-2S-EqV"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="0Fk-ll-OJj" firstAttribute="top" secondItem="ixM-hr-0q0" secondAttribute="bottom" constant="16" id="1lF-ZA-12s"/>
-                            <constraint firstItem="0Fk-ll-OJj" firstAttribute="trailing" secondItem="eQq-gn-RcX" secondAttribute="trailing" id="7ca-1F-Ugc"/>
+                            <constraint firstItem="msZ-T7-hpR" firstAttribute="top" secondItem="0Fk-ll-OJj" secondAttribute="top" constant="32" id="6s3-IM-SlA"/>
                             <constraint firstItem="5wy-2S-EqV" firstAttribute="trailing" secondItem="ixM-hr-0q0" secondAttribute="trailing" id="8Yf-SO-fZJ"/>
                             <constraint firstItem="ixM-hr-0q0" firstAttribute="leading" secondItem="5wy-2S-EqV" secondAttribute="leading" id="Cu1-Fs-77F"/>
-                            <constraint firstItem="eQq-gn-RcX" firstAttribute="leading" secondItem="0Fk-ll-OJj" secondAttribute="leading" id="DRZ-1B-HhU"/>
+                            <constraint firstItem="0Fk-ll-OJj" firstAttribute="trailing" secondItem="msZ-T7-hpR" secondAttribute="trailing" constant="47" id="Gqj-hB-9fW"/>
                             <constraint firstItem="0Fk-ll-OJj" firstAttribute="centerX" secondItem="0Wr-u7-fDk" secondAttribute="centerX" id="IGs-1h-IPX"/>
                             <constraint firstItem="MxI-v4-L4p" firstAttribute="leading" secondItem="5wy-2S-EqV" secondAttribute="leading" id="JfH-jA-rxy"/>
                             <constraint firstItem="vkS-UC-VtB" firstAttribute="top" secondItem="ixM-hr-0q0" secondAttribute="bottom" constant="32" id="LmG-wg-6Ac"/>
@@ -148,7 +148,6 @@
                             <constraint firstItem="5wy-2S-EqV" firstAttribute="trailing" secondItem="MxI-v4-L4p" secondAttribute="trailing" id="ffz-vN-hIh"/>
                             <constraint firstItem="5wy-2S-EqV" firstAttribute="trailing" secondItem="BdP-x1-mrH" secondAttribute="trailing" id="kcF-lU-rYD"/>
                             <constraint firstItem="ixM-hr-0q0" firstAttribute="top" secondItem="5wy-2S-EqV" secondAttribute="top" id="qes-V4-gEL"/>
-                            <constraint firstItem="0Fk-ll-OJj" firstAttribute="bottom" secondItem="eQq-gn-RcX" secondAttribute="bottom" constant="82" id="rME-Ld-2hc"/>
                             <constraint firstItem="5wy-2S-EqV" firstAttribute="trailing" secondItem="vkS-UC-VtB" secondAttribute="trailing" id="s4z-1Z-jcr"/>
                             <constraint firstItem="BdP-x1-mrH" firstAttribute="leading" secondItem="5wy-2S-EqV" secondAttribute="leading" id="yZp-Mc-ofW"/>
                         </constraints>
@@ -160,6 +159,7 @@
                     <connections>
                         <outlet property="bgView" destination="0Fk-ll-OJj" id="G8c-jG-Wmd"/>
                         <outlet property="bottomButton" destination="BdP-x1-mrH" id="3jN-lS-qg5"/>
+                        <outlet property="firstBubbleView" destination="msZ-T7-hpR" id="aMj-uR-uXH"/>
                         <outlet property="fishNum" destination="Z8y-gO-1ua" id="ZRX-Op-mH4"/>
                         <outlet property="shellNum" destination="L5e-MF-Ifp" id="IVk-8j-jNf"/>
                         <outlet property="shellfishView" destination="ixM-hr-0q0" id="egh-gS-YTG"/>
@@ -282,6 +282,8 @@
                     </view>
                     <connections>
                         <outlet property="ShopCollection" destination="aom-2t-MV3" id="zV5-h9-80I"/>
+                        <outlet property="fishNum" destination="cQy-Sy-iRg" id="9Wn-dH-Vhu"/>
+                        <outlet property="titleLabel" destination="y0K-pI-s53" id="5Bz-xp-zcP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AdS-FR-hSb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -356,6 +358,7 @@
                     </view>
                     <connections>
                         <outlet property="ThingsCollection" destination="MbU-4a-Ftp" id="Jg2-Er-vB5"/>
+                        <outlet property="titleLabel" destination="Px6-a1-zNR" id="TTd-6h-4cN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dst-Ri-NdP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -647,10 +650,14 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contentLabel" destination="JUv-67-MDQ" id="RDL-qd-Kzl"/>
+                        <outlet property="contentLabel" destination="JUv-67-MDQ" id="sUj-Qb-nx3"/>
                         <outlet property="goButton" destination="G6v-Bt-8fa" id="baO-sB-Eoj"/>
+                        <outlet property="goNum" destination="l6E-1f-arO" id="bJ7-WT-0re"/>
                         <outlet property="laterButton" destination="pCs-Mf-cFa" id="uxq-ES-PNP"/>
+                        <outlet property="laterNum" destination="RJp-cS-rGA" id="YOv-SB-jei"/>
                         <outlet property="noButton" destination="1Ov-xD-UgC" id="Xek-00-6kP"/>
+                        <outlet property="noNum" destination="Fu0-sF-gIe" id="uPa-9K-CaH"/>
+                        <outlet property="textLabel" destination="3mp-ED-EwN" id="hnF-Ka-U5k"/>
                         <outlet property="timeLabel" destination="5m8-6Q-Tjr" id="oBN-OK-kVa"/>
                     </connections>
                 </viewController>
@@ -2289,12 +2296,10 @@
         <image name="add_btn" width="32" height="32"/>
         <image name="arrow_right_black" width="24" height="24"/>
         <image name="bg_alarm" width="392" height="852"/>
-        <image name="bg_character" width="360" height="558"/>
         <image name="bottomsheet_grabber" width="120" height="4"/>
         <image name="character_alarm" width="282" height="227"/>
         <image name="character_btn_after" width="70" height="83"/>
         <image name="character_btn_before" width="70" height="83"/>
-        <image name="character_character" width="360" height="300"/>
         <image name="character_home" width="264" height="176"/>
         <image name="clock_after" width="24" height="24"/>
         <image name="clock_before" width="24" height="24"/>
@@ -2312,6 +2317,8 @@
         <image name="setting" width="24" height="24"/>
         <image name="shell" width="36" height="34"/>
         <image name="shop" width="24" height="24"/>
+        <image name="speechBubble_letter" width="215" height="165"/>
+        <image name="ui_character" width="360" height="558"/>
         <image name="waterdrop" width="40" height="57"/>
         <namedColor name="EmphasizeError">
             <color red="0.93725490196078431" green="0.29803921568627451" blue="0.29803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2335,7 +2342,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
