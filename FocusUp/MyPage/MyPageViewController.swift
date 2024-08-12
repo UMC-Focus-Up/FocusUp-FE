@@ -65,7 +65,6 @@ class CustomHeaderView: UIView {
 // MARK: - MyPage ViewController
 class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
     
-    // MARK: - Outlets
     @IBOutlet weak var settingButton: UIBarButtonItem!
     @IBOutlet weak var goalRoutineLabel: UILabel!
     @IBOutlet weak var moreButton: UIButton!
@@ -85,15 +84,21 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     var routineData: [(String, [Int], String, String)] = []
     
-    // MARK: - Lifecycle Methods
+    private var savedTimeElapsed: TimeInterval = 0
+    private var uptoNext: Int?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNotification()
+        
         setupUI()
         setupCalendar()
         setupNotifications()
+        
         updateLevelLabel()
         
-        // tableView
+        NotificationCenter.default.addObserver(self, selector: #selector(handleLevelProgressUpdate), name: .didPassMaxBoosterTime, object: nil)
+        
         routineTableView.delegate = self
         routineTableView.dataSource = self
         let listNib = UINib(nibName: "GoalRoutineTableViewCell", bundle: nil)
@@ -128,15 +133,12 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         NotificationCenter.default.removeObserver(self)
     }
     
-    // MARK: - UI Setup
     private func setupUI() {
         goalRoutineLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         addUnderlineToMoreButton()
         levelStateLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
         levelNoticeLabel.font = UIFont(name: "Pretendard-Regular", size: 12)
-        
         presentLevelLabel.font = UIFont(name: "Pretendard-Regular", size: 12)
-        
         addUnderlineToPresentLevelLabel()
         setLevelLabel()
         calendarLabel.font = UIFont(name: "Pretendard-Medium", size: 15)
@@ -161,11 +163,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             levelProgress.heightAnchor.constraint(equalToConstant: 10)
         ])
         
-        updateProgressView(to: 0.2) // Initial progress
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.updateProgressView(to: 0.4) }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.updateProgressView(to: 0.6) }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { self.updateProgressView(to: 0.8) }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { self.updateProgressView(to: 1.0) }
+        updateLevelNoticeLabel()
     }
     
     private func setupCalendar() {
@@ -209,7 +207,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
-    // MARK: - Actions
     @IBAction func didTapSettingBtn(_ sender: Any) {
         guard let toSettingVC = storyboard?.instantiateViewController(identifier: "SettingViewController") else { return }
         navigationController?.pushViewController(toSettingVC, animated: true)
@@ -289,12 +286,11 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     func showEditViewController(forRoutineAt index: Int) {
         let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
-        editVC.delegate = self  // 델리게이트 설정
+        editVC.delegate = self
         editVC.routineIndex = index
         navigationController?.pushViewController(editVC, animated: true)
     }
     
-    // MARK: - Helper Methods
     private func addUnderlineToMoreButton() {
         let title = "더보기"
         let font = UIFont(name: "Pretendard-Regular", size: 10)
@@ -310,19 +306,12 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private func addUnderlineToPresentLevelLabel() {
         guard let title = presentLevelLabel.text else { return }
         let attributedString = NSMutableAttributedString(string: title)
-        
         let underlineStyle = NSUnderlineStyle.single.rawValue
-        
         attributedString.addAttributes([
             .underlineStyle: underlineStyle,
             .baselineOffset: 3.0
         ], range: NSRange(location: 0, length: title.count))
-        
         presentLevelLabel.attributedText = attributedString
-    }
-    
-    private func updateProgressView(to progress: Float) {
-        levelProgress.setProgress(progress, animated: true)
     }
     
     private func setLevelLabel() {
@@ -335,6 +324,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let userLevel = LevelControlViewController.sharedData.userLevel
         presentLevelLabel.text = "현재 Level \(userLevel)"
     }
+    
     
     private func setWeekdayLabels() {
         let weekdaySymbols = ["S", "M", "T", "W", "T", "F", "S"]
@@ -376,18 +366,45 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         calendarHeaderView.updateMonthLabel(with: currentPage)
     }
     
-    // MARK: - FSCalendar Delegate and DataSource Methods
-    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-        updateHeaderViewForCurrentMonth()
+    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        showBottomSheet(for: date)
     }
     
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
-        return UIColor.clear
+    private func showBottomSheet(for date: Date) {
+        let dayOfWeek = Calendar.current.component(.weekday, from: date) - 1
+        let routinesForDay = RoutineDataModel.shared.routineData.filter { $0.1.contains(dayOfWeek) }
+        
+        if !routinesForDay.isEmpty {
+            let bottomSheetVC = CalendarBottomSheetViewController()
+            bottomSheetVC.modalPresentationStyle = .pageSheet
+            bottomSheetVC.selectedDate = date
+            bottomSheetVC.timeElapsed = savedTimeElapsed // timeElapsed 값을 전달
+            
+            if let sheet = bottomSheetVC.sheetPresentationController {
+                let customDetent = UISheetPresentationController.Detent.custom { context in
+                    return 547
+                }
+                sheet.detents = [customDetent]
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+                sheet.preferredCornerRadius = 8
+            }
+            
+            present(bottomSheetVC, animated: true, completion: nil)
+        } else {
+            // 루틴이 없는 경우의 처리
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+            let formattedDate = dateFormatter.string(from: date)
+            
+            let alert = UIAlertController(title: "\(formattedDate)", message: "목표 루틴이 없습니다.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .cancel)
+            alert.addAction(okAction)
+            okAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+            
+            present(alert, animated: true, completion: nil)
+        }
     }
-    
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleSelectionColorFor date: Date) -> UIColor? {
-        return appearance.titleDefaultColor
-    }
+
     
     @objc private func didTapPreviousMonthButton() {
         let currentPage = calendarView.currentPage
@@ -400,9 +417,62 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentPage)!
         calendarView.setCurrentPage(nextMonth, animated: true)
     }
+    
+    @objc func handleLevelProgressUpdate() {
+        // progress를 0.2씩 증가
+        updateLevelProgress(by: 0.2)
+    }
+    
+    // progress 값을 업데이트하는 메소드
+    func updateLevelProgress(by increment: Float) {
+        let newProgress = min(levelProgress.progress + increment, 1.0)
+        levelProgress.setProgress(newProgress, animated: true)
+        updateLevelNoticeLabel()
+        
+        if newProgress >= 1.0 {
+            // progress가 1.0에 도달하면 userLevel 증가 및 progress 초기화
+            LevelControlViewController.sharedData.userLevel += 1
+            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
+            updateLevelLabel()
+        } else {
+            levelProgress.setProgress(newProgress, animated: true)
+        }
+    }
+    
+    private func updateLevelNoticeLabel() {
+        // progress에 따라 표시할 숫자 계산
+        let progressValues: [Float: Int] = [
+            0.0: 5,
+            0.2: 4,
+            0.4: 3,
+            0.6: 2,
+            0.8: 1,
+            1.0: 5
+        ]
+        // 현재 progress 값에 해당하는 숫자를 가져와 presentLevelLabel에 표시
+        let currentProgress = round(levelProgress.progress * 5) / 5 // 가장 가까운 0.2 단위로 반올림
+        let currentLabelValue = progressValues[currentProgress] ?? 0
+        levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(currentLabelValue)번 남았어요!"
+    }
 }
 
 // MARK: - extension
+extension MyPageViewController {
+    private func setupNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTimeElapsedUpdate(_:)), name: .didPassTimeElapsed, object: nil)
+    }
+    
+    @objc private func handleTimeElapsedUpdate(_ notification: Notification) {
+        if let timeElapsed = notification.userInfo?["timeElapsed"] as? TimeInterval {
+            savedTimeElapsed = timeElapsed
+        }
+    }
+}
+
+extension Notification.Name {
+    static let didPassMaxBoosterTime = Notification.Name("didPassMaxBoosterTime")
+}
+
 extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -455,14 +525,12 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
 extension MyPageViewController: RoutineDataDelegate {
     func didReceiveData(_ data: (String, [Int], String, String)) {
         print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
-        routineData.insert(data, at: 0)  // 배열에 데이터 추가
-        routineTableView.reloadData()  // 테이블 뷰 리로드
+        routineData.insert(data, at: 0)
+        routineTableView.reloadData()
     }
 }
 
-extension MyPageViewController: RoutineDeleteDelegate {
-
-}
+extension MyPageViewController: RoutineDeleteDelegate {}
 
 extension MyPageViewController: RoutineUpdateDelegate {
     func didUpdateRoutine() {
