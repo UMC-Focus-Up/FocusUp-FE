@@ -10,6 +10,10 @@ import UserNotifications
 
 class AlarmViewController: UIViewController {
 
+    
+    @IBOutlet weak var shellNum: UILabel!
+    @IBOutlet weak var fishNum: UILabel!
+    
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var textLabel: UILabel!
     @IBOutlet var contentLabel: UILabel!
@@ -29,6 +33,9 @@ class AlarmViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        shellNum.font = UIFont.pretendardMedium(size: 16)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
         
         timeLabel.font = UIFont.pretendardSemibold(size: 48)
         textLabel.font = UIFont.pretendardRegular(size: 16)
@@ -128,6 +135,7 @@ class AlarmViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    // MARK: API 연동
     private func scheduleNotification(minutes: Int) {
         // 현재 시간에서 지정한 분만큼 더한 새 알람 시간 계산
         guard let newDate = Calendar.current.date(byAdding: .minute, value: minutes, to: Date()) else { return }
@@ -181,4 +189,22 @@ class AlarmViewController: UIViewController {
         self.present(mainVC, animated: true, completion: nil)
     }
     
+}
+
+// MARK : API 연동
+extension UNUserNotificationCenter {
+    func addNotificationRequest(date: Date, completionHandler: @escaping (Error?) -> Void) {
+        let content = UNMutableNotificationContent()
+        content.title = "루틴 실행할 시간이에요! ⏰️"
+        content.body = "< 매일 30분 독서하기 >"
+        content.sound = .default
+        content.badge = 1
+        content.userInfo = ["targetScene": "Alarm"]
+        
+        let component = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: component, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        self.add(request, withCompletionHandler: completionHandler)
+    }
 }
