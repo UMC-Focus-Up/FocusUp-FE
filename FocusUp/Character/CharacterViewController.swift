@@ -27,11 +27,12 @@ class CharacterViewController: UIViewController {
         setupShopButtonAppearance()
         shopButton.configureButtonWithTitleBelowImage(spacing: 6.0)
         
-        fetchDataFromURL()
-        scheduleCharacterNotification()
-        
         shellNum.font = UIFont.pretendardMedium(size: 16)
         fishNum.font = UIFont.pretendardMedium(size: 16)
+        
+        // 캐릭터 정보를 조회합니다.
+        fetchCharacterInfo()
+        scheduleCharacterNotification()
         
         // 앱이 실행될 때마다 firstBubbleView를 3초 동안 표시
         firstBubbleView.isHidden = false
@@ -43,6 +44,38 @@ class CharacterViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bgViewTapped))
         bgView.isUserInteractionEnabled = true
         bgView.addGestureRecognizer(tapGesture)
+    }
+    
+    // 캐릭터 정보 조회
+    private func fetchCharacterInfo() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        APIClient.getRequest(endpoint: "/api/user/character", token: token) { (result: Result<CharacterResponse, AFError>) in
+            switch result {
+            case .success(let characterResponse):
+                if characterResponse.isSuccess {
+                    if let characterResult = characterResponse.result {
+                        self.shellNum.text = "\(characterResult.life)"
+                        self.fishNum.text = "\(characterResult.point)"
+                        
+                        // 캐릭터 아이템이 있는지 확인
+                        if let item = characterResult.item {
+                            print("Item: \(item.name)")
+                        } else {
+                            print("No item equipped.")
+                        }
+                    }
+                    print("Character info successfully fetched.")
+                } else {
+                    print("Error: \(characterResponse.message)")
+                }
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func setupBottomButtonBorder() {
