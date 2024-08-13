@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Gtd-Tb-Nhc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="mgW-Lj-VXY">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -86,8 +86,8 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z8y-gO-1ua">
-                                        <rect key="frame" x="116" y="23.666666666666671" width="11" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="250" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z8y-gO-1ua">
+                                        <rect key="frame" x="115.99999999999999" y="23.666666666666671" width="30.333333333333329" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -241,8 +241,11 @@
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="aom-2t-MV3">
-                                <rect key="frame" x="16" y="221" width="361" height="577"/>
+                                <rect key="frame" x="16.666666666666657" y="221" width="360" height="577"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="360" id="GSe-PG-RZs"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="r2Q-g1-TjP">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -268,7 +271,6 @@
                             <constraint firstItem="J4e-d4-nYe" firstAttribute="top" secondItem="acr-IF-h0a" secondAttribute="top" id="6Hk-mz-CFQ"/>
                             <constraint firstItem="7tp-z6-DmJ" firstAttribute="centerX" secondItem="pY6-nc-sVO" secondAttribute="centerX" id="EFC-Zo-N7k"/>
                             <constraint firstItem="y0K-pI-s53" firstAttribute="leading" secondItem="acr-IF-h0a" secondAttribute="leading" id="MZJ-Wg-zsb"/>
-                            <constraint firstItem="acr-IF-h0a" firstAttribute="trailing" secondItem="aom-2t-MV3" secondAttribute="trailing" constant="16" id="PDy-gF-jMJ"/>
                             <constraint firstItem="7tp-z6-DmJ" firstAttribute="leading" secondItem="acr-IF-h0a" secondAttribute="leading" id="ZIv-SH-uxj"/>
                             <constraint firstItem="7tp-z6-DmJ" firstAttribute="top" secondItem="y0K-pI-s53" secondAttribute="bottom" constant="20" id="ZsL-8s-9GO"/>
                             <constraint firstItem="aom-2t-MV3" firstAttribute="top" secondItem="7tp-z6-DmJ" secondAttribute="bottom" constant="24" id="pg3-Q2-GX9"/>
@@ -276,8 +278,8 @@
                             <constraint firstItem="y0K-pI-s53" firstAttribute="top" secondItem="J4e-d4-nYe" secondAttribute="bottom" id="rwq-ud-6bS"/>
                             <constraint firstItem="y0K-pI-s53" firstAttribute="trailing" secondItem="acr-IF-h0a" secondAttribute="trailing" id="s8T-OV-lGY"/>
                             <constraint firstItem="J4e-d4-nYe" firstAttribute="leading" secondItem="acr-IF-h0a" secondAttribute="leading" id="sJA-2T-tWa"/>
+                            <constraint firstItem="aom-2t-MV3" firstAttribute="centerX" secondItem="pY6-nc-sVO" secondAttribute="centerX" id="yuU-sS-GAS"/>
                             <constraint firstItem="acr-IF-h0a" firstAttribute="bottom" secondItem="aom-2t-MV3" secondAttribute="bottom" constant="20" id="yv4-Im-Jhz"/>
-                            <constraint firstItem="aom-2t-MV3" firstAttribute="leading" secondItem="acr-IF-h0a" secondAttribute="leading" constant="16" id="zGl-dc-8G6"/>
                         </constraints>
                     </view>
                     <connections>
@@ -321,8 +323,11 @@
                                 </connections>
                             </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="MbU-4a-Ftp">
-                                <rect key="frame" x="16" y="167" width="361" height="631"/>
+                                <rect key="frame" x="16.666666666666657" y="167" width="360" height="631"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="360" id="QAa-Bf-G6a"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="bdz-Xv-rqU">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -345,15 +350,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="BWU-de-5zK" firstAttribute="trailing" secondItem="Px6-a1-zNR" secondAttribute="trailing" id="7mH-HP-aDn"/>
-                            <constraint firstItem="MbU-4a-Ftp" firstAttribute="leading" secondItem="BWU-de-5zK" secondAttribute="leading" constant="16" id="BmD-jY-Ti4"/>
                             <constraint firstItem="BWU-de-5zK" firstAttribute="bottom" secondItem="MbU-4a-Ftp" secondAttribute="bottom" constant="20" id="CdC-WS-Kmg"/>
                             <constraint firstItem="zcb-hj-T17" firstAttribute="leading" secondItem="BWU-de-5zK" secondAttribute="leading" id="DwE-2N-YgK"/>
                             <constraint firstItem="MbU-4a-Ftp" firstAttribute="top" secondItem="Px6-a1-zNR" secondAttribute="bottom" constant="20" id="Gel-5s-Uru"/>
-                            <constraint firstItem="BWU-de-5zK" firstAttribute="trailing" secondItem="MbU-4a-Ftp" secondAttribute="trailing" constant="16" id="H54-Le-iYU"/>
                             <constraint firstItem="zcb-hj-T17" firstAttribute="top" secondItem="BWU-de-5zK" secondAttribute="top" id="Laz-z2-oTv"/>
                             <constraint firstItem="Px6-a1-zNR" firstAttribute="top" secondItem="zcb-hj-T17" secondAttribute="bottom" id="Pgy-Mw-TMf"/>
                             <constraint firstItem="Px6-a1-zNR" firstAttribute="leading" secondItem="BWU-de-5zK" secondAttribute="leading" id="WFz-L8-Ghx"/>
                             <constraint firstItem="zcb-hj-T17" firstAttribute="trailing" secondItem="BWU-de-5zK" secondAttribute="trailing" id="aCr-1M-4h1"/>
+                            <constraint firstItem="MbU-4a-Ftp" firstAttribute="centerX" secondItem="EjP-i7-pCZ" secondAttribute="centerX" id="b1d-wS-JRy"/>
                         </constraints>
                     </view>
                     <connections>
@@ -2342,7 +2346,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
