@@ -14,6 +14,7 @@ class CharacterViewController: UIViewController {
     @IBOutlet var bottomButton: UIButton!
     @IBOutlet var shopButton: UIButton!
     @IBOutlet var bgView: UIImageView!
+    @IBOutlet var firstBubbleView: UIImageView!
     
     @IBOutlet var shellNum: UILabel!
     @IBOutlet var fishNum: UILabel!
@@ -26,8 +27,55 @@ class CharacterViewController: UIViewController {
         setupShopButtonAppearance()
         shopButton.configureButtonWithTitleBelowImage(spacing: 6.0)
         
-        fetchDataFromURL()
+        shellNum.font = UIFont.pretendardMedium(size: 16)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
+        
+        // 캐릭터 정보를 조회합니다.
+        fetchCharacterInfo()
         scheduleCharacterNotification()
+        
+        // 앱이 실행될 때마다 firstBubbleView를 3초 동안 표시
+        firstBubbleView.isHidden = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.firstBubbleView.isHidden = true
+        }
+        
+        // bgView에 tap gesture recognizer 추가
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bgViewTapped))
+        bgView.isUserInteractionEnabled = true
+        bgView.addGestureRecognizer(tapGesture)
+    }
+    
+    // 캐릭터 정보 조회
+    private func fetchCharacterInfo() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        APIClient.getRequest(endpoint: "/api/user/character", token: token) { (result: Result<CharacterResponse, AFError>) in
+            switch result {
+            case .success(let characterResponse):
+                if characterResponse.isSuccess {
+                    if let characterResult = characterResponse.result {
+                        self.shellNum.text = "\(characterResult.life)"
+                        self.fishNum.text = "\(characterResult.point)"
+                        
+                        // 캐릭터 아이템이 있는지 확인
+                        if let item = characterResult.item {
+                            print("Item: \(item.name)")
+                        } else {
+                            print("No item equipped.")
+                        }
+                    }
+                    print("Character info successfully fetched.")
+                } else {
+                    print("Error: \(characterResponse.message)")
+                }
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func setupBottomButtonBorder() {
@@ -65,6 +113,7 @@ class CharacterViewController: UIViewController {
         
         shopButton.layer.cornerRadius = 12
         shopButton.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        shopButton.titleLabel?.font = UIFont.pretendardSemibold(size: 14)
     }
     
     @IBAction func configureButton(_ sender: Any) {
@@ -74,6 +123,11 @@ class CharacterViewController: UIViewController {
     @IBAction func configureShopButton(_ sender: Any) {
         showShopBottomSheet()
     }
+    
+    @objc private func bgViewTapped() {
+            // "조개껍데기"를 제목으로 didTapItem 호출
+            didTapItem(withTitle: "조개껍데기")
+        }
     
     private func showBottomSheet() {
         // MARK: Show BottomSheetViewController
@@ -136,6 +190,39 @@ class CharacterViewController: UIViewController {
                 print("Notification scheduled for \(futureDate)")
             }
         }
+    }
+    
+    func didTapItem(withTitle title: String) {
+        // "title" 부분은 Semibold 16px, "을(를) 삭제하시겠습니까?" 부분은 Medium 16px 폰트를 적용
+        let fullText = "\(title)을(를) 삭제하시겠습니까?"
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+        
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: title)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+        
+        // "을(를) 삭제하시겠습니까?"에 Medium 16px 적용
+        let messageRange = (fullText as NSString).range(of: "을(를) 삭제하시겠습니까?")
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardMedium(size: 16), range: messageRange)
+        
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+        cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
+        
+        let confirm = UIAlertAction(title: "삭제", style: .default) { action in
+            print("\(title) 삭제")
+        }
+        confirm.setValue(UIColor(named: "EmphasizeError"), forKey: "titleTextColor")
+        
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        
+        present(alert, animated: true, completion: nil)
     }
 }
 

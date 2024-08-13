@@ -300,7 +300,7 @@ extension Notification.Name {
 
 // 공유 데이터 모델 정의
 class LevelControlSharedData {
-    var userLevel: Int = 3
+    var userLevel: Int = 1
 }
 
 

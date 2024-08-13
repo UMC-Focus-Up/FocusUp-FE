@@ -13,6 +13,8 @@
 		1955828D2C5D6FBD003F7A86 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */; };
 		1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1961F9462C5113FB000D9652 /* ContentViewController.swift */; };
 		1961F9492C511474000D9652 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1961F9482C511474000D9652 /* BottomSheetViewController.swift */; };
+		19798B4B2C6B2F3D00AEA1C8 /* API+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */; };
+		19798B4E2C6B326E00AEA1C8 /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */; };
 		19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AC29F02C51002600CB8554 /* CharacterViewController.swift */; };
 		19F34E752C6549E900805942 /* MyRoomThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E742C6549E900805942 /* MyRoomThings.swift */; };
 		19F34E782C654F3F00805942 /* MyThingCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F34E772C654F3F00805942 /* MyThingCollectionViewCell.xib */; };
@@ -46,6 +48,7 @@
 		23E51D962C4678580099C44B /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */; };
 		23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E51D972C46DD210099C44B /* CustomTabBarController.swift */; };
 		52AECD5E71F4D31D350CF7DF /* Pods_FocusUp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E598D0F7E520D0720143B7A3 /* Pods_FocusUp.framework */; };
+		8B1A5BE62C6857720003B894 /* CalendarBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1A5BE52C6857720003B894 /* CalendarBottomSheetViewController.swift */; };
 		8BB17DD22C5A28D300D6F6E4 /* LevelControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */; };
 		8BBD00802C50DB99008E1E0C /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */; };
 		8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */; };
@@ -62,6 +65,8 @@
 		1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		1961F9462C5113FB000D9652 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		1961F9482C511474000D9652 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
+		19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "API+Extension.swift"; sourceTree = "<group>"; };
+		19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterModel.swift; sourceTree = "<group>"; };
 		19AC29F02C51002600CB8554 /* CharacterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterViewController.swift; sourceTree = "<group>"; };
 		19F34E742C6549E900805942 /* MyRoomThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRoomThings.swift; sourceTree = "<group>"; };
 		19F34E762C654F3F00805942 /* MyThingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyThingCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -96,6 +101,7 @@
 		23E51D8C2C4678580099C44B /* Pretendard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Light.otf"; sourceTree = "<group>"; };
 		23E51D8D2C4678580099C44B /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		23E51D972C46DD210099C44B /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
+		8B1A5BE52C6857720003B894 /* CalendarBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarBottomSheetViewController.swift; sourceTree = "<group>"; };
 		8BB17DD12C5A28D300D6F6E4 /* LevelControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelControlViewController.swift; sourceTree = "<group>"; };
 		8BBD007F2C50DB99008E1E0C /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineListViewController.swift; sourceTree = "<group>"; };
@@ -141,6 +147,7 @@
 				19F34E7A2C655BD900805942 /* ShopThings.swift */,
 				19322DCD2C6568CD00564C59 /* ShopCollectionViewCell.swift */,
 				19322DCE2C6568CD00564C59 /* ShopCollectionViewCell.xib */,
+				19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */,
 			);
 			path = Character;
 			sourceTree = "<group>";
@@ -189,6 +196,7 @@
 				19AC29EF2C50FB2E00CB8554 /* Character */,
 				194EDB4D2C5D25D000FA43E7 /* Alarm */,
 				1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */,
+				19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */,
 				23E51D772C466B6C0099C44B /* Assets.xcassets */,
 				23E51D792C466B6C0099C44B /* LaunchScreen.storyboard */,
 				23E51D7C2C466B6C0099C44B /* Info.plist */,
@@ -251,6 +259,7 @@
 				23C9F9002C5A4ED60052B213 /* CustomGoalTimePickerView.swift */,
 				23163CD02C63BE7100961A1C /* GoalRoutineEditViewController.swift */,
 				239304342C64256900AE9DDC /* Protocols.swift */,
+				8B1A5BE52C6857720003B894 /* CalendarBottomSheetViewController.swift */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";
@@ -405,8 +414,10 @@
 				19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */,
 				23163CCF2C63B18E00961A1C /* GoalRoutineAddTableViewCell.swift in Sources */,
 				239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */,
+				19798B4E2C6B326E00AEA1C8 /* CharacterModel.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
 				23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */,
+				19798B4B2C6B2F3D00AEA1C8 /* API+Extension.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,
 				1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
@@ -421,6 +432,7 @@
 				8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */,
 				19F34E7D2C655D0100805942 /* ShopViewController.swift in Sources */,
 				23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */,
+				8B1A5BE62C6857720003B894 /* CalendarBottomSheetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

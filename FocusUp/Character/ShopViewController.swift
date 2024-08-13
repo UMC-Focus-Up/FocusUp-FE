@@ -53,6 +53,8 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
     }
 
     @IBOutlet var ShopCollection: UICollectionView!
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var fishNum: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +63,8 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
         ShopCollection.dataSource = self
         
         registerXib()
+        titleLabel.font = UIFont.pretendardRegular(size: 18)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
     }
 
     // 셀 선택 시 호출되는 메서드
@@ -70,7 +74,23 @@ class ShopViewController: UIViewController, UICollectionViewDataSource, UICollec
     }
     
     func didTapItem(withTitle title: String) {
-        let alert = UIAlertController(title: "\(title)을(를) 구매하시겠습니까?", message: "", preferredStyle: .alert)
+        // "title" 부분은 Semibold 16px, "을(를) 구매하시겠습니까?" 부분은 Medium 16px 폰트를 적용
+        let fullText = "\(title)을(를) 구매하시겠습니까?"
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+        
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: title)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+        
+        // "을(를) 구매하시겠습니까?"에 Medium 16px 적용
+        let messageRange = (fullText as NSString).range(of: "을(를) 구매하시겠습니까?")
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardMedium(size: 16), range: messageRange)
+        
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let cancel = UIAlertAction(title: "아니오", style: .default, handler: nil)
         cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
