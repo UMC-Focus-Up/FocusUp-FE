@@ -57,6 +57,7 @@
 		8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */; };
 		8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */; };
 		8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */; };
+		97601AE32C6B879300B52214 /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97601AE22C6B879300B52214 /* AlarmModel.swift */; };
 		97DD90912C65D90D0072C677 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DD90902C65D90D0072C677 /* HomeViewController.swift */; };
 		97DD90932C65D9250072C677 /* LevelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DD90922C65D9250072C677 /* LevelViewController.swift */; };
 /* End PBXBuildFile section */
@@ -114,6 +115,7 @@
 		8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineSettingViewController.swift; sourceTree = "<group>"; };
 		8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.release.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.release.xcconfig"; sourceTree = "<group>"; };
+		97601AE22C6B879300B52214 /* AlarmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmModel.swift; sourceTree = "<group>"; };
 		97DD90902C65D90D0072C677 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		97DD90922C65D9250072C677 /* LevelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelViewController.swift; sourceTree = "<group>"; };
 		983A7CBBEE3C961D2D4A307B /* Pods-FocusUp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.debug.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				194EDB4E2C5D25E500FA43E7 /* AlarmViewController.swift */,
+				97601AE22C6B879300B52214 /* AlarmModel.swift */,
 			);
 			path = Alarm;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				19F34E7D2C655D0100805942 /* ShopViewController.swift in Sources */,
 				23C9F8FD2C57AA200052B213 /* InformationViewController.swift in Sources */,
 				8B1A5BE62C6857720003B894 /* CalendarBottomSheetViewController.swift in Sources */,
+				97601AE32C6B879300B52214 /* AlarmModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

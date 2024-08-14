@@ -7,6 +7,7 @@
 
 import UIKit
 import UserNotifications
+import Alamofire
 
 class AlarmViewController: UIViewController {
 
@@ -29,6 +30,9 @@ class AlarmViewController: UIViewController {
     var name: String?
     var startTime: Date?
     var alarmID: Int?
+    
+    // 사용자 ID 설정
+    private let routineId = 123
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +68,7 @@ class AlarmViewController: UIViewController {
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
-        self.navigateToMainViewController()
+        navigateToMainViewController()
     }
     
     @IBAction func laterBtnClick(_ sender: Any) {
@@ -91,7 +95,20 @@ class AlarmViewController: UIViewController {
         alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
-            print("5분 뒤 알람")
+            self.scheduleNotification(minutes: 5)
+                    
+            let parameters = AlarmRequestModel(userId: self.routineId, action: AlarmOption.later.rawValue)
+
+                    
+            APIClient.postRequest(endpoint: "/alarms/update", parameters: parameters) { (result: Result<AlarmResponse, AFError>) in
+                switch result {
+                case .success(let response):
+                        print("알람 요청 성공: \(response)")
+                        // 응답 처리 로직 추가
+                case .failure(let error):
+                        print("알람 요청 실패: \(error.localizedDescription)")
+                }
+            }
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -126,7 +143,18 @@ class AlarmViewController: UIViewController {
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
             self.navigateToMainViewController()
-            print("조개 차감")
+            
+            let parameters = AlarmRequestModel(userId: self.routineId, action: AlarmOption.later.rawValue)
+
+            APIClient.postRequest(endpoint: "/api/alarm/user/\(self.routineId)", parameters: parameters) { (result: Result<AlarmResponse, AFError>) in
+                switch result {
+                case .success(let response):
+                    print("알람 요청 성공: \(response)")
+                    // 응답 처리 로직 추가
+                case .failure(let error):
+                    print("알람 요청 실패: \(error.localizedDescription)")
+                }
+            }
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -135,7 +163,7 @@ class AlarmViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    // MARK: API 연동
+    
     private func scheduleNotification(minutes: Int) {
         // 현재 시간에서 지정한 분만큼 더한 새 알람 시간 계산
         guard let newDate = Calendar.current.date(byAdding: .minute, value: minutes, to: Date()) else { return }
