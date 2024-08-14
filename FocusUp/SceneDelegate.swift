@@ -24,11 +24,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(openAlarmViewController), name: Notification.Name("OpenAlarmViewController"), object: nil)
     }
     
-    @objc func openAlarmViewController() {
+    @objc func openAlarmViewController(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let name = userInfo["name"] as? String,
+              let startTime = userInfo["startTime"] as? Date,
+              let alarmID = userInfo["alarmID"] as? Int else { return }
+
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let alarmViewController = storyboard.instantiateViewController(withIdentifier: "AlarmViewController")
-        window?.rootViewController = alarmViewController
-        window?.makeKeyAndVisible()
+        if let alarmViewController = storyboard.instantiateViewController(withIdentifier: "AlarmViewController") as? AlarmViewController {
+            alarmViewController.alarmID = alarmID
+            alarmViewController.name = name
+            alarmViewController.startTime = startTime
+            window?.rootViewController = alarmViewController
+            window?.makeKeyAndVisible()
+        }
     }
     
     // 로그인
