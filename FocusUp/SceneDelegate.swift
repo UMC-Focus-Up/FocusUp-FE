@@ -15,8 +15,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        // 스토리보드에서 설정된 초기 뷰 컨트롤러를 가져옴
-        let initialViewController = storyboard.instantiateInitialViewController()
+//        // 로그인 상태에 따른 시작 화면 설정
+//        if let _ = UserDefaults.standard.string(forKey: "accessToken") {
+//            let mainVC = storyboard.instantiateViewController(withIdentifier: "CustomTabBarController") as! CustomTabBarController
+//            window?.rootViewController = mainVC
+//        } else {
+//            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+//            window?.rootViewController = loginVC
+//        }
+        
+        let accessToken = UserDefaults.standard.string(forKey: "accessToken")
+        let initialViewController: UIViewController
+        if accessToken != nil {
+            initialViewController = storyboard.instantiateViewController(identifier: "CustomTabBarController")
+        } else {
+            initialViewController = storyboard.instantiateViewController(identifier: "LoginViewController")
+        }
+        
+//        let initialViewController = storyboard.instantiateInitialViewController()
         window?.rootViewController = initialViewController
         window?.makeKeyAndVisible()
 

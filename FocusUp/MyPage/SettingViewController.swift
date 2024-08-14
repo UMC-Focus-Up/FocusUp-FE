@@ -53,27 +53,39 @@ class SettingViewController: UIViewController {
         Cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
         let logout = UIAlertAction(title: "로그아웃", style: .default, handler: { (action) in
+            // 네이버 로그아웃 처리
             self.naverLoginInstance?.requestDeleteToken()
             
+            // 카카오 로그아웃 처리
             UserApi.shared.logout {(error) in
                 if let error = error {
                     print(error)
-                } else {
-                    guard let loginVC = self.storyboard?.instantiateViewController(identifier: "LoginViewController") as? LoginViewController else { return }
-                    loginVC.modalTransitionStyle = .coverVertical
-                    loginVC.modalPresentationStyle = .fullScreen
-                    self.present(loginVC, animated: true, completion: nil)
-                    
-                    print("Kakao logout Success.")
                 }
+                
+                print("Kakao logout Success.")
+                self.clearUserDataAndGoToLogin()
             }
         })
+        
         alert.addAction(logout)
         logout.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
         alert.preferredAction = logout
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    func clearUserDataAndGoToLogin() {
+        // UserDefaults에서 토큰 제거
+        UserDefaults.standard.removeObject(forKey: "accessToken")
+        UserDefaults.standard.removeObject(forKey: "refreshToken")
+        
+        // 로그인 화면으로 돌아가기
+        if let loginVC = self.storyboard?.instantiateViewController(identifier: "LoginViewController") as? LoginViewController {
+            loginVC.modalTransitionStyle = .coverVertical
+            loginVC.modalPresentationStyle = .fullScreen
+            self.present(loginVC, animated: true, completion: nil)
+        }
     }
     
     @IBAction func didTapLevelManageButton(_ sender: Any) {
@@ -108,12 +120,8 @@ extension SettingViewController: NaverThirdPartyLoginConnectionDelegate {
     }
     
     func oauth20ConnectionDidFinishDeleteToken() {
-        guard let loginVC = self.storyboard?.instantiateViewController(identifier: "LoginViewController") as? LoginViewController else { return }
-        loginVC.modalTransitionStyle = .coverVertical
-        loginVC.modalPresentationStyle = .fullScreen
-        self.present(loginVC, animated: true, completion: nil)
-        
         print("Naver logout Success.")
+        self.clearUserDataAndGoToLogin()
     }
     
     func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: (any Error)!) {
