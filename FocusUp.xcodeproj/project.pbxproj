@@ -15,6 +15,8 @@
 		1961F9492C511474000D9652 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1961F9482C511474000D9652 /* BottomSheetViewController.swift */; };
 		19798B4B2C6B2F3D00AEA1C8 /* API+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */; };
 		19798B4E2C6B326E00AEA1C8 /* CharacterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */; };
+		19798B502C6C1E0200AEA1C8 /* CharacterUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19798B4F2C6C1E0200AEA1C8 /* CharacterUI.swift */; };
+		198E605D2C6CB8DE004F53C1 /* RoutineAlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198E605C2C6CB8DE004F53C1 /* RoutineAlarmModel.swift */; };
 		19AC29F12C51002600CB8554 /* CharacterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AC29F02C51002600CB8554 /* CharacterViewController.swift */; };
 		19F34E752C6549E900805942 /* MyRoomThings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F34E742C6549E900805942 /* MyRoomThings.swift */; };
 		19F34E782C654F3F00805942 /* MyThingCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F34E772C654F3F00805942 /* MyThingCollectionViewCell.xib */; };
@@ -67,6 +69,8 @@
 		1961F9482C511474000D9652 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
 		19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "API+Extension.swift"; sourceTree = "<group>"; };
 		19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterModel.swift; sourceTree = "<group>"; };
+		19798B4F2C6C1E0200AEA1C8 /* CharacterUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterUI.swift; sourceTree = "<group>"; };
+		198E605C2C6CB8DE004F53C1 /* RoutineAlarmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineAlarmModel.swift; sourceTree = "<group>"; };
 		19AC29F02C51002600CB8554 /* CharacterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterViewController.swift; sourceTree = "<group>"; };
 		19F34E742C6549E900805942 /* MyRoomThings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyRoomThings.swift; sourceTree = "<group>"; };
 		19F34E762C654F3F00805942 /* MyThingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyThingCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 				19F34E7A2C655BD900805942 /* ShopThings.swift */,
 				19322DCD2C6568CD00564C59 /* ShopCollectionViewCell.swift */,
 				19322DCE2C6568CD00564C59 /* ShopCollectionViewCell.xib */,
+				19798B4F2C6C1E0200AEA1C8 /* CharacterUI.swift */,
 				19798B4D2C6B326E00AEA1C8 /* CharacterModel.swift */,
 			);
 			path = Character;
@@ -197,6 +202,7 @@
 				194EDB4D2C5D25D000FA43E7 /* Alarm */,
 				1955828C2C5D6FBD003F7A86 /* UIView+Extension.swift */,
 				19798B4A2C6B2F3D00AEA1C8 /* API+Extension.swift */,
+				198E605C2C6CB8DE004F53C1 /* RoutineAlarmModel.swift */,
 				23E51D772C466B6C0099C44B /* Assets.xcassets */,
 				23E51D792C466B6C0099C44B /* LaunchScreen.storyboard */,
 				23E51D7C2C466B6C0099C44B /* Info.plist */,
@@ -404,6 +410,7 @@
 				19F34E792C654F3F00805942 /* MyThingCollectionViewCell.swift in Sources */,
 				19322DD02C6568CD00564C59 /* ShopCollectionViewCell.swift in Sources */,
 				8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */,
+				19798B502C6C1E0200AEA1C8 /* CharacterUI.swift in Sources */,
 				194EDB4F2C5D25E500FA43E7 /* AlarmViewController.swift in Sources */,
 				232B79122C47E278001D2934 /* LoginViewController.swift in Sources */,
 				239304352C64256900AE9DDC /* Protocols.swift in Sources */,
@@ -416,6 +423,7 @@
 				239304332C6424B000AE9DDC /* RoutineDataModel.swift in Sources */,
 				19798B4E2C6B326E00AEA1C8 /* CharacterModel.swift in Sources */,
 				23E51D6F2C466B6B0099C44B /* AppDelegate.swift in Sources */,
+				198E605D2C6CB8DE004F53C1 /* RoutineAlarmModel.swift in Sources */,
 				23C9F8FF2C584D7D0052B213 /* CustomStartTimePickerView.swift in Sources */,
 				19798B4B2C6B2F3D00AEA1C8 /* API+Extension.swift in Sources */,
 				23E51D712C466B6B0099C44B /* SceneDelegate.swift in Sources */,

@@ -49,6 +49,16 @@ extension APIClient {
         }
     }
     
+    // 공통 POST 요청 함수 (parameters가 필요없을 때)
+    static func postRequestWithoutParameters<T: Decodable>(endpoint: String, token: String? = nil, completion: @escaping (Result<T, AFError>) -> Void) {
+        let url = "\(baseURL)\(endpoint)"
+        let headers = getHeaders(withToken: token)
+        
+        AF.request(url, method: .post, headers: headers).responseDecodable(of: T.self) { response in
+            completion(response.result)
+        }
+    }
+    
     // 공통 DELETE 요청 함수
     static func deleteRequest<T: Decodable>(endpoint: String, token: String? = nil, completion: @escaping (Result<T, AFError>) -> Void) {
         let url = "\(baseURL)\(endpoint)"

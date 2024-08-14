@@ -8,28 +8,42 @@
 import UIKit
 
 struct MyThing {
+    let id: Int
     let title: String
     let category: String?
     var image: String
 }
 
 extension MyThing {
-    static var data = [
-        MyThing(title: "조개껍데기", category: "소지품", image: "item_shell"),
-        MyThing(title: "불가사리", category: "소지품", image: "item_starfish"),
-        MyThing(title: "물고기", category: "소지품", image: "item_fish"),
-        MyThing(title: "리본", category: "목", image: "item_ribbon"),
-        MyThing(title: "흰색 꽃", category: "머리", image: "item_hairpin_flower_white"),
-        MyThing(title: "꽃", category: "머리", image: "item_hairpin_flower"),
-        MyThing(title: "불가사리", category: "머리", image: "item_hairpin_starfish"),
-        MyThing(title: "모자", category: "머리", image: "item_hat"),
-        MyThing(title: "안경", category: "눈", image: "item_glasses"),
-        MyThing(title: "선글라스", category: "눈", image: "item_sunglasses"),
-        MyThing(title: "물고기", category: "배경", image: "item_bg_fish"),
-        MyThing(title: "불가사리", category: "배경", image: "item_bg_starfish"),
-        MyThing(title: "문어", category: "배경", image: "item_bg_octopus"),
-        MyThing(title: "바위", category: "배경", image: "item_bg_rock"),
-        MyThing(title: "생명권", category: nil, image: "item_life"),
-        MyThing(title: "부활권", category: nil, image: "item_resurrection"),
-    ]
+    static func getImageName(for title: String, category: String?) -> String {
+        if let category = category {
+            switch category {
+            case "소지품":
+                return title == "조개껍데기" ? "item_shell" :
+                       title == "불가사리" ? "item_starfish" :
+                       title == "물고기" ? "item_fish" : "default_image"
+            case "목":
+                return title == "리본" ? "item_ribbon" : "default_image"
+            case "머리":
+                return title == "흰색 꽃" ? "item_hairpin_flower_white" :
+                       title == "꽃" ? "item_hairpin_flower" :
+                       title == "불가사리" ? "item_hairpin_starfish" :
+                       title == "모자" ? "item_hat" : "default_image"
+            case "눈":
+                return title == "안경" ? "item_glasses" :
+                       title == "선글라스" ? "item_sunglasses" : "default_image"
+            case "배경":
+                return title == "물고기" ? "item_bg_fish" :
+                       title == "불가사리" ? "item_bg_starfish" :
+                       title == "문어" ? "item_bg_octopus" :
+                       title == "바위" ? "item_bg_rock" : "default_image"
+            default:
+                return "default_image"
+            }
+        } else {
+            // category가 nil일 경우의 처리
+            return title == "생명권" ? "item_life" :
+                   title == "부활권" ? "item_resurrection" : "default_image"
+        }
+    }
 }
