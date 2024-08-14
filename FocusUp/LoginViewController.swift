@@ -74,6 +74,7 @@ class LoginViewController: UIViewController {
                 if loginResponse.isSuccess {
                     print("Server login success. Access Token: \(loginResponse.result.accessToken)")
                     // 토큰을 저장 (예: UserDefaults에 저장)
+                    UserDefaults.standard.set(socialType, forKey: "loginSocialType")
                     UserDefaults.standard.set(loginResponse.result.accessToken, forKey: "accessToken")
                     UserDefaults.standard.set(loginResponse.result.refreshToken, forKey: "refreshToken")
                     self?.navigateToMainScreen()

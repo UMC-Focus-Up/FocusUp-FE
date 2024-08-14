@@ -53,17 +53,24 @@ class SettingViewController: UIViewController {
         Cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
         let logout = UIAlertAction(title: "로그아웃", style: .default, handler: { (action) in
+            // 로그인 상태 확인
+            let loginSocialType = UserDefaults.standard.string(forKey: "loginSocialType")
+
             // 네이버 로그아웃 처리
-            self.naverLoginInstance?.requestDeleteToken()
+            if loginSocialType == "NAVER" {
+                self.naverLoginInstance?.requestDeleteToken()
+            }
             
             // 카카오 로그아웃 처리
-            UserApi.shared.logout {(error) in
-                if let error = error {
-                    print(error)
+            if loginSocialType == "KAKAO" {
+                UserApi.shared.logout {(error) in
+                    if let error = error {
+                        print(error)
+                    }
+                    
+                    print("Kakao logout Success.")
+                    self.clearUserDataAndGoToLogin()
                 }
-                
-                print("Kakao logout Success.")
-                self.clearUserDataAndGoToLogin()
             }
         })
         
