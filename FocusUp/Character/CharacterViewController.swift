@@ -32,7 +32,6 @@ class CharacterViewController: UIViewController {
         
         // 캐릭터 정보를 조회합니다.
         fetchCharacterInfo()
-        scheduleCharacterNotification()
         
         // 앱이 실행될 때마다 firstBubbleView를 3초 동안 표시
         firstBubbleView.isHidden = false
@@ -47,6 +46,9 @@ class CharacterViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemPurchasedNotification), name: .itemPurchased, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemSelectedNotification), name: .itemSelected, object: nil)
+        
+        // 캐릭터 화면 접속시 알람 설정
+        SetupRoutineAlarms.setupRoutineAlarms()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -190,21 +192,6 @@ class CharacterViewController: UIViewController {
         setupShopButtonAppearance()
     }
     
-    private func scheduleCharacterNotification() {
-        // 알림 예약 예제: 현재 시간에서 10초 후
-        let now = Date()
-        let futureDate = Calendar.current.date(byAdding: .second, value: 5, to: now)!
-        
-        // UNUserNotificationCenter 인스턴스를 가져옴
-        UNUserNotificationCenter.current().addNotificationRequest(date: futureDate) { error in
-            if let error = error {
-                print("Error adding notification request: \(error.localizedDescription)")
-            } else {
-                print("Notification scheduled for \(futureDate)")
-            }
-        }
-    }
-    
     // MARK: - 아이템 삭제 연동
     private func deleteItem(withTitle title: String) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
@@ -228,8 +215,6 @@ class CharacterViewController: UIViewController {
             }
         }
     }
-
-
     
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -272,9 +257,9 @@ class CharacterViewController: UIViewController {
     }
     
     deinit {
-            NotificationCenter.default.removeObserver(self, name: .itemPurchased, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .itemPurchased, object: nil)
         NotificationCenter.default.removeObserver(self, name: .itemSelected, object: nil)
-        }
+    }
 }
 
 extension UIButton {
