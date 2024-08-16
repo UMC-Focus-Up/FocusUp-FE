@@ -1,4 +1,5 @@
 import UIKit
+import Alamofire
 
 class GoalRoutineSettingViewController: UIViewController {
     // MARK: - Properties
@@ -147,6 +148,72 @@ class GoalRoutineSettingViewController: UIViewController {
         view.endEditing(true)
     }
     
+    // MARK: - API
+    var accessToken: String = ""
+    
+    func createRoutine() {
+        // 요청할 URL 생성
+        let url = "http://15.165.198.110:80/api/routine/user/create"
+        
+        // 전송할 데이터 생성
+        let routineData: [String: Any] = [
+            "routineName": goalRoutine,
+            "startDate": getCurrentDateString(), // 현재 날짜를 시작 날짜로 사용
+            "repeatCycleDay": getRepeatCycleDays(),
+            "startTime": startTime,
+            "endTime": goalTime
+        ]
+        
+        // 헤더 설정
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+                accessToken = token
+            } else {
+                print("accessToken이 없습니다.")
+            }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        // Alamofire를 이용한 POST 요청
+        AF.request(url, method: .post, parameters: routineData, encoding: JSONEncoding.default, headers: headers)
+            .validate(statusCode: 200..<300) // 응답 상태 코드 검증
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    if let jsonResponse = value as? [String: Any] {
+                        print("응답: \(jsonResponse)")
+                    }
+                case .failure(let error):
+                    print("API 요청 실패: \(error)")
+                }
+            }
+    }
+    
+    // 현재 날짜를 문자열로 반환
+    func getCurrentDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: Date())
+    }
+    
+    // 선택된 반복 요일을 반환
+    func getRepeatCycleDays() -> [String] {
+        let dayMapping: [Int: String] = [
+            1: "MONDAY",
+            2: "TUESDAY",
+            3: "WEDNESDAY",
+            4: "THURSDAY",
+            5: "FRIDAY",
+            6: "SATURDAY",
+            0: "SUNDAY"
+        ]
+        
+        return repeatPeriodTags.compactMap { dayMapping[$0] }
+    }
+    
+    
     // MARK: - Action
     private func setWeekStackViewButton() {
         for case let button as UIButton in weekStackButton.arrangedSubviews {
@@ -276,19 +343,6 @@ class GoalRoutineSettingViewController: UIViewController {
         customPickerView.delegate = self
         window.addSubview(customPickerView)
     }
-
-
-//    private func showCustomStartTimePicker() {
-//        let customPickerView = CustomStartTimePickerView(frame: self.view.bounds)
-//        customPickerView.delegate = self
-//        self.view.addSubview(customPickerView)
-//    }
-//    
-//    private func showCustomGoalTimePicker() {
-//        let customPickerView = CustomGoalTimePickerView(frame: self.view.bounds)
-//        customPickerView.delegate = self
-//        self.view.addSubview(customPickerView)
-//    }
     
     private func updateStartTimeUI() {
         startTimeView.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).cgColor
