@@ -31,16 +31,16 @@ struct AlarmUserResult: Codable {
 
 
 // 레벨 변경
-struct LevelChangeResponse: Decodable {
-    let isSuccess: Bool
-    let message: String
-    let result: LevelResult
-}
-
-struct LevelResult: Decodable {
-    let level: Int
-    let isUserLevel: Bool
-}
+//struct LevelChangeResponse: Decodable {
+//    let isSuccess: Bool
+//    let message: String
+//    let result: LevelResult
+//}
+//
+//struct LevelResult: Decodable {
+//    let level: Int
+//    let isUserLevel: Bool
+//}
 
 
 // 루틴 정보
