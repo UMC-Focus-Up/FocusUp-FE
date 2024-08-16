@@ -24,7 +24,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var routineLabel: UILabel!
     
     var timer: Timer?
-    var timeElapsed: TimeInterval = 590             // 경과 시간
+    var timeElapsed: TimeInterval = 0             // 경과 시간
     
     // 멈춤 시간 추적 타이머
     var pauseTimer: Timer?
@@ -33,8 +33,8 @@ class HomeViewController: UIViewController {
     var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
-    let boosterTimeThreshold: TimeInterval = 600    // 10분 (600초)
-    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
+    let boosterTimeThreshold: TimeInterval = 1    // 10분 (600초)
+    let maxBoosterTime: TimeInterval = 2        // 최대 부스터 시간 (3시간)
 
 
 // MARK: - viewDidLoad()
@@ -85,6 +85,21 @@ class HomeViewController: UIViewController {
         let cancelButtonAlert = UIAlertController(title: "집중 시간을 끝내시겠습니까?", message: nil, preferredStyle: .alert)
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
+            
+            // Pass the timeElapsed value to CalendarBottomSheet
+            let timeElapsedToPass = self.timeElapsed
+            
+            // maxBoosterTime을 초과했는지 확인
+            let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
+            
+            // Post a notification with the timeElapsed value
+            NotificationCenter.default.post(name: .didPassTimeElapsed, object: nil, userInfo: ["timeElapsed": timeElapsedToPass])
+            
+            if hasExceededMaxTime {
+                NotificationCenter.default.post(name: .didPassMaxBoosterTime, object: nil)
+            }
+            
+            
             // 타이머 초기화
             self.resetTimer()
             self.routineLabel.isHidden = true

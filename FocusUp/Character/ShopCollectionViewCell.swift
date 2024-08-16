@@ -16,6 +16,10 @@ class ShopCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        itemLabel.font = UIFont.pretendardMedium(size: 15)
+        categoryLabel.font = UIFont.pretendardRegular(size: 12)
+        priceLabel.font = UIFont.pretendardMedium(size: 14)
     }
 
 }

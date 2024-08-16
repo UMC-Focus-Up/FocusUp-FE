@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class LevelControlViewController: UIViewController {
     
@@ -118,8 +119,9 @@ class LevelControlViewController: UIViewController {
         
         var previousButton: UIButton = myLevelButton
         
-        for level in 1..<userLevel {
-            let levelButton = createButton(withTitle: "Level \(level)", type: "levelButton")
+        for changeLevel in 1..<userLevel {
+            // 각 changeLevel 값에 따라 고유한 accessibilityIdentifier를 설정
+            let levelButton = createButton(withTitle: "Level \(changeLevel)", type: "levelButton\(changeLevel)")
             contentView.addSubview(levelButton)
             
             NSLayoutConstraint.activate([
@@ -132,6 +134,7 @@ class LevelControlViewController: UIViewController {
             previousButton = levelButton
         }
     }
+
     
     private func configureHeaderView() {
         if let levelLabel = headerView.subviews.compactMap({ $0 as? UILabel }).first {
@@ -280,15 +283,69 @@ class LevelControlViewController: UIViewController {
     }
     
     @objc private func completeButtonTapped() {
-        let buttonType = selectedButton?.accessibilityIdentifier ?? "none"
-        
-        if buttonType == "myLevelButton" {
-            NotificationCenter.default.post(name: .didCancelLevelSelection, object: nil)
-        } else {
-            NotificationCenter.default.post(name: .didCompleteLevelSelection, object: nil, userInfo: ["buttonType": buttonType])
+        guard let buttonType = selectedButton?.accessibilityIdentifier else {
+            // 버튼이 선택되지 않은 경우 처리
+            print("레벨이 선택되지 않았습니다.")
+            return
         }
+        
+        var selectedLevel: Int = 0
+        
+        // 선택된 버튼에 따라 level 값 설정
+        if buttonType == "myLevelButton" {
+            selectedLevel = 0 // myLevelButton 선택 시 level 값 0
+            fetchUserLevel(with: selectedLevel)
+            NotificationCenter.default.post(name: .didCancelLevelSelection, object: nil)
+        } else if let changeLevel = Int(buttonType.replacingOccurrences(of: "levelButton", with: "")) {
+            selectedLevel = changeLevel // levelButton 선택 시 해당 레벨 값 설정
+            fetchUserLevel(with: selectedLevel)
+            NotificationCenter.default.post(name: .didCompleteLevelSelection, object: nil, userInfo: ["buttonType": buttonType])
+        } else {
+            // 이 경우는 유효하지 않은 선택에 대해 처리
+            print("잘못된 레벨 선택입니다.")
+            return
+        }
+        
         dismiss(animated: true, completion: nil)
     }
+
+    // 레벨 변경을 위한 API 연동
+    private func fetchUserLevel(with level: Int) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/level/user?level=\(level)"
+
+        APIClient.putRequest(endpoint: endpoint, token: token) { (result: Result<LevelResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if response.isSuccess {
+                    print("레벨 변경 성공")
+                    DispatchQueue.main.async {
+                        if let result = response.result {
+                            let levelText = "Level \(result.level)"
+                            let isUserLevelText = "isUserLevel \(result.isUserLevel)"
+                            
+                            if level == 0 {
+                                print("내 레벨임")
+                            }
+                            print(levelText)
+                            print(isUserLevelText)
+                        }
+                    }
+                } else {
+                    print("레벨 변경 실패: \(response.message)")
+                }
+            case .failure(let error):
+                print("레벨 변경 API 호출 실패: \(error)")
+            }
+        }
+    }
+
+
+
 }
 
 // MARK: - Notification Names
@@ -300,8 +357,5 @@ extension Notification.Name {
 
 // 공유 데이터 모델 정의
 class LevelControlSharedData {
-    var userLevel: Int = 3
+    var userLevel: Int = 4
 }
-
-
-

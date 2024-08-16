@@ -10,6 +10,7 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import NaverThirdPartyLogin
 import UserNotifications
+import Alamofire
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -49,6 +50,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             }
         )
         
+        // 앱 실행 시 루틴 알람 설정
+        SetupRoutineAlarms.setupRoutineAlarms()
+        
         return true
     }
     
@@ -82,15 +86,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             completionHandler([.badge, .sound])
         }
     }
-    
+
     // 알림 클릭 시 호출되는 메서드
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         if let targetScene = userInfo["targetScene"] as? String, targetScene == "Alarm" {
-            // NotificationCenter를 사용하여 SceneDelegate에 알림 보냄
-            NotificationCenter.default.post(name: Notification.Name("OpenAlarmViewController"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name("OpenAlarmViewController"), object: nil, userInfo: userInfo)
         }
         completionHandler()
     }
-    
 }

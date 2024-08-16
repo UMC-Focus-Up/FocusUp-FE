@@ -75,3 +75,54 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
 }
+
+extension UIFont {
+    
+    enum pretendardFontName: String {
+        case regular    = "Pretendard-Regular"
+        case thin       = "Pretendard-Thin"
+        case extralight = "Pretendard-ExtraLight"
+        case light      = "Pretendard-Light"
+        case medium     = "Pretendard-Medium"
+        case semibold   = "Pretendard-SemiBold"
+        case bold       = "Pretendard-Bold"
+        case extrabold  = "Pretendard-ExtraBold"
+        case black      = "Pretendard-Black"
+    }
+    
+    class func pretendardRegular(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.regular.rawValue, size: size)!
+    }
+    
+    class func pretendardThin(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.thin.rawValue, size: size)!
+    }
+    
+    class func pretendardExtralight(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.extralight.rawValue, size: size)!
+    }
+    
+    class func pretendardLight(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.light.rawValue, size: size)!
+    }
+    
+    class func pretendardMedium(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.medium.rawValue, size: size)!
+    }
+    
+    class func pretendardSemibold(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.semibold.rawValue, size: size)!
+    }
+    
+    class func pretendardBold(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.bold.rawValue, size: size)!
+    }
+    
+    class func pretendardExtrabold(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.extrabold.rawValue, size: size)!
+    }
+    
+    class func pretendardBlack(size: CGFloat) -> UIFont {
+        return UIFont(name: pretendardFontName.black.rawValue, size: size)!
+    }
+}
