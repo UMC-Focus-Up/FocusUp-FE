@@ -172,29 +172,33 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             
             // 1. CalendarBottomSheetViewController를 먼저 사라지게 합니다.
             dismiss(animated: true) {
-                // 2. AlertController를 비동기적으로 표시합니다.
-                let alertController = UIAlertController(title: formattedDate, message: routineInfo, preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "확인", style: .cancel)
-                alertController.addAction(okAction)
-                okAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
-                
-                
-                // 현재의 SceneDelegate를 통해 rootViewController를 가져옵니다.
-                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootViewController = scene.windows.first?.rootViewController {
-                    rootViewController.present(alertController, animated: true, completion: nil)
+                // 현재의 UIWindowScene을 가져옵니다.
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                    // 현재 윈도우를 가져옵니다.
+                    if let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                        // 현재 윈도우의 루트 뷰 컨트롤러를 가져옵니다.
+                        if let rootViewController = window.rootViewController {
+                            // 현재 뷰 컨트롤러가 표시 가능한 상태인지 확인
+                            var topViewController = rootViewController
+                            while let presentedViewController = topViewController.presentedViewController {
+                                topViewController = presentedViewController
+                            }
+                            
+                            let alertController = UIAlertController(title: formattedDate, message: routineInfo, preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .cancel)
+                            alertController.addAction(okAction)
+                            okAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+                            
+                            // 최상위 뷰 컨트롤러에서 UIAlertController를 표시합니다.
+                            topViewController.present(alertController, animated: true, completion: nil)
+                        }
+                    }
                 }
             }
         } else {
             print("선택된 루틴이 없습니다.")
         }
     }
-
-
-
-
-
-
 
     
     private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String)] {

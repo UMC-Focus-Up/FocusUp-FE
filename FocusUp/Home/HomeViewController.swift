@@ -33,8 +33,8 @@ class HomeViewController: UIViewController {
     var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
-    let boosterTimeThreshold: TimeInterval = 600    // 10분 (600초)
-    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
+    let boosterTimeThreshold: TimeInterval = 1    // 10분 (600초)
+    let maxBoosterTime: TimeInterval = 2        // 최대 부스터 시간 (3시간)
 
 
 // MARK: - viewDidLoad()
