@@ -1,12 +1,6 @@
-//
-//  LoginViewController.swift
-//  FocusUp
-//
-//  Created by 김미주 on 17/07/2024.
-//
-
 import UIKit
 import KakaoSDKUser
+import KakaoSDKAuth
 import NaverThirdPartyLogin
 import Alamofire
 
@@ -80,14 +74,55 @@ class LoginViewController: UIViewController {
                 if loginResponse.isSuccess {
                     print("Server login success. Access Token: \(loginResponse.result.accessToken)")
                     // 토큰을 저장 (예: UserDefaults에 저장)
+                    UserDefaults.standard.set(socialType, forKey: "loginSocialType")
                     UserDefaults.standard.set(loginResponse.result.accessToken, forKey: "accessToken")
                     UserDefaults.standard.set(loginResponse.result.refreshToken, forKey: "refreshToken")
                     self?.navigateToMainScreen()
+                } else if loginResponse.message == "Token expired" { // 만료된 토큰의 경우 (예시)
+                    self?.refreshAccessToken { success in
+                        if success {
+                            self?.loginToServer(socialType: socialType, idToken: idToken)
+                        } else {
+                            print("Failed to refresh token and re-login.")
+                        }
+                    }
                 } else {
                     print("Server login failed: \(loginResponse.message)")
                 }
             case .failure(let error):
                 print("Server login error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // AccessToken 재발급 함수
+    func refreshAccessToken(completion: @escaping (Bool)->Void) {
+        guard let refreshToken = UserDefaults.standard.string(forKey: "refreshToken") else {
+            print("No refresh token found.")
+            completion(false)
+            return
+        }
+        
+        let url = "http://15.165.198.110:80/api/user/auth/reissue"
+        let parameters: [String: Any] = [
+            "refreshToken": refreshToken
+        ]
+        
+        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseDecodable(of: LoginResponse.self) { response in
+            switch response.result {
+            case .success(let loginResponse):
+                if loginResponse.isSuccess {
+                    print("Access token refreshed successfully.")
+                    UserDefaults.standard.set(loginResponse.result.accessToken, forKey: "accessToken")
+                    UserDefaults.standard.set(loginResponse.result.refreshToken, forKey: "refreshToken")
+                    completion(true)
+                } else {
+                    print("Failed to refresh access token: \(loginResponse.message)")
+                    completion(false)
+                }
+            case .failure(let error):
+                print("Error refreshing access token: \(error.localizedDescription)")
+                completion(false)
             }
         }
     }
