@@ -6,7 +6,8 @@ class GoalRoutineListViewController: UIViewController {
     @IBOutlet weak var routineTableView: UITableView!
     
     var routineData: [(String, [Int], String, String)] = []
-    
+    var isAddMode: Bool = false                          // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -42,9 +43,11 @@ class GoalRoutineListViewController: UIViewController {
             print("커스텀 폰트를 로드할 수 없습니다.")
         }
         
-        let backButton = UIImage(named: "arrow_left")
-        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
-        self.navigationItem.leftBarButtonItem = leftBarButton
+        if !isAddMode {
+            let backButton = UIImage(named: "arrow_left")
+            let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
+            self.navigationItem.leftBarButtonItem = leftBarButton
+        }
     }
     
     // MARK: - action
@@ -71,7 +74,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
         if section == 0 {
             return routineData.count
         } else {
-            return 1
+            return isAddMode ? 1 : 0        // AddCell이 필요할 때만 1로 설정
         }
     }
     
@@ -93,7 +96,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
         if indexPath.section == 0 {
             return 56
         } else {
-            return 50
+            return isAddMode ? 50 : 0
         }
     }
     

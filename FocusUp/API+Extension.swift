@@ -80,4 +80,16 @@ extension APIClient {
             completion(response.result)
         }
     }
+    
+    // PUT 요청 함수
+    static func putRequest<T: Decodable>(endpoint: String, parameters: Parameters? = nil, token: String, completion: @escaping (Result<T, AFError>) -> Void) {
+       
+        let url = "\(baseURL)\(endpoint)"
+        let headers = getHeaders(withToken: token)
+
+        
+        AF.request(url, method: .put, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseDecodable(of: T.self) { response in
+            completion(response.result)
+        }
+    }
 }
