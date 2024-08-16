@@ -13,7 +13,7 @@
         <!--Character View Controller-->
         <scene sceneID="srg-iQ-2hz">
             <objects>
-                <viewController storyboardIdentifier="CharacterViewController" id="qYc-NW-qEm" customClass="CharacterViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="CharacterViewController" storyboardIdentifier="CharacterViewController" id="qYc-NW-qEm" customClass="CharacterViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0Wr-u7-fDk">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1241,14 +1241,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_login" translatesAutoresizingMaskIntoConstraints="NO" id="6GE-RE-45Y">
-                                <rect key="frame" x="116.66666666666669" y="209" width="160" height="235"/>
+                                <rect key="frame" x="116.66666666666669" y="238.66666666666663" width="160" height="235"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vIJ-6N-2Bg">
-                                <rect key="frame" x="25.666666666666657" y="619" width="342" height="52"/>
+                                <rect key="frame" x="25" y="630" width="343" height="52"/>
                                 <color key="backgroundColor" name="EmphasizeKakao2"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="342" id="8jH-3c-BDq"/>
-                                    <constraint firstAttribute="height" constant="52" id="qSa-d2-alM"/>
+                                    <constraint firstAttribute="height" constant="52" id="XX3-2A-X0p"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="165" maxY="0.0"/>
@@ -1260,11 +1259,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qv7-rW-jm7">
-                                <rect key="frame" x="25.666666666666657" y="689" width="342" height="52"/>
+                                <rect key="frame" x="25" y="700" width="343" height="52"/>
                                 <color key="backgroundColor" name="EmphasizeNaver2"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="52" id="CvZ-ER-kkz"/>
-                                    <constraint firstAttribute="width" constant="342" id="JeT-eP-cR4"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="165" maxY="0.0"/>
@@ -1279,12 +1277,16 @@
                         <viewLayoutGuide key="safeArea" id="fhg-jo-bz2"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="6GE-RE-45Y" firstAttribute="top" secondItem="GXj-rd-O5l" secondAttribute="top" constant="209" id="2c1-ST-N40"/>
-                            <constraint firstItem="vIJ-6N-2Bg" firstAttribute="top" secondItem="6GE-RE-45Y" secondAttribute="bottom" constant="175" id="67B-t6-XP9"/>
                             <constraint firstItem="Qv7-rW-jm7" firstAttribute="centerX" secondItem="GXj-rd-O5l" secondAttribute="centerX" id="79Y-Xs-8V7"/>
                             <constraint firstItem="6GE-RE-45Y" firstAttribute="centerX" secondItem="GXj-rd-O5l" secondAttribute="centerX" id="9TR-wz-yda"/>
+                            <constraint firstItem="6GE-RE-45Y" firstAttribute="centerY" secondItem="GXj-rd-O5l" secondAttribute="centerY" constant="-70" id="Fqv-uY-8wt"/>
+                            <constraint firstItem="Qv7-rW-jm7" firstAttribute="leading" secondItem="fhg-jo-bz2" secondAttribute="leading" constant="25" id="H8s-Pd-Ydw"/>
+                            <constraint firstItem="Qv7-rW-jm7" firstAttribute="centerY" secondItem="GXj-rd-O5l" secondAttribute="centerY" constant="300" id="HkK-ak-h6P"/>
+                            <constraint firstItem="vIJ-6N-2Bg" firstAttribute="leading" secondItem="fhg-jo-bz2" secondAttribute="leading" constant="25" id="Lx7-XN-nJg"/>
+                            <constraint firstItem="fhg-jo-bz2" firstAttribute="trailing" secondItem="Qv7-rW-jm7" secondAttribute="trailing" constant="25" id="M8e-Lj-VCr"/>
+                            <constraint firstItem="fhg-jo-bz2" firstAttribute="trailing" secondItem="vIJ-6N-2Bg" secondAttribute="trailing" constant="25" id="Vk0-QH-UEX"/>
+                            <constraint firstItem="vIJ-6N-2Bg" firstAttribute="centerY" secondItem="GXj-rd-O5l" secondAttribute="centerY" constant="230" id="rZ5-Ka-2S9"/>
                             <constraint firstItem="vIJ-6N-2Bg" firstAttribute="centerX" secondItem="GXj-rd-O5l" secondAttribute="centerX" id="ybk-cV-5uP"/>
-                            <constraint firstItem="Qv7-rW-jm7" firstAttribute="top" secondItem="vIJ-6N-2Bg" secondAttribute="bottom" constant="18" id="z58-Ij-m2C"/>
                         </constraints>
                     </view>
                     <connections>
