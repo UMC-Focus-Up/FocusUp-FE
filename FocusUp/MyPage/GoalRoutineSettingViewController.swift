@@ -303,6 +303,12 @@ class GoalRoutineSettingViewController: UIViewController {
             // API 요청 호출
             self.createRoutine()
             
+            // 요일 정보와 함께 루틴 추가
+            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
+            
+            // 루틴 데이터 추가
+            RoutineDataModel.shared.routineData.insert(data, at: 0)
+            
             // Delegate를 통해 목록 업데이트
             self.updateDelegate?.didUpdateRoutine()
             self.navigationController?.popViewController(animated: true)

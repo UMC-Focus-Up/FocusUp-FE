@@ -6,7 +6,7 @@ class GoalRoutineListViewController: UIViewController {
     @IBOutlet weak var routineTableView: UITableView!
     
     var routineData: [(String, [Int], String, String)] = []
-    var isAddMode: Bool = false                          // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
+    var isAddMode: Bool = true                          // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,11 +43,9 @@ class GoalRoutineListViewController: UIViewController {
             print("커스텀 폰트를 로드할 수 없습니다.")
         }
         
-        if !isAddMode {
-            let backButton = UIImage(named: "arrow_left")
-            let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
-            self.navigationItem.leftBarButtonItem = leftBarButton
-        }
+        let backButton = UIImage(named: "arrow_left")
+        let leftBarButton: UIBarButtonItem = UIBarButtonItem(image: backButton, style: .plain, target: self, action: #selector(completeButtonDidTap))
+        self.navigationItem.leftBarButtonItem = leftBarButton
     }
     
     // MARK: - action
