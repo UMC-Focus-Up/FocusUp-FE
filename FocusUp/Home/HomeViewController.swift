@@ -39,8 +39,8 @@ class HomeViewController: UIViewController {
     // 부스터 시간
     let boosterTimeThreshold: TimeInterval = 1    // 10분 (600초)
     let maxBoosterTime: TimeInterval = 2        // 최대 부스터 시간 (3시간)
-    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
-    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
+//    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
+//    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
 
     
 // MARK: - viewDidLoad()
@@ -185,26 +185,26 @@ class HomeViewController: UIViewController {
         let endpoint = "/api/level/user?level=\(level)"
                
 
-        APIClient.putRequest(endpoint: endpoint, token: token) { (result: Result<LevelChangeResponse, AFError>) in
-            switch result {
-            case .success(let response):
-                if response.isSuccess {
-                    print("레벨 변경 성공: \(response)")
-                    DispatchQueue.main.async {
-                        let result = response.result
-                        
-                        self.level.setTitle("Level \(result.level)", for: .normal)
-                        self.level.setTitleColor(result.isUserLevel ? UIColor(named: "primary4") : .black, for: .normal)
-                        self.level.setNeedsLayout() // 레이아웃 갱신을 강제로 실행
-                        self.level.layoutIfNeeded()
-                    }
-                } else {
-                    print("레벨 변경 실패: \(response.message)")
-                }
-            case .failure(let error):
-                print("레벨 변경 API 호출 실패: \(error)")
-            }
-        }
+//        APIClient.putRequest(endpoint: endpoint, token: token) { (result: Result<LevelChangeResponse, AFError>) in
+//            switch result {
+//            case .success(let response):
+//                if response.isSuccess {
+//                    print("레벨 변경 성공: \(response)")
+//                    DispatchQueue.main.async {
+//                        let result = response.result
+//                        
+//                        self.level.setTitle("Level \(result.level)", for: .normal)
+//                        self.level.setTitleColor(result.isUserLevel ? UIColor(named: "primary4") : .black, for: .normal)
+//                        self.level.setNeedsLayout() // 레이아웃 갱신을 강제로 실행
+//                        self.level.layoutIfNeeded()
+//                    }
+//                } else {
+//                    print("레벨 변경 실패: \(response.message)")
+//                }
+//            case .failure(let error):
+//                print("레벨 변경 API 호출 실패: \(error)")
+//            }
+//        }
     }
 
     private func fetchHomeData() {
@@ -247,11 +247,11 @@ class HomeViewController: UIViewController {
             7: 5400    // 90분
         ]
         
-        if let threshold = boosterTimeMapping[level] {
-            boosterTimeThreshold = threshold
-        } else {
-            boosterTimeThreshold = 600
-        }
+//        if let threshold = boosterTimeMapping[level] {
+//            boosterTimeThreshold = threshold
+//        } else {
+//            boosterTimeThreshold = 600
+//        }
     }
     
     // 타이머 시작
