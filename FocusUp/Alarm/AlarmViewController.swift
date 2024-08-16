@@ -7,9 +7,14 @@
 
 import UIKit
 import UserNotifications
+import Alamofire
 
 class AlarmViewController: UIViewController {
 
+    
+    @IBOutlet weak var shellNum: UILabel!
+    @IBOutlet weak var fishNum: UILabel!
+    
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var textLabel: UILabel!
     @IBOutlet var contentLabel: UILabel!
@@ -26,21 +31,10 @@ class AlarmViewController: UIViewController {
     var startTime: Date?
     var alarmID: Int?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
-        timeLabel.font = UIFont.pretendardSemibold(size: 48)
-        textLabel.font = UIFont.pretendardRegular(size: 16)
-        contentLabel.font = UIFont.pretendardBold(size: 20)
-        
-        goButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        laterButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        noButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        
-        goNum.font = UIFont.pretendardMedium(size: 15)
-        laterNum.font = UIFont.pretendardMedium(size: 15)
-        noNum.font = UIFont.pretendardMedium(size: 15)
+        setupUI()
         
         if let name = name, let startTime = startTime {
             let timeFormatter = DateFormatter()
@@ -54,6 +48,9 @@ class AlarmViewController: UIViewController {
         } else {
             print("알람 ID가 설정되지 않았습니다.") // 디버깅 메시지 추가
         }
+        
+        // 생명, 코인 수 API 연동
+        fetchLifeAndPoints()
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
@@ -84,7 +81,10 @@ class AlarmViewController: UIViewController {
         alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
-            print("5분 뒤 알람")
+            
+            // Option 1로 설정하고 서버에 POST 요청 전송
+            self.sendAlarmActionRequest(option: .later)
+            
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -93,6 +93,7 @@ class AlarmViewController: UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
+    
     
     @IBAction func noBtnClick(_ sender: Any) {
         // "title"
@@ -118,14 +119,43 @@ class AlarmViewController: UIViewController {
         alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
-            self.navigateToMainViewController()
-            print("조개 차감")
+            
+            // Option 2로 설정하고 서버에 POST 요청 전송
+            self.sendAlarmActionRequest(option: .no)
+    
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
         alert.addAction(confirm)
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    
+    private func sendAlarmActionRequest(option: AlarmOption) {
+        guard let alarmID = alarmID else {
+            print("알람 ID가 없습니다.")
+            return
+        }
+        
+        let parameters = [
+            "routineId": alarmID,
+            "option": option.rawValue
+        ]
+        
+        let endpoint = "/api/alarm/user/\(alarmID)?option=\(option.rawValue)" // 경로에 alarmID를 포함하여 설정
+        
+        APIClient.postRequest(endpoint: endpoint, parameters: parameters) { (result: Result<AlarmResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                print("알람 요청 성공: \(response)")
+                // 응답 처리 로직 추가
+            case .failure(let error):
+                print(parameters)
+                print(endpoint)
+                print("알람 요청 실패: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func scheduleNotification(minutes: Int) {
@@ -164,7 +194,6 @@ class AlarmViewController: UIViewController {
         }
     }
 
-
     
     private func navigateToMainViewController() {
         // 스토리보드에서 MainViewController 인스턴스 생성
@@ -181,4 +210,48 @@ class AlarmViewController: UIViewController {
         self.present(mainVC, animated: true, completion: nil)
     }
     
+    private func setupUI() {
+        // Do any additional setup after loading the view.
+
+        shellNum.font = UIFont.pretendardMedium(size: 16)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
+        
+        timeLabel.font = UIFont.pretendardSemibold(size: 48)
+        textLabel.font = UIFont.pretendardRegular(size: 16)
+        contentLabel.font = UIFont.pretendardBold(size: 20)
+        
+        goButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        laterButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        noButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        
+        goNum.font = UIFont.pretendardMedium(size: 15)
+        laterNum.font = UIFont.pretendardMedium(size: 15)
+        noNum.font = UIFont.pretendardMedium(size: 15)
+    }
+    
+    // 생명과 코인 API 연동
+    private func fetchLifeAndPoints() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        APIClient.getRequest(endpoint: "/api/alarm/user", token: token) { (result: Result<AlarmUserResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                let life = response.result.life
+                let point = response.result.point
+                DispatchQueue.main.async {
+                    self.shellNum.text = "\(life)" // 생명 정보를 라벨에 표시
+                    self.fishNum.text = "\(point)"
+                }
+            case .failure(let error):
+                print("Failed to fetch life data: \(error)")
+            }
+        }
+    }
 }
+
+    
+    
+

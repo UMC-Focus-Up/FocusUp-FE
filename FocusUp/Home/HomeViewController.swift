@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import Alamofire
 
 class HomeViewController: UIViewController {
     
+    @IBOutlet weak var shellfishView: UIView!
     @IBOutlet weak var shellNumber: UILabel!
     @IBOutlet weak var fishNumber: UILabel!
     @IBOutlet weak var level: UIButton!
@@ -16,15 +18,17 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var timerOutline: UIView!
     @IBOutlet weak var timerInline: UIView!
     @IBOutlet weak var timerLabel: UILabel!
+    @IBOutlet weak var boosterLabel: UILabel!
+    @IBOutlet weak var routineLabel: UILabel!
     
     @IBOutlet weak var closedButtonOutlet: UIButton!
     @IBOutlet weak var addButtonOutlet: UIButton!
     @IBOutlet weak var playButtonOutlet: UIButton!
-    @IBOutlet weak var boosterLabel: UILabel!
-    @IBOutlet weak var routineLabel: UILabel!
+    
+    private let routineId = 123     // 루틴 ID 설정
     
     var timer: Timer?
-    var timeElapsed: TimeInterval = 0             // 경과 시간
+    var timeElapsed: TimeInterval = 1790             // 경과 시간
     
     // 멈춤 시간 추적 타이머
     var pauseTimer: Timer?
@@ -35,15 +39,27 @@ class HomeViewController: UIViewController {
     // 부스터 시간
     let boosterTimeThreshold: TimeInterval = 1    // 10분 (600초)
     let maxBoosterTime: TimeInterval = 2        // 최대 부스터 시간 (3시간)
+    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
+    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
 
-
+    
 // MARK: - viewDidLoad()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupShellfishViewBorder()
         setAttribute()
         setFont()
+        
+        // Fetching API
+        fetchLifeData()                             // 생명 수 연동
+        fetchUserLevel { level in                   // 레벨 연동
+            self.updateBoosterTimeThreshold(level: level)
+        }
+        fetchHomeData()                             // 홈화면에 데이터 업데이트
+        
         updateTimeLabel()
+        
     }
     
 // MARK: - Action
@@ -82,7 +98,14 @@ class HomeViewController: UIViewController {
     
     // cancel 알림 표시
     @IBAction func cancelButton(_ sender: Any) {
-        let cancelButtonAlert = UIAlertController(title: "집중 시간을 끝내시겠습니까?", message: nil, preferredStyle: .alert)
+        // title 폰트 설정
+        let title = "집중 시간을 끝내시겠습니까?"
+        let attributedTitle = NSMutableAttributedString(string: title)
+        let titleRange = (title as NSString).range(of: title)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+        
+        
+        let cancelButtonAlert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
             
@@ -99,13 +122,12 @@ class HomeViewController: UIViewController {
                 NotificationCenter.default.post(name: .didPassMaxBoosterTime, object: nil)
             }
             
-            
+            // 코인알림 표시
+            self.showCoinAlert()
+
             // 타이머 초기화
             self.resetTimer()
             self.routineLabel.isHidden = true
-            
-            // 코인알림 표시
-            self.showCoinAlert()
         }
         cancelButtonAlert.addAction(confirm)
 
@@ -116,40 +138,153 @@ class HomeViewController: UIViewController {
 
         self.present(cancelButtonAlert, animated: true, completion: nil)
     }
-
+    
+    @IBAction func addButton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let goalRoutineVC = storyboard.instantiateViewController(withIdentifier: "GoalRoutineListViewController") as? GoalRoutineListViewController {
+            goalRoutineVC.isAddMode = false // 추가 모드가 아니도록 설정
+            
+            if let sheet = goalRoutineVC.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+            }
+            self.present(goalRoutineVC, animated: true, completion: nil)
+        }
+    }
+    
 
 // MARK: - Function
+    
+    // 생명 정보를 가져오기 위한 API 연동
+     private func fetchLifeData() {
+         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+             print("Error: No access token found.")
+             return
+         }
+         
+         APIClient.getRequest(endpoint: "/api/alarm/user", token: token) { (result: Result<AlarmUserResponse, AFError>) in
+             switch result {
+             case .success(let response):
+                 let life = response.result.life
+                 DispatchQueue.main.async {
+                     self.shellNumber.text = "\(life)" // 생명 정보를 라벨에 표시
+                 }
+             case .failure(let error):
+                 print("Failed to fetch life data: \(error)")
+             }
+         }
+     }
+    
+    // 레벨 변경을 위한 API 연동
+    private func fetchUserLevel(completion: @escaping (Int) -> Void) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let level = 3
+        let endpoint = "/api/level/user?level=\(level)"
+               
 
+        APIClient.putRequest(endpoint: endpoint, token: token) { (result: Result<LevelChangeResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if response.isSuccess {
+                    print("레벨 변경 성공: \(response)")
+                    DispatchQueue.main.async {
+                        let result = response.result
+                        
+                        self.level.setTitle("Level \(result.level)", for: .normal)
+                        self.level.setTitleColor(result.isUserLevel ? UIColor(named: "primary4") : .black, for: .normal)
+                        self.level.setNeedsLayout() // 레이아웃 갱신을 강제로 실행
+                        self.level.layoutIfNeeded()
+                    }
+                } else {
+                    print("레벨 변경 실패: \(response.message)")
+                }
+            case .failure(let error):
+                print("레벨 변경 API 호출 실패: \(error)")
+            }
+        }
+    }
+
+    private func fetchHomeData() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/user/home"
+        
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<HomeResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if response.isSuccess {
+                    DispatchQueue.main.async {
+                        let result = response.result
+                        self.routineLabel.text = result.routineName.isEmpty ? "오늘의 루틴 없음" : result.routineName
+                        self.shellNumber.text = "\(result.life)"
+                        self.fishNumber.text = "\(result.point)"
+                    }
+                } else {
+                    print("API 호출 실패: \(response.message)")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    
+    // 유저 레벨에 따른 부스터 시간 업데이트
+    private func updateBoosterTimeThreshold(level: Int) {
+        let boosterTimeMapping: [Int: TimeInterval] = [
+            1: 600,    // 10분
+            2: 1200,   // 20분
+            3: 1800,   // 30분
+            4: 2700,   // 45분
+            5: 3600,   // 60분
+            6: 4500,   // 75분
+            7: 5400    // 90분
+        ]
+        
+        if let threshold = boosterTimeMapping[level] {
+            boosterTimeThreshold = threshold
+        } else {
+            boosterTimeThreshold = 600
+        }
+    }
+    
     // 타이머 시작
-    func startTimer() {
+    private func startTimer() {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
         updateTimeLabel()
     }
           
-    @objc func timerFired() {
-          timeElapsed += 1
-          updateTimeLabel()
-      }
+    @objc private func timerFired() {
+        timeElapsed += 1
+        updateTimeLabel()
+    }
+      
     
     // 타이머 중지
-    func stopTimer() {
+    private func stopTimer() {
         timer?.invalidate()
         timer = nil
         updateTimeLabel()
     }
 
     // 멈춤추적 타이머
-    func startPauseTimer() {
+    private func startPauseTimer() {
          pauseTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(pauseTimerFired), userInfo: nil, repeats: true)
      }
      
-     func stopPauseTimer() {
+    private func stopPauseTimer() {
          pauseTimer?.invalidate()
          pauseTimer = nil
          pauseTimeElapsed = 0
      }
      
-     @objc func pauseTimerFired() {
+    @objc private func pauseTimerFired() {
          pauseTimeElapsed += 1
          if pauseTimeElapsed >= pauseTimeLimit {
              resetTimer()
@@ -158,8 +293,9 @@ class HomeViewController: UIViewController {
      }
     
     // 타이머 초기화
-     func resetTimer() {
+    private func resetTimer() {
          stopTimer()                // 타이머 멈춤
+         let coins = calculateCoins()
          timeElapsed = 0            // 경과 시간 초기화
          updateTimeLabel()          // UI 업데이트
          stopPauseTimer()           // 멈춤 타이머 중지 및 초기화
@@ -169,11 +305,12 @@ class HomeViewController: UIViewController {
      
     // 코인 알람
     // 집중시간: 집중한 시간만큼 적립된 코인 (부스터 타임 포함)
-    // 루틴시간: 루틴 알람을 통해 들어왔을 때 지급하는 코인
-    // 보너스: 루틴 알림을 통해 들어오고, 목표 시간 이상 집중했을 때 지급하는 코인
+    // 루틴시간: 루틴 알림을 통해 들어오고, 목표 시간 이상 집중했을 때 지급하는 코인 (고정값 30)
+    // 보너스:  루틴 알람을 통해 들어왔을 때 지급하는 코인 (고정값 30)
     // 부스터 타임은 1분에 n배의 코인 휙득 (레벨에 따라 배수가 달라짐) -> 부스터 타임에만 1분에 n배씩 휙득
-    
-    func calculateCoins(for timeElapsed: TimeInterval) -> (focusCoins: Int, routineCoins: Int, bonusCoins: Int) {
+   
+    // 코인 API 연동시 집중시간이랑, 루틴시간만 포함하도록 (보너스는 이미 30코인 추가가 되었기에 값을 넘겨줄 필요가 없음)
+    private func calculateCoins() -> (focusCoins: Int, routineCoins: Int, bonusCoins: Int) {
         // 코인 휙득 기준 설정
         let normalCoinRate = 1                      // 1분당 1코인
         let routineCoins = 30                       // 루틴 시간에 지급하는 코인
@@ -184,14 +321,19 @@ class HomeViewController: UIViewController {
         var focusCoins = 0
         
         // 집중 시간 코인 계산
-        if timeElapsed >= boosterTimeThreshold && timeElapsed < maxBoosterTime {
+        if timeElapsed >= boosterTimeThreshold && timeElapsed <= maxBoosterTime {
             // 부스터 타임 적용
             let normalTimeCoins = Int(boosterTimeThreshold / 60) * normalCoinRate
             let boosterTimeCoins = Int((timeElapsed - boosterTimeThreshold) / 60) * normalCoinRate * boosterMultiplier
             focusCoins += normalTimeCoins + boosterTimeCoins
-        } else {
-            // 일반 시간 적용
+        } else if timeElapsed < boosterTimeThreshold {
+            // 부스터 타임 전 일반 시간 적용
             focusCoins += Int(timeElapsed / 60) * normalCoinRate
+        } else if timeElapsed > maxBoosterTime {
+            // 최대 부스터 시간 이후
+            let normalTimeCoins = Int(boosterTimeThreshold / 60) * normalCoinRate
+            let boosterTimeCoins = Int((maxBoosterTime - boosterTimeThreshold) / 60) * normalCoinRate * boosterMultiplier
+            focusCoins += normalTimeCoins + boosterTimeCoins
         }
 
         // 보너스 코인 추가
@@ -202,22 +344,39 @@ class HomeViewController: UIViewController {
         return (focusCoins, routineCoins, bonusCoins)
     }
     
-     func showCoinAlert() {
-         let coins = calculateCoins(for: timeElapsed)
-         let totalCoins = coins.focusCoins + coins.routineCoins
+    // 코인 정산알람창
+    private func showCoinAlert() {
+         let coins = calculateCoins()
+         let totalCoins = coins.focusCoins + coins.routineCoins + coins.bonusCoins
          
-         var message = "집중시간 \(coins.focusCoins)마리\n 루틴 시간 \(coins.routineCoins)마리"
+         // title 폰트 및 색상 설정
+         let title = "물고기(코인) \(totalCoins)마리 획득!"
+         let attributedTitle = NSMutableAttributedString(string: title)
          
+         let titleRange = (title as NSString).range(of: title)
+         attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+         let coinRange = (title as NSString).range(of: "\(totalCoins)")
+         attributedTitle.addAttribute(.foregroundColor, value: UIColor(named: "Primary4")!, range: coinRange)
+         
+         // message 설정
+         var message = "집중시간 \(coins.focusCoins)마리"
+         
+         // 루틴 코인이 있는 경우 메시지에 추가
+         if coins.routineCoins > 0 {
+             message += "\n 루틴 시간 \(coins.routineCoins)마리"
+         }
          // 보너스 코인이 있는 경우 메시지에 추가
          if coins.bonusCoins > 0 {
              message += "\n 보너스 \(coins.bonusCoins)마리"
          }
          
          let coinAlertController = UIAlertController(
-            title: "물고기(코인) \(totalCoins)마리 획득!",
+            title: title,
             message: message,
             preferredStyle: .alert
          )
+         
+         coinAlertController.setValue(attributedTitle, forKey: "attributedTitle")
          
          let coinConfirm = UIAlertAction(title: "확인", style: .default, handler: nil)
          coinAlertController.addAction(coinConfirm)
@@ -229,10 +388,31 @@ class HomeViewController: UIViewController {
              let newFishCoins = currentFishCoins + totalCoins
              fishNumber.text = "\(newFishCoins)"
          }
+        
+        // 코인 휙득 후 API에 데이터 전송
+        sendCoinDataToAPI(totalCoins: totalCoins)
      }
     
+    private func sendCoinDataToAPI(totalCoins: Int) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let pointData = SendCoinData(point: totalCoins)
+        
+        APIClient.postRequest(endpoint: "/api/user/addPoint", parameters: pointData, token: token) { (result: Result<EmptyResponse, AFError>) in
+            switch result {
+            case .success:
+                print("Successfully sent point data: \(pointData)")
+            case .failure(let error):
+                print("Failed to send point data: \(error)")
+            }
+        }
+    }
+    
     // 현재 남은 시간 화면에 표시
-    func updateTimeLabel() {
+    private func updateTimeLabel() {
         let hours = Int(timeElapsed) / 3600
         let minutes = (Int(timeElapsed) % 3600) / 60
         let seconds = Int(timeElapsed) % 60
@@ -242,7 +422,7 @@ class HomeViewController: UIViewController {
     }
     
     
-    func setColor() {
+    private func setColor() {
         if timeElapsed >= boosterTimeThreshold && timeElapsed < maxBoosterTime {
             // 부스터 상태
             let boosterColor = UIColor.emphasizeError
@@ -280,7 +460,7 @@ class HomeViewController: UIViewController {
     
     
     
-    func displayPauseMessage() {
+    private func displayPauseMessage() {
         if pauseMessage == nil {
             let newPauseMessage = UILabel()
             newPauseMessage.textColor = .emphasizeError
@@ -313,12 +493,24 @@ class HomeViewController: UIViewController {
         }
     }
     
-    func removePauseMessage() {
+    private func removePauseMessage() {
            pauseMessage?.removeFromSuperview()
            pauseMessage = nil
     }
     
-    func setAttribute() {
+    
+    // shellfishView 아래 테두리 추가
+    private func setupShellfishViewBorder() {
+        let bottomBorder = CALayer()
+        bottomBorder.frame = CGRect(x: 0, y: shellfishView.frame.height - 1, width: shellfishView.frame.width, height: 1)
+        bottomBorder.backgroundColor = UIColor(red: 229/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0).cgColor
+        
+        shellfishView.layer.sublayers?.removeAll { $0.backgroundColor == bottomBorder.backgroundColor }
+        
+        shellfishView.layer.addSublayer(bottomBorder)
+    }
+    
+    private func setAttribute() {
         timerOutline.layer.cornerRadius = timerOutline.frame.height/2
         timerOutline.clipsToBounds = true
         timerInline.layer.cornerRadius = timerInline.frame.height/2
@@ -336,9 +528,9 @@ class HomeViewController: UIViewController {
         }
     }
     
-    func setFont() {
-        shellNumber.font = UIFont(name: "Pretendard-Regular", size: 16)
-        fishNumber.font = UIFont(name: "Pretendard-Regular", size: 16)
+    private func setFont() {
+        shellNumber.font = UIFont(name: "Pretendard-Medium", size: 16)
+        fishNumber.font = UIFont(name: "Pretendard-Medium", size: 16)
         level.titleLabel?.font = UIFont(name: "Pretendard-Regular", size: 17)!
         timerLabel.font = UIFont(name: "Pretendard-Semibold", size: 40)
         boosterLabel.font = UIFont(name: "Pretendard-Semibold", size: 16)
