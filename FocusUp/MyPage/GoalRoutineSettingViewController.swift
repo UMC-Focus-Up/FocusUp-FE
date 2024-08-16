@@ -156,13 +156,17 @@ class GoalRoutineSettingViewController: UIViewController {
         let url = "http://15.165.198.110:80/api/routine/user/create"
         
         // 전송할 데이터 생성
+        let convertedStartTime = convertTimeTo24HourFormat(time: startTime)
+        
         let routineData: [String: Any] = [
             "routineName": goalRoutine,
             "startDate": getCurrentDateString(), // 현재 날짜를 시작 날짜로 사용
             "repeatCycleDay": getRepeatCycleDays(),
-            "startTime": startTime,
+            "startTime": convertedStartTime ?? "00:00",
             "endTime": goalTime
         ]
+        print("보내는 데이터: \(routineData)")
+
         
         // 헤더 설정
         if let token = UserDefaults.standard.string(forKey: "accessToken") {
@@ -175,8 +179,8 @@ class GoalRoutineSettingViewController: UIViewController {
             "Authorization": "Bearer \(accessToken)",
             "Content-Type": "application/json"
         ]
+        print("헤더: \(headers)")
         
-        // Alamofire를 이용한 POST 요청
         AF.request(url, method: .post, parameters: routineData, encoding: JSONEncoding.default, headers: headers)
             .validate(statusCode: 200..<300) // 응답 상태 코드 검증
             .responseJSON { response in
@@ -212,6 +216,20 @@ class GoalRoutineSettingViewController: UIViewController {
         
         return repeatPeriodTags.compactMap { dayMapping[$0] }
     }
+    
+    // 시간 형식 변경
+    func convertTimeTo24HourFormat(time: String) -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a" // 현재의 12시간 형식
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        if let date = formatter.date(from: time) {
+            formatter.dateFormat = "HH:mm" // 24시간 형식으로 변환
+            return formatter.string(from: date)
+        }
+        return nil
+    }
+
     
     
     // MARK: - Action
@@ -282,11 +300,8 @@ class GoalRoutineSettingViewController: UIViewController {
             self.startTime = self.startTimeLabel.text ?? ""
             self.goalTime = self.goalTimeLabel.text ?? ""
             
-            // 요일 정보와 함께 루틴 추가
-            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
-            
-            // 루틴 데이터 추가
-            RoutineDataModel.shared.routineData.insert(data, at: 0)
+            // API 요청 호출
+            self.createRoutine()
             
             // Delegate를 통해 목록 업데이트
             self.updateDelegate?.didUpdateRoutine()
