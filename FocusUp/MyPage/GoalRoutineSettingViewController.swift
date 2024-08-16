@@ -254,16 +254,41 @@ class GoalRoutineSettingViewController: UIViewController {
     }
     
     private func showCustomStartTimePicker() {
-        let customPickerView = CustomStartTimePickerView(frame: self.view.bounds)
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else { return }
+
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        let customPickerView = CustomStartTimePickerView(frame: window.bounds)
         customPickerView.delegate = self
-        self.view.addSubview(customPickerView)
+        window.addSubview(customPickerView)
     }
-    
+
     private func showCustomGoalTimePicker() {
-        let customPickerView = CustomGoalTimePickerView(frame: self.view.bounds)
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else { return }
+
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        let customPickerView = CustomGoalTimePickerView(frame: window.bounds)
         customPickerView.delegate = self
-        self.view.addSubview(customPickerView)
+        window.addSubview(customPickerView)
     }
+
+
+//    private func showCustomStartTimePicker() {
+//        let customPickerView = CustomStartTimePickerView(frame: self.view.bounds)
+//        customPickerView.delegate = self
+//        self.view.addSubview(customPickerView)
+//    }
+//    
+//    private func showCustomGoalTimePicker() {
+//        let customPickerView = CustomGoalTimePickerView(frame: self.view.bounds)
+//        customPickerView.delegate = self
+//        self.view.addSubview(customPickerView)
+//    }
     
     private func updateStartTimeUI() {
         startTimeView.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).cgColor
