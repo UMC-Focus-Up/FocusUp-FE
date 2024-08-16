@@ -13,7 +13,7 @@
         <!--Character View Controller-->
         <scene sceneID="srg-iQ-2hz">
             <objects>
-                <viewController storyboardIdentifier="CharacterViewController" id="qYc-NW-qEm" customClass="CharacterViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="CharacterViewController" storyboardIdentifier="CharacterViewController" id="qYc-NW-qEm" customClass="CharacterViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0Wr-u7-fDk">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
