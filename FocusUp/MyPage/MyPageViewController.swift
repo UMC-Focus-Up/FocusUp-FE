@@ -468,11 +468,11 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     }
 
     func displayRoutines(_ routines: [RoutineDetails]) {
-        // routines를 출력하거나, UI에 표시하는 로직을 여기에 추가하세요.
+        print("서버에서 데이터를 성공적으로 불러왔습니다.")
         for routine in routines {
             print("date: \(routine.date)")
             for routineDetail in routine.routines {
-                print("routine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
+                print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
             }
         }
     }
@@ -620,8 +620,6 @@ extension MyPageViewController: RoutineDataDelegate {
         print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
-        
-        fetchTopThreeRoutines()
     }
 }
 
@@ -632,6 +630,7 @@ extension MyPageViewController: RoutineUpdateDelegate {
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
         
+        fetchRoutineData()
         fetchTopThreeRoutines()
     }
 }
