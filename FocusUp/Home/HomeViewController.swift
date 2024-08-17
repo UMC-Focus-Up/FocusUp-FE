@@ -39,8 +39,6 @@ class HomeViewController: UIViewController {
     // 부스터 시간
     private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
     let maxBoosterTime: TimeInterval = 2                     // 최대 부스터 시간 (3시간)
-//    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
-//    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
 
     
 // MARK: - viewDidLoad()
@@ -59,11 +57,12 @@ class HomeViewController: UIViewController {
         }
         
         updateTimeLabel()
-        
     }
     
+    
+    
 // MARK: - Action
-
+    
     @IBAction func levelButton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let levelVC = storyboard.instantiateViewController(withIdentifier: "levelVC") as? LevelViewController else {
@@ -78,9 +77,9 @@ class HomeViewController: UIViewController {
             sheet.selectedDetentIdentifier = .medium
             sheet.prefersGrabberVisible = true
         }
-        
         self.present(levelVC, animated: true, completion: nil)
     }
+    
     
     @IBAction func playButton(_ sender: Any) {
         if timer == nil {
@@ -109,9 +108,15 @@ class HomeViewController: UIViewController {
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
             
+            // Ensure routineId has a value
+            guard let routineId = self.routineId else {
+                print("Error: routineId is nil.")
+                return
+            }
+            
             // Pass the timeElapsed value to CalendarBottomSheet
             let timeElapsedToPass = self.timeElapsed
-            
+    
             // maxBoosterTime을 초과했는지 확인
             let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
             
@@ -128,8 +133,8 @@ class HomeViewController: UIViewController {
             self.resetTimer()
             self.routineLabel.isHidden = true
             
-            // Call the API to complete the routine
-            
+            // 루틴 종료시 timeElapsed 값 전송하기 위한 API 연동
+            self.sendRoutineEndToAPI(routineId: routineId, timeElapsed: timeElapsedToPass)
         }
         
         cancelButtonAlert.addAction(confirm)
@@ -233,12 +238,34 @@ class HomeViewController: UIViewController {
         }
     }
     
-    private func sendPostRoutineRequest() {
+    // 서버에 timeElapsed 전송
+    private func sendRoutineEndToAPI(routineId: Int, timeElapsed: TimeInterval) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
             return
         }
         
+        // timeElapsed를 hour, minute, second, nano로 변환
+        let elapsedTime = Int(timeElapsed)
+        let hours = elapsedTime / 3600
+        let minutes = (elapsedTime % 3600) / 60
+        let formattedTime = String(format: "%02d:%02d", hours, minutes)
+
+        let postRoutineRequest = PostRoutineRequest(execTime: formattedTime)
+        
+        APIClient.postRequest(endpoint: "/api/routine/\(routineId)", parameters: postRoutineRequest, token: token) { (result: Result<PostRoutineResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if response.isSuccess {
+                    print("Successfully sent routine execTime: \(formattedTime)")
+
+                } else {
+                    print("API call failed: \(response.message)")
+                }
+            case .failure(let error):
+                print("Failed to send routine execTime: \(error)")
+            }
+        }
     }
     
     
