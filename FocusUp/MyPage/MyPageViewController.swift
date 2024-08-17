@@ -433,6 +433,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             present(alert, animated: true, completion: nil)
         }
     }
+    
+    // MARK: - 마이페이지 조회 - 날짜 연동
 
     
     @objc private func didTapPreviousMonthButton() {
@@ -590,6 +592,8 @@ extension MyPageViewController: RoutineDataDelegate {
         print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
+        
+        fetchTopThreeRoutines()
     }
 }
 
@@ -599,5 +603,7 @@ extension MyPageViewController: RoutineUpdateDelegate {
     func didUpdateRoutine() {
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
+        
+        fetchTopThreeRoutines()
     }
 }
