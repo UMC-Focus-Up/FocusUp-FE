@@ -39,4 +39,3 @@ enum AlarmError: Error {
     case decodingError
 }
 
-// 생명과 코인 정보
