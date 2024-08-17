@@ -90,15 +90,13 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNotification()
         
         setupUI()
         setupCalendar()
         setupNotifications()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBoosterTimeEntry), name: .boosterTimeEntered, object: nil)
+
         updateLevelLabel()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleLevelProgressUpdate), name: .didPassMaxBoosterTime, object: nil)
         
         routineTableView.delegate = self
         routineTableView.dataSource = self
@@ -134,6 +132,18 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    // 부스터 타임 진입 시 호출되는 메서드
+    @objc private func handleBoosterTimeEntry() {
+        updateLevelProgress(by: 0.2) // progress를 0.2씩 증가
+
+        if levelProgress.progress >= 1.0 {
+            // progress가 1.0에 도달하면 레벨업
+            LevelControlViewController.sharedData.userLevel += 1
+            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
+            updateLevelLabel()
+        }
     }
     
     private func setupUI() {
@@ -343,7 +353,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
                         self.presentLevelLabel.text = "현재 Level \(serverLevel)"
                     }
                     print("서버에서 데이터를 성공적으로 불러왔습니다.")
-                    print("API에서 가져온 level: \(serverLevel)")
+                    print("level: \(serverLevel)")
                 } else {
                     print("서버 응답은 성공했지만 result 데이터가 없습니다.")
                 }
@@ -407,7 +417,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             let bottomSheetVC = CalendarBottomSheetViewController()
             bottomSheetVC.modalPresentationStyle = .pageSheet
             bottomSheetVC.selectedDate = date
-            bottomSheetVC.timeElapsed = savedTimeElapsed // timeElapsed 값을 전달
             
             if let sheet = bottomSheetVC.sheetPresentationController {
                 let customDetent = UISheetPresentationController.Detent.custom { context in
@@ -432,6 +441,11 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             
             present(alert, animated: true, completion: nil)
         }
+    }
+    
+    // MARK: - 마이페이지 조회 - 날짜 연동
+    func fetchDate() {
+        
     }
 
     
@@ -503,7 +517,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
                 if let mypageResult = mypageResponse.result {
                     // API에서 가져온 루틴 중 상위 3개의 루틴을 출력
                     print("서버에서 데이터를 성공적으로 불러왔습니다.")
-                    print("API에서 가져온 상위 3개의 루틴:")
+                    print("최근 추가한 순 상위 3개의 루틴:")
                     let topThreeRoutines = mypageResult.userRoutines.prefix(3)
                     for routine in topThreeRoutines {
                         print("id: \(routine.id), name: \(routine.name)")
@@ -520,20 +534,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
 }
 
 // MARK: - extension
-extension MyPageViewController {
-    private func setupNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleTimeElapsedUpdate(_:)), name: .didPassTimeElapsed, object: nil)
-    }
-    
-    @objc private func handleTimeElapsedUpdate(_ notification: Notification) {
-        if let timeElapsed = notification.userInfo?["timeElapsed"] as? TimeInterval {
-            savedTimeElapsed = timeElapsed
-        }
-    }
-}
-
 extension Notification.Name {
-    static let didPassMaxBoosterTime = Notification.Name("didPassMaxBoosterTime")
+    static let boosterTimeEntered = Notification.Name("boosterTimeEntered")
 }
 
 extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
@@ -590,6 +592,8 @@ extension MyPageViewController: RoutineDataDelegate {
         print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
+        
+        fetchTopThreeRoutines()
     }
 }
 
@@ -599,5 +603,7 @@ extension MyPageViewController: RoutineUpdateDelegate {
     func didUpdateRoutine() {
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
+        
+        fetchTopThreeRoutines()
     }
 }

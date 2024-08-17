@@ -304,7 +304,7 @@ class LevelControlViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
 
-    // 레벨 변경을 위한 API 연동
+    // MARK: - 레벨 변경 연동
     private func fetchUserLevel(with level: Int) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
@@ -320,14 +320,16 @@ class LevelControlViewController: UIViewController {
                     print("레벨 변경 성공")
                     DispatchQueue.main.async {
                         if let result = response.result {
-                            let levelText = "Level \(result.level)"
-                            let isUserLevelText = "isUserLevel \(result.isUserLevel)"
+                            let serverLevel = result.level
+                            let userLevelStatus = result.isUserLevel
                             
                             if level == 0 {
                                 print("사용자의 원래 레벨을 사용합니다.")
+                                print("level: \(serverLevel), isUserLevel: \(userLevelStatus)")
+                            } else {
+                                print("변경된 레벨을 사용합니다.")
+                                print("level: \(serverLevel), isUserLevel: \(userLevelStatus)")
                             }
-                            print(levelText)
-                            print(isUserLevelText)
                         }
                     }
                 } else {
@@ -339,7 +341,7 @@ class LevelControlViewController: UIViewController {
         }
     }
 
-    // 서버에서 userLevel을 가져오는 함수 추가
+    // MARK: - 마이페이지 조회 - 서버 레벨 가져오기 연동
     private func fetchUserLevel() {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
