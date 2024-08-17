@@ -218,7 +218,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     }
     
     @objc private func handleNotification(_ notification: Notification) {
-        if let buttonType = notification.userInfo?["buttonType"] as? String, buttonType == "levelButton" {
+        if let buttonType = notification.userInfo?["buttonType"] as? String, buttonType.contains("levelButton") {
             handleLevelSelectionCompletion()
         }
     }
@@ -410,13 +410,16 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let currentPage = calendarView.currentPage
         let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentPage)!
         calendarView.setCurrentPage(previousMonth, animated: true)
+        updateHeaderViewForCurrentMonth()  // Add this line
     }
-    
+
     @objc private func didTapNextMonthButton() {
         let currentPage = calendarView.currentPage
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentPage)!
         calendarView.setCurrentPage(nextMonth, animated: true)
+        updateHeaderViewForCurrentMonth()  // Add this line
     }
+
     
     @objc func handleLevelProgressUpdate() {
         // progress를 0.2씩 증가

@@ -1,10 +1,3 @@
-//
-//  LevelControlViewController.swift
-//  FocusUp
-//
-//  Created by 성호은 on 7/31/24.
-//
-
 import UIKit
 import Alamofire
 
@@ -294,12 +287,12 @@ class LevelControlViewController: UIViewController {
         // 선택된 버튼에 따라 level 값 설정
         if buttonType == "myLevelButton" {
             selectedLevel = 0 // myLevelButton 선택 시 level 값 0
-            fetchUserLevel(with: selectedLevel)
             NotificationCenter.default.post(name: .didCancelLevelSelection, object: nil)
+            fetchUserLevel(with: selectedLevel)
         } else if let changeLevel = Int(buttonType.replacingOccurrences(of: "levelButton", with: "")) {
             selectedLevel = changeLevel // levelButton 선택 시 해당 레벨 값 설정
-            fetchUserLevel(with: selectedLevel)
             NotificationCenter.default.post(name: .didCompleteLevelSelection, object: nil, userInfo: ["buttonType": buttonType])
+            fetchUserLevel(with: selectedLevel)
         } else {
             // 이 경우는 유효하지 않은 선택에 대해 처리
             print("잘못된 레벨 선택입니다.")
@@ -344,8 +337,9 @@ class LevelControlViewController: UIViewController {
         }
     }
 
-
-
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 // MARK: - Notification Names
