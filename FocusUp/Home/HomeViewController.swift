@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var addButtonOutlet: UIButton!
     @IBOutlet weak var playButtonOutlet: UIButton!
     
-    private let routineId = 123     // 루틴 ID 설정
+    private var routineId: Int?                   // 루틴 ID를 저장할 변수
     
     var timer: Timer?
     var timeElapsed: TimeInterval = 0             // 경과 시간
@@ -37,8 +37,8 @@ class HomeViewController: UIViewController {
     var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
-    let boosterTimeThreshold: TimeInterval = 1    // 10분 (600초)
-    let maxBoosterTime: TimeInterval = 2        // 최대 부스터 시간 (3시간)
+    private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
+    let maxBoosterTime: TimeInterval = 2                     // 최대 부스터 시간 (3시간)
 //    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
 //    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
 
@@ -52,11 +52,11 @@ class HomeViewController: UIViewController {
         setFont()
         
         // Fetching API
-        fetchLifeData()                             // 생명 수 연동
-        fetchUserLevel { level in                   // 레벨 연동
+        fetchLifeData()                                     // 생명 수 연동
+        fetchHomeData { [weak self] level in                // 홈화면에 데이터 업데이트
+            guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
         }
-        fetchHomeData()                             // 홈화면에 데이터 업데이트
         
         updateTimeLabel()
         
@@ -124,14 +124,16 @@ class HomeViewController: UIViewController {
             
             // 코인알림 표시
             self.showCoinAlert()
-
             // 타이머 초기화
             self.resetTimer()
             self.routineLabel.isHidden = true
+            
+            // Call the API to complete the routine
+            
         }
+        
         cancelButtonAlert.addAction(confirm)
 
-        
         let closeAlert = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         closeAlert.setValue(UIColor.gray, forKey: "titleTextColor")
         cancelButtonAlert.addAction(closeAlert)
@@ -139,6 +141,8 @@ class HomeViewController: UIViewController {
         self.present(cancelButtonAlert, animated: true, completion: nil)
     }
     
+    
+    // 루틴 조회를 위한 addButton
     @IBAction func addButton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let goalRoutineVC = storyboard.instantiateViewController(withIdentifier: "GoalRoutineListViewController") as? GoalRoutineListViewController {
@@ -152,7 +156,7 @@ class HomeViewController: UIViewController {
     }
     
 
-// MARK: - Function
+// MARK: - API
     
     // 생명 정보를 가져오기 위한 API 연동
      private func fetchLifeData() {
@@ -173,41 +177,9 @@ class HomeViewController: UIViewController {
              }
          }
      }
-    
-    // 레벨 변경을 위한 API 연동
-    private func fetchUserLevel(completion: @escaping (Int) -> Void) {
-        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
-            print("Error: No access token found.")
-            return
-        }
-        
-        let level = 3
-        let endpoint = "/api/level/user?level=\(level)"
-               
 
-//        APIClient.putRequest(endpoint: endpoint, token: token) { (result: Result<LevelChangeResponse, AFError>) in
-//            switch result {
-//            case .success(let response):
-//                if response.isSuccess {
-//                    print("레벨 변경 성공: \(response)")
-//                    DispatchQueue.main.async {
-//                        let result = response.result
-//                        
-//                        self.level.setTitle("Level \(result.level)", for: .normal)
-//                        self.level.setTitleColor(result.isUserLevel ? UIColor(named: "primary4") : .black, for: .normal)
-//                        self.level.setNeedsLayout() // 레이아웃 갱신을 강제로 실행
-//                        self.level.layoutIfNeeded()
-//                    }
-//                } else {
-//                    print("레벨 변경 실패: \(response.message)")
-//                }
-//            case .failure(let error):
-//                print("레벨 변경 API 호출 실패: \(error)")
-//            }
-//        }
-    }
 
-    private func fetchHomeData() {
+    private func fetchHomeData(completion: @escaping (Int) -> Void) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
             return
@@ -220,10 +192,18 @@ class HomeViewController: UIViewController {
             case .success(let response):
                 if response.isSuccess {
                     DispatchQueue.main.async {
+                        print("홈화면:\(response)")
                         let result = response.result
+                        self.routineId = result.routineId       // 홈화면에서 조회되는 루틴 ID 저장 => 루틴 알람 완료에서 사용
                         self.routineLabel.text = result.routineName.isEmpty ? "오늘의 루틴 없음" : result.routineName
                         self.shellNumber.text = "\(result.life)"
                         self.fishNumber.text = "\(result.point)"
+                        self.level.setAttributedTitle(nil, for: .normal)
+                        self.level.setTitle("Level \(result.level)", for: .normal)
+                        self.level.layoutIfNeeded()
+
+                        // 클로저를 통해 level 값 전달
+                        completion(result.level)
                     }
                 } else {
                     print("API 호출 실패: \(response.message)")
@@ -234,6 +214,36 @@ class HomeViewController: UIViewController {
         }
     }
     
+    
+    private func sendCoinDataToAPI(totalCoins: Int) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let pointData = SendCoinData(point: totalCoins)
+        
+        APIClient.postRequest(endpoint: "/api/user/addPoint", parameters: pointData, token: token) { (result: Result<EmptyResponse, AFError>) in
+            switch result {
+            case .success:
+                print("Successfully sent point data: \(pointData)")
+            case .failure(let error):
+                print("Failed to send point data: \(error)")
+            }
+        }
+    }
+    
+    private func sendPostRoutineRequest() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+    }
+    
+    
+    
+// MARK: Function
     
     // 유저 레벨에 따른 부스터 시간 업데이트
     private func updateBoosterTimeThreshold(level: Int) {
@@ -247,11 +257,11 @@ class HomeViewController: UIViewController {
             7: 5400    // 90분
         ]
         
-//        if let threshold = boosterTimeMapping[level] {
-//            boosterTimeThreshold = threshold
-//        } else {
-//            boosterTimeThreshold = 600
-//        }
+        if let threshold = boosterTimeMapping[level] {
+            boosterTimeThreshold = threshold
+        } else {
+            boosterTimeThreshold = 600
+        }
     }
     
     // 타이머 시작
@@ -393,23 +403,6 @@ class HomeViewController: UIViewController {
         sendCoinDataToAPI(totalCoins: totalCoins)
      }
     
-    private func sendCoinDataToAPI(totalCoins: Int) {
-        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
-            print("Error: No access token found.")
-            return
-        }
-        
-        let pointData = SendCoinData(point: totalCoins)
-        
-        APIClient.postRequest(endpoint: "/api/user/addPoint", parameters: pointData, token: token) { (result: Result<EmptyResponse, AFError>) in
-            switch result {
-            case .success:
-                print("Successfully sent point data: \(pointData)")
-            case .failure(let error):
-                print("Failed to send point data: \(error)")
-            }
-        }
-    }
     
     // 현재 남은 시간 화면에 표시
     private func updateTimeLabel() {
