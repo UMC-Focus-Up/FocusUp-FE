@@ -108,6 +108,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.isScrollEnabled = false
         
         fetchTopThreeRoutines()
+        
+        fetchRoutineData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -443,11 +445,37 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
-    // MARK: - 마이페이지 조회 - 날짜 연동
-    func fetchDate() {
+    // MARK: - 마이페이지 조회 - 캘린더 연동
+    func fetchRoutineData() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
         
+        let endpoint = "/api/routine/mypage"
+        
+        // APIClient의 getRequest 메서드를 사용하여 데이터 가져오기
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if let routines = response.result?.routines {
+                    self.displayRoutines(routines)
+                }
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
     }
 
+    func displayRoutines(_ routines: [RoutineDetails]) {
+        // routines를 출력하거나, UI에 표시하는 로직을 여기에 추가하세요.
+        for routine in routines {
+            print("date: \(routine.date)")
+            for routineDetail in routine.routines {
+                print("routine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
+            }
+        }
+    }
     
     @objc private func didTapPreviousMonthButton() {
         let currentPage = calendarView.currentPage
