@@ -4,7 +4,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
 
     var selectedDate: Date?
     private var selectedIndexPath: IndexPath?
-    private var selectedRoutine: (String, [Int], String, String)? // 선택된 루틴 정보를 저장할 변수
+    private var selectedRoutine: (String, [Int], String, String, Int64)? // 선택된 루틴 정보를 저장할 변수
 
     var timeElapsed: TimeInterval? // 전달할 timeElapsed 값을 저장하는 프로퍼티
     
@@ -60,7 +60,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
         return tableView
     }()
     
-    private var routinesByDay: [(String, [Int], String, String)] = [] // 차례대로 루틴이름, 반복주기, 시작시간, 목표시간
+    private var routinesByDay: [(String, [Int], String, String, Int64)] = [] // 차례대로 루틴이름, 반복주기, 시작시간, 목표시간
     private var dayOfWeek: Int = 0
     
     override func viewDidLoad() {
@@ -201,8 +201,8 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
     }
 
     
-    private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String)] {
-        var routinesForDay: [(String, [Int], String, String)] = []
+    private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String, Int64)] {
+        var routinesForDay: [(String, [Int], String, String, Int64)] = []
         
         for routine in RoutineDataModel.shared.routineData {
             if routine.1.contains(dayOfWeek) {

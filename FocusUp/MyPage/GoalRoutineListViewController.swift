@@ -1,12 +1,13 @@
 import UIKit
+import Alamofire
 
 class GoalRoutineListViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var goalRoutineLabel2: UILabel!
     @IBOutlet weak var routineTableView: UITableView!
     
-    var routineData: [(String, [Int], String, String)] = []
-    var isAddMode: Bool = true                          // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
+    var routineData: [(String, [Int], String, String, Int64)] = []
+    var isAddMode: Bool = true       // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -114,7 +115,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
 
 
 extension GoalRoutineListViewController: RoutineDataDelegate, RoutineDeleteDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String)) {
+    func didReceiveData(_ data: (String, [Int], String, String, Int64)) {
         RoutineDataModel.shared.addRoutine(data)
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()

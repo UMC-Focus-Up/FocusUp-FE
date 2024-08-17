@@ -23,6 +23,7 @@ class GoalRoutineSettingViewController: UIViewController {
     var repeatPeriodTags: [Int] = []
     var startTime: String = ""
     var goalTime: String = ""
+    var userRoutineId: Int64 = 0
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -188,6 +189,11 @@ class GoalRoutineSettingViewController: UIViewController {
                 case .success(let value):
                     if let jsonResponse = value as? [String: Any] {
                         print("응답: \(jsonResponse)")
+                        if let result = jsonResponse["result"] as? Int64 {
+                            self.userRoutineId = result
+                            
+                            self.addRoutineData()
+                        }
                     }
                 case .failure(let error):
                     print("API 요청 실패: \(error)")
@@ -302,16 +308,6 @@ class GoalRoutineSettingViewController: UIViewController {
             
             // API 요청 호출
             self.createRoutine()
-            
-            // 요일 정보와 함께 루틴 추가
-            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
-            
-            // 루틴 데이터 추가
-            RoutineDataModel.shared.routineData.insert(data, at: 0)
-            
-            // Delegate를 통해 목록 업데이트
-            self.updateDelegate?.didUpdateRoutine()
-            self.navigationController?.popViewController(animated: true)
         }
         alert.addAction(confirmAction)
         confirmAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
@@ -321,6 +317,18 @@ class GoalRoutineSettingViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
 
+    // 루틴 데이터 저장 함수
+    func addRoutineData() {
+        // 요일 정보와 함께 루틴 추가
+        let data: (String, [Int], String, String, Int64) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime, self.userRoutineId)
+        
+        // 루틴 데이터 추가
+        RoutineDataModel.shared.routineData.insert(data, at: 0)
+        
+        // Delegate를 통해 목록 업데이트
+        self.updateDelegate?.didUpdateRoutine()
+        self.navigationController?.popViewController(animated: true)
+    }
 
     
     @objc func customButtonDidTap(_ sender: UIButton) {

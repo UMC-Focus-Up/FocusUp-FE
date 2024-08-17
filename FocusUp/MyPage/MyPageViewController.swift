@@ -82,7 +82,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var levelDownLabel: UILabel?
     private var modifyNoticeLabel: UILabel?
     
-    var routineData: [(String, [Int], String, String)] = []
+    var routineData: [(String, [Int], String, String, Int64)] = []
     
     private var savedTimeElapsed: TimeInterval = 0
     private var uptoNext: Int?
@@ -523,7 +523,7 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MyPageViewController: RoutineDataDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String)) {
+    func didReceiveData(_ data: (String, [Int], String, String, Int64)) {
         print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()

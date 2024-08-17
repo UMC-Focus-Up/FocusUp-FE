@@ -5,9 +5,9 @@ class RoutineDataModel {
     
     private init() {}
     
-    var routineData: [(String, [Int], String, String)] = []
+    var routineData: [(String, [Int], String, String, Int64)] = []
     
-    func addRoutine(_ routine: (String, [Int], String, String)) {
+    func addRoutine(_ routine: (String, [Int], String, String, Int64)) {
         routineData.insert(routine, at: 0)
     }
     

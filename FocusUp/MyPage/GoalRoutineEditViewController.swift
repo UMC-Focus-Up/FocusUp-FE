@@ -1,4 +1,5 @@
 import UIKit
+import Alamofire
 
 class GoalRoutineEditViewController: UIViewController {
     // MARK: - Properties
@@ -17,8 +18,7 @@ class GoalRoutineEditViewController: UIViewController {
     @IBOutlet weak var goalTimeButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
     
-    var routineData: (String, [Int], String, String)?
-    
+    var routineData: (String, [Int], String, String, Int64)?
     weak var delegate: RoutineDeleteDelegate?
     var routineIndex: Int?
 
@@ -29,15 +29,9 @@ class GoalRoutineEditViewController: UIViewController {
         setFont()
         setWeekStackViewButton()
         
-        // 데이터가 설정되었을 경우 UI 업데이트
         if let routineData = routineData {
-            goalRoutineTextLabel.text = routineData.0
-            startTimeLabel.text = routineData.2
-            goalTimeLabel.text = routineData.3
-            // 버튼 태그 업데이트
-            for case let button as UIButton in weekStackButton.arrangedSubviews {
-                setButton(button, selectedTags: routineData.1)
-            }
+            let userRoutineId = routineData.4
+            fetchRoutineDetails(userRoutineId: userRoutineId)
         }
     }
     
@@ -114,6 +108,82 @@ class GoalRoutineEditViewController: UIViewController {
         
         self.navigationItem.titleView = titleView
     }
+    
+    // MARK: - API
+    var accessToken: String = ""
+    
+    func fetchRoutineDetails(userRoutineId: Int64) {
+        let url = "http://15.165.198.110:80/api/routine/user/\(userRoutineId)"
+        print("Request URL: \(url)")
+
+        // 헤더 설정
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+                accessToken = token
+            } else {
+                print("accessToken이 없습니다.")
+            }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)"
+        ]
+        
+        AF.request(url, method: .get, headers: headers).responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let isSuccess = json["isSuccess"] as? Bool, isSuccess,
+                   let result = json["result"] as? [String: Any] {
+                    print("응답: \(json)")
+                    self.updateUI(with: result)
+                } else {
+                    print("API 호출에 실패했습니다.")
+                }
+                
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func updateUI(with result: [String: Any]) {
+        print("result: \(result)")
+        if let routineName = result["routineName"] as? String,
+           let repeatCycleDay = result["repeatCycleDay"] as? [String],
+           let startTime = result["startTime"] as? String,
+           let endTime = result["endTime"] as? String {
+            
+            self.goalRoutineTextLabel.text = routineName
+            self.startTimeLabel.text = convertTo12HourFormat(time: startTime)
+            self.goalTimeLabel.text = endTime
+
+            let dayMapping: [String: Int] = [
+                "SUNDAY": 0, "MONDAY": 1, "TUESDAY": 2,
+                "WEDNESDAY": 3, "THURSDAY": 4, "FRIDAY": 5, "SATURDAY": 6
+            ]
+            
+            let selectedTags = repeatCycleDay.compactMap { dayMapping[$0] }
+            for case let button as UIButton in weekStackButton.arrangedSubviews {
+                setButton(button, selectedTags: selectedTags)
+            }
+        } else {
+            print("데이터가 예상과 다릅니다.")
+        }
+    }
+    
+    // 12시간제로 변환하는 함수
+    func convertTo12HourFormat(time: String) -> String {
+        let formatter24Hour = DateFormatter()
+        formatter24Hour.dateFormat = "HH:mm"
+        
+        let formatter12Hour = DateFormatter()
+        formatter12Hour.dateFormat = "h:mm a"
+        
+        if let date = formatter24Hour.date(from: time) {
+            return formatter12Hour.string(from: date)
+        }
+        return time  // 변환 실패 시 원래 시간을 반환
+    }
+    
     
     // MARK: - Action
     private func setWeekStackViewButton() {
