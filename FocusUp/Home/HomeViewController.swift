@@ -50,6 +50,8 @@ class HomeViewController: UIViewController {
         setAttribute()
         setFont()
         
+        // NotificationCenter를 사용하여 서버 데이터 업데이트 이벤트를 감지합니다.
+        NotificationCenter.default.addObserver(self, selector: #selector(handleServerDataUpdate), name: .serverDataUpdated, object: nil)
         // Fetching API
         fetchLifeData()                                     // 생명 수 연동
         fetchHomeData { [weak self] level in                // 홈화면에 데이터 업데이트
@@ -60,6 +62,18 @@ class HomeViewController: UIViewController {
         updateTimeLabel()
     }
     
+    
+    // 서버 데이터 업데이트 알림을 받았을 때 실행되는 메서드
+    @objc private func handleServerDataUpdate() {
+        fetchHomeData { [weak self] level in  // 데이터를 다시 가져옴
+            guard let self = self else { return }
+            self.updateBoosterTimeThreshold(level: level)
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .serverDataUpdated, object: nil)
+    }
     
     
 // MARK: - Action
@@ -120,7 +134,6 @@ class HomeViewController: UIViewController {
     
             // maxBoosterTime을 초과했는지 확인
             let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
-
             
             // 코인알림 표시
             self.showCoinAlert()
@@ -193,6 +206,9 @@ class HomeViewController: UIViewController {
                 if response.isSuccess {
                     DispatchQueue.main.async {
                         print("홈화면:\(response)")
+                    
+                        // 알림을 통해 서버 데이터 업데이트 이벤트를 전파합니다.
+                        NotificationCenter.default.post(name: .serverDataUpdated, object: nil)
                         let result = response.result
                         self.routineId = result.routineId       // 홈화면에서 조회되는 루틴 ID 저장 => 루틴 알람 완료에서 사용
                         self.routineLabel.text = result.routineName.isEmpty ? "오늘의 루틴 없음" : result.routineName
@@ -351,17 +367,15 @@ class HomeViewController: UIViewController {
      
     // 코인 알람
     // 집중시간: 집중한 시간만큼 적립된 코인 (부스터 타임 포함)
-    // 루틴시간: 루틴 알림을 통해 들어오고, 목표 시간 이상 집중했을 때 지급하는 코인 (고정값 30)
-    // 보너스:  루틴 알람을 통해 들어왔을 때 지급하는 코인 (고정값 30)
+    // 루틴시간: 목표 시간 이상 집중했을 때 지급하는 코인 (고정값 30)
+    // 보너스:  루틴 알람을 통해 들어왔을 때 지급하는 코인 (고정값 30). => 서버쪽에서 구현이 된 상태이기에 빼
     // 부스터 타임은 1분에 n배의 코인 휙득 (레벨에 따라 배수가 달라짐) -> 부스터 타임에만 1분에 n배씩 휙득
    
     // 코인 API 연동시 집중시간이랑, 루틴시간만 포함하도록 (보너스는 이미 30코인 추가가 되었기에 값을 넘겨줄 필요가 없음)
-    private func calculateCoins() -> (focusCoins: Int, routineCoins: Int, bonusCoins: Int) {
+    private func calculateCoins() -> (focusCoins: Int, routineCoins: Int) {
         // 코인 휙득 기준 설정
         let normalCoinRate = 1                      // 1분당 1코인
         let routineCoins = 30                       // 루틴 시간에 지급하는 코인
-        let bonusThreshold: TimeInterval = 3600     // 보너스 지급 기준
-        let bonusCoins = 30                         // 보너스 코인
         let boosterMultiplier = 2                   // 레벨에 따른 부스터 타임 배수
         
         var focusCoins = 0
@@ -382,18 +396,13 @@ class HomeViewController: UIViewController {
             focusCoins += normalTimeCoins + boosterTimeCoins
         }
 
-        // 보너스 코인 추가
-        if timeElapsed >= bonusThreshold {
-            focusCoins += bonusCoins
-        }
-
-        return (focusCoins, routineCoins, bonusCoins)
+        return (focusCoins, routineCoins)
     }
     
     // 코인 정산알람창
     private func showCoinAlert() {
          let coins = calculateCoins()
-         let totalCoins = coins.focusCoins + coins.routineCoins + coins.bonusCoins
+         let totalCoins = coins.focusCoins + coins.routineCoins
          
          // title 폰트 및 색상 설정
          let title = "물고기(코인) \(totalCoins)마리 획득!"
@@ -410,10 +419,6 @@ class HomeViewController: UIViewController {
          // 루틴 코인이 있는 경우 메시지에 추가
          if coins.routineCoins > 0 {
              message += "\n 루틴 시간 \(coins.routineCoins)마리"
-         }
-         // 보너스 코인이 있는 경우 메시지에 추가
-         if coins.bonusCoins > 0 {
-             message += "\n 보너스 \(coins.bonusCoins)마리"
          }
          
          let coinAlertController = UIAlertController(
@@ -566,3 +571,6 @@ class HomeViewController: UIViewController {
     }
 }
 
+extension Notification.Name {
+    static let serverDataUpdated = Notification.Name("serverDataUpdated")
+}
