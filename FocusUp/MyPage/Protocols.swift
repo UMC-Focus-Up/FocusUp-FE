@@ -5,7 +5,7 @@ protocol RoutineUpdateDelegate: AnyObject {
 }
 
 protocol RoutineDataDelegate: AnyObject {
-    func didReceiveData(_ data: (String, [Int], String, String))
+    func didReceiveData(_ data: (String, [Int], String, String, Int64))
 }
 
 protocol RoutineDeleteDelegate: AnyObject {
