@@ -184,6 +184,42 @@ class GoalRoutineEditViewController: UIViewController {
         return time  // 변환 실패 시 원래 시간을 반환
     }
     
+    func deleteRoutine(userRoutineId: Int64) {
+        let url = "http://15.165.198.110:80/api/routine/user/\(userRoutineId)"
+        print("Request URL: \(url)")
+
+        // 헤더 설정
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+            accessToken = token
+        } else {
+            print("accessToken이 없습니다.")
+            return
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)"
+        ]
+        
+        AF.request(url, method: .delete, headers: headers).responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let isSuccess = json["isSuccess"] as? Bool, isSuccess {
+                    print("삭제 성공: \(json)")
+                    // 삭제 성공 후의 처리
+                    if let index = self.routineIndex {
+                        self.delegate?.didDeleteRoutine(at: index)
+                    }
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    print("삭제 실패")
+                }
+                
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
+    }
     
     // MARK: - Action
     private func setWeekStackViewButton() {
@@ -237,10 +273,11 @@ class GoalRoutineEditViewController: UIViewController {
         cancelAction.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
         let confirmAction = UIAlertAction(title: "삭제", style: .default) { _ in
-            if let index = self.routineIndex {
-                self.delegate?.didDeleteRoutine(at: index)
+            guard let userRoutineId = self.routineData?.4 else {
+                print("루틴 ID가 없습니다.")
+                return
             }
-            self.navigationController?.popViewController(animated: true)
+            self.deleteRoutine(userRoutineId: userRoutineId)
         }
         alert.addAction(confirmAction)
         confirmAction.setValue(UIColor(named: "EmphasizeError"), forKey: "titleTextColor")
