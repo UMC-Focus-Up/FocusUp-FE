@@ -191,7 +191,7 @@ class GoalRoutineSettingViewController: UIViewController {
                         print("응답: \(jsonResponse)")
                         if let result = jsonResponse["result"] as? Int64 {
                             self.userRoutineId = result
-                            
+                            print("\(self.userRoutineId)")
                             self.addRoutineData()
                         }
                     }
