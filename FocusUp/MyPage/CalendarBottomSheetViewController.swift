@@ -160,14 +160,15 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             // 실제 소요 시간을 시간 단위로 변환
             let timeElapsedInHours = Int(timeElapsed ?? 0) / 3600
             
-            // 달성률 계산
+            // 달성률 계산 (소수점 첫째자리까지 표시)
             let totalGoalHours = Double(totalHours)
             let achievementRate = totalGoalHours > 0 ? min(max((Double(timeElapsedInHours) / totalGoalHours) * 100, 0), 100) : 0
+            let formattedAchievementRate = String(format: "%.1f", achievementRate) // 소수점 첫째자리까지
             
             let routineInfo = """
             목표 시간 : \(totalHours)시간
             실제 루틴 시간 : \(timeElapsedInHours)시간
-            달성률 : \(Int(achievementRate))%
+            달성률 : \(formattedAchievementRate)%
             """
             
             // 1. CalendarBottomSheetViewController를 먼저 사라지게 합니다.
@@ -199,6 +200,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             print("선택된 루틴이 없습니다.")
         }
     }
+
 
     
     private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String)] {

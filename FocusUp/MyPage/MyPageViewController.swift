@@ -1,5 +1,6 @@
 import UIKit
 import FSCalendar
+import Alamofire
 
 // MARK: - Custom Calendar Header View
 class CustomHeaderView: UIView {
@@ -107,6 +108,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
         routineTableView.separatorStyle = .none
         routineTableView.isScrollEnabled = false
+        
+        fetchTopThreeRoutines()
     }
     
     override func viewDidLayoutSubviews() {
@@ -320,10 +323,36 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
+    // MARK: - 마이페이지 조회 - 레벨 연동
     private func updateLevelLabel() {
-        let userLevel = LevelControlViewController.sharedData.userLevel
-        presentLevelLabel.text = "현재 Level \(userLevel)"
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        // API 호출 후, 서버에서 받아온 level 값을 사용하여 UI를 업데이트
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let mypageResponse):
+                if let mypageResult = mypageResponse.result {
+                    // 서버에서 받아온 level 값으로 presentLevelLabel 업데이트
+                    let serverLevel = mypageResult.level
+                    DispatchQueue.main.async {
+                        self.presentLevelLabel.text = "현재 Level \(serverLevel)"
+                    }
+                    print("서버에서 데이터를 성공적으로 불러왔습니다.")
+                    print("API에서 가져온 level: \(serverLevel)")
+                } else {
+                    print("서버 응답은 성공했지만 result 데이터가 없습니다.")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
     }
+
     
     
     private func setWeekdayLabels() {
@@ -457,6 +486,37 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let currentLabelValue = progressValues[currentProgress] ?? 0
         levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(currentLabelValue)번 남았어요!"
     }
+    
+    // MARK: - 마이페이지 조회 - 상위 루틴 3개 조회 연동
+    func fetchTopThreeRoutines() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        // API 호출 후, 상위 3개의 루틴을 가져와 출력
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let mypageResponse):
+                if let mypageResult = mypageResponse.result {
+                    // API에서 가져온 루틴 중 상위 3개의 루틴을 출력
+                    print("서버에서 데이터를 성공적으로 불러왔습니다.")
+                    print("API에서 가져온 상위 3개의 루틴:")
+                    let topThreeRoutines = mypageResult.userRoutines.prefix(3)
+                    for routine in topThreeRoutines {
+                        print("id: \(routine.id), name: \(routine.name)")
+                    }
+                } else {
+                    print("서버 응답은 성공했지만 result 데이터가 없습니다.")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+
 }
 
 // MARK: - extension
