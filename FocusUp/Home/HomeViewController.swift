@@ -120,13 +120,7 @@ class HomeViewController: UIViewController {
     
             // maxBoosterTime을 초과했는지 확인
             let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
-            
-            // Post a notification with the timeElapsed value
-            NotificationCenter.default.post(name: .didPassTimeElapsed, object: nil, userInfo: ["timeElapsed": timeElapsedToPass])
-            
-            if hasExceededMaxTime {
-                NotificationCenter.default.post(name: .didPassMaxBoosterTime, object: nil)
-            }
+
             
             // 코인알림 표시
             self.showCoinAlert()
