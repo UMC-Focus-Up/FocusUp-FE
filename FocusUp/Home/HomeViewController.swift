@@ -121,6 +121,7 @@ class HomeViewController: UIViewController {
             // maxBoosterTime을 초과했는지 확인
             let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
 
+
             
             // 코인알림 표시
             self.showCoinAlert()
@@ -263,8 +264,6 @@ class HomeViewController: UIViewController {
         }
     }
     
-    
-    
 // MARK: Function
     
     // 유저 레벨에 따른 부스터 시간 업데이트
@@ -291,24 +290,10 @@ class HomeViewController: UIViewController {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
         updateTimeLabel()
     }
-    
-    private func notifyBoosterTimeEntry() {
-        NotificationCenter.default.post(name: .boosterTimeEntered, object: nil)
-    }
           
     @objc private func timerFired() {
         timeElapsed += 1
         updateTimeLabel()
-        
-        // 부스터 타임 진입 여부 확인
-        if timeElapsed >= boosterTimeThreshold && timeElapsed < maxBoosterTime {
-            if !isInBoosterTime {
-                notifyBoosterTimeEntry()  // 부스터 타임에 처음 진입한 경우에만 알림을 보냅니다.
-                isInBoosterTime = true    // 부스터 타임에 진입했음을 기록합니다.
-            }
-        } else {
-            isInBoosterTime = false  // 부스터 타임에서 벗어났음을 기록합니다.
-        }
     }
       
     

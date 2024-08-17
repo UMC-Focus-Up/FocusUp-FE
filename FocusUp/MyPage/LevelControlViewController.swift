@@ -11,7 +11,7 @@ class LevelControlViewController: UIViewController {
             return LevelControlViewController.sharedData.userLevel
         }
         set {
-            LevelControlViewController.sharedData.userLevel = newValue
+            LevelControlViewController.sharedData.userLevel = min(newValue, 7) // 레벨을 7로 제한
         }
     }
     
@@ -76,9 +76,6 @@ class LevelControlViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         setupUI()
-        setupLevelButtons()
-        configureHeaderView()
-        
         fetchUserLevel()
     }
     
@@ -114,8 +111,7 @@ class LevelControlViewController: UIViewController {
         
         var previousButton: UIButton = myLevelButton
         
-        for changeLevel in 1..<userLevel {
-            // 각 changeLevel 값에 따라 고유한 accessibilityIdentifier를 설정
+        for changeLevel in 1..<min(userLevel, 7) { // 레벨 7까지만 버튼 생성
             let levelButton = createButton(withTitle: "Level \(changeLevel)", type: "levelButton\(changeLevel)")
             contentView.addSubview(levelButton)
             
@@ -174,7 +170,6 @@ class LevelControlViewController: UIViewController {
         stackView.spacing = 12
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        // square 이미지를 대체하는 버튼 생성
         let squareButton = UIButton(type: .system)
         squareButton.translatesAutoresizingMaskIntoConstraints = false
         squareButton.backgroundColor = UIColor.clear
@@ -204,7 +199,6 @@ class LevelControlViewController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(named: "BlueGray3")?.cgColor
         
-        // Check 이미지 추가
         let checkImageView = UIImageView(image: UIImage(named: "check"))
         checkImageView.translatesAutoresizingMaskIntoConstraints = false
         checkImageView.isHidden = true
@@ -225,20 +219,16 @@ class LevelControlViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func buttonTapped(_ sender: UIButton) {
-        // 현재 선택된 버튼이 있다면 그 버튼의 선택 상태 해제
         if let previousSelectedButton = selectedButton {
             resetButtonSelection(previousSelectedButton)
         }
         
-        // 새로운 버튼 선택 상태 설정
         updateButtonSelection(sender)
         
-        // 선택된 버튼 업데이트
         selectedButton = sender
     }
     
     private func resetButtonSelection(_ button: UIButton) {
-        // 선택 상태 해제
         if let previousCheckImageView = button.subviews.compactMap({ $0 as? UIImageView }).last {
             previousCheckImageView.isHidden = true
         }
@@ -279,24 +269,21 @@ class LevelControlViewController: UIViewController {
     
     @objc private func completeButtonTapped() {
         guard let buttonType = selectedButton?.accessibilityIdentifier else {
-            // 버튼이 선택되지 않은 경우 처리
             print("레벨이 선택되지 않았습니다.")
             return
         }
         
         var selectedLevel: Int = 0
         
-        // 선택된 버튼에 따라 level 값 설정
         if buttonType == "myLevelButton" {
-            selectedLevel = 0 // myLevelButton 선택 시 level 값 0
+            selectedLevel = 0
             NotificationCenter.default.post(name: .didCancelLevelSelection, object: nil)
             fetchUserLevel(with: selectedLevel)
         } else if let changeLevel = Int(buttonType.replacingOccurrences(of: "levelButton", with: "")) {
-            selectedLevel = changeLevel // levelButton 선택 시 해당 레벨 값 설정
+            selectedLevel = changeLevel
             NotificationCenter.default.post(name: .didCompleteLevelSelection, object: nil, userInfo: ["buttonType": buttonType])
             fetchUserLevel(with: selectedLevel)
         } else {
-            // 이 경우는 유효하지 않은 선택에 대해 처리
             print("잘못된 레벨 선택입니다.")
             return
         }
@@ -320,7 +307,7 @@ class LevelControlViewController: UIViewController {
                     print("레벨 변경 성공")
                     DispatchQueue.main.async {
                         if let result = response.result {
-                            let serverLevel = result.level
+                            let serverLevel = min(result.level, 7) // 레벨을 7로 제한
                             let userLevelStatus = result.isUserLevel
                             
                             if level == 0 {
@@ -356,7 +343,7 @@ class LevelControlViewController: UIViewController {
             case .success(let mypageResponse):
                 if let mypageResult = mypageResponse.result {
                     DispatchQueue.main.async {
-                        self.userLevel = mypageResult.level
+                        self.userLevel = min(mypageResult.level, 7) // 레벨을 7로 제한
                         LevelControlViewController.sharedData.userLevel = self.userLevel
                         print("서버에서 가져온 레벨은 \(LevelControlViewController.sharedData.userLevel)입니다.")
                         self.setupLevelButtons() // 서버에서 가져온 userLevel로 버튼 생성

@@ -94,7 +94,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         setupUI()
         setupCalendar()
         setupNotifications()
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBoosterTimeEntry), name: .boosterTimeEntered, object: nil)
 
         updateLevelLabel()
         
@@ -108,7 +107,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.isScrollEnabled = false
         
         fetchTopThreeRoutines()
-        
         fetchRoutineData()
     }
     
@@ -134,18 +132,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    // 부스터 타임 진입 시 호출되는 메서드
-    @objc private func handleBoosterTimeEntry() {
-        updateLevelProgress(by: 0.2) // progress를 0.2씩 증가
-
-        if levelProgress.progress >= 1.0 {
-            // progress가 1.0에 도달하면 레벨업
-            LevelControlViewController.sharedData.userLevel += 1
-            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
-            updateLevelLabel()
-        }
     }
     
     private func setupUI() {
@@ -350,7 +336,13 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             case .success(let mypageResponse):
                 if let mypageResult = mypageResponse.result {
                     // 서버에서 받아온 level 값으로 presentLevelLabel 업데이트
-                    let serverLevel = mypageResult.level
+                    var serverLevel = mypageResult.level
+                    
+                    // 레벨이 7 이상이면 7로 제한
+                    if serverLevel > 7 {
+                        serverLevel = 7
+                    }
+                    
                     DispatchQueue.main.async {
                         self.presentLevelLabel.text = "현재 Level \(serverLevel)"
                     }
@@ -473,9 +465,31 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             print("date: \(routine.date)")
             for routineDetail in routine.routines {
                 print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
+
+                // execTime이 targetTime과 같거나 클 때 프로그레스바를 증가시킵니다.
+                if let execTime = timeIntervalFromString(routineDetail.execTime),
+                   let targetTime = timeIntervalFromString(routineDetail.targetTime) {
+                    if execTime >= targetTime {
+                        // 프로그레스바 증가
+                        updateLevelProgress(by: 0.2)
+                    }
+                }
             }
         }
     }
+
+    // 문자열 시간을 TimeInterval로 변환하는 헬퍼 메서드
+    func timeIntervalFromString(_ timeString: String) -> TimeInterval? {
+        let components = timeString.split(separator: ":")
+        guard components.count == 2,
+              let hours = Double(components[0]),
+              let minutes = Double(components[1]) else {
+            return nil
+        }
+        
+        return (hours * 3600) + (minutes * 60)
+    }
+
     
     @objc private func didTapPreviousMonthButton() {
         let currentPage = calendarView.currentPage
@@ -490,22 +504,17 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         calendarView.setCurrentPage(nextMonth, animated: true)
         updateHeaderViewForCurrentMonth()  // Add this line
     }
-
     
-    @objc func handleLevelProgressUpdate() {
-        // progress를 0.2씩 증가
-        updateLevelProgress(by: 0.2)
-    }
-    
-    // progress 값을 업데이트하는 메소드
     func updateLevelProgress(by increment: Float) {
         let newProgress = min(levelProgress.progress + increment, 1.0)
         levelProgress.setProgress(newProgress, animated: true)
         updateLevelNoticeLabel()
         
         if newProgress >= 1.0 {
-            // progress가 1.0에 도달하면 userLevel 증가 및 progress 초기화
-            LevelControlViewController.sharedData.userLevel += 1
+            // 레벨이 7 이상이면 레벨 업을 하지 않음
+            if LevelControlViewController.sharedData.userLevel < 7 {
+                LevelControlViewController.sharedData.userLevel += 1
+            }
             levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
             updateLevelLabel()
         } else {
@@ -562,10 +571,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
 }
 
 // MARK: - extension
-extension Notification.Name {
-    static let boosterTimeEntered = Notification.Name("boosterTimeEntered")
-}
-
 extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
