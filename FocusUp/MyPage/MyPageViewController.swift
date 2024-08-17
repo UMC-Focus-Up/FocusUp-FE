@@ -343,7 +343,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
                         self.presentLevelLabel.text = "현재 Level \(serverLevel)"
                     }
                     print("서버에서 데이터를 성공적으로 불러왔습니다.")
-                    print("API에서 가져온 level: \(serverLevel)")
+                    print("level: \(serverLevel)")
                 } else {
                     print("서버 응답은 성공했지만 result 데이터가 없습니다.")
                 }
@@ -503,7 +503,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
                 if let mypageResult = mypageResponse.result {
                     // API에서 가져온 루틴 중 상위 3개의 루틴을 출력
                     print("서버에서 데이터를 성공적으로 불러왔습니다.")
-                    print("API에서 가져온 상위 3개의 루틴:")
+                    print("최근 추가한 순 상위 3개의 루틴:")
                     let topThreeRoutines = mypageResult.userRoutines.prefix(3)
                     for routine in topThreeRoutines {
                         print("id: \(routine.id), name: \(routine.name)")
