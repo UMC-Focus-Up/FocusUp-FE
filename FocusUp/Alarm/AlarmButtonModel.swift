@@ -12,12 +12,12 @@ import Alamofire
 struct AlarmResponse: Decodable {
     let isSuccess: Bool
     let message: String
-    let result: AlarmResult
+    let result: AlarmResult?
     
     struct AlarmResult: Decodable {
-        let life: Int
-        let point: Int
-        let delayCount: Int
+        let life: Int?
+        let point: Int?
+        let delayCount: Int?
     }
 }
 

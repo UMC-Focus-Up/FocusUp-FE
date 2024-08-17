@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
                     print(error)
                 } else if let oauthToken = oauthToken {
                     print("loginWithKakaoTalk() success.")
-                    self?.loginToServer(socialType: "KAKAO", idToken: oauthToken.accessToken)
+                    self?.fetchKakaoUserId()
                 }
             }
         } else {
@@ -38,7 +38,7 @@ class LoginViewController: UIViewController {
                     print(error)
                 } else if let oauthToken = oauthToken {
                     print("loginWithKakaoAccount() success.")
-                    self?.loginToServer(socialType: "KAKAO", idToken: oauthToken.accessToken)
+                    self?.fetchKakaoUserId()
                 }
             }
         }
@@ -61,11 +61,11 @@ class LoginViewController: UIViewController {
     }
     
     // 서버로 로그인 요청을 보내는 함수
-    func loginToServer(socialType: String, idToken: String) {
+    func loginToServer(socialType: String, userId: String) {
         let url = "http://15.165.198.110:80/api/user/auth/login"
         let parameters: [String: Any] = [
             "socialType": socialType,
-            "id": idToken
+            "id": userId
         ]
         
         AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).responseDecodable(of: LoginResponse.self) { [weak self] response in
@@ -81,7 +81,7 @@ class LoginViewController: UIViewController {
                 } else if loginResponse.message == "Token expired" { // 만료된 토큰의 경우 (예시)
                     self?.refreshAccessToken { success in
                         if success {
-                            self?.loginToServer(socialType: socialType, idToken: idToken)
+                            self?.loginToServer(socialType: socialType, userId: userId)
                         } else {
                             print("Failed to refresh token and re-login.")
                         }
@@ -134,6 +134,18 @@ class LoginViewController: UIViewController {
         mainVC.modalPresentationStyle = .fullScreen
         self.present(mainVC, animated: true, completion: nil)
     }
+    
+    // Kakao 사용자 ID를 가져오는 함수
+    func fetchKakaoUserId() {
+        UserApi.shared.me() { [weak self] (user, error) in
+            if let error = error {
+                print("Failed to fetch Kakao user info: \(error)")
+            } else if let user = user {
+                print("Kakao User ID: \(user.id ?? 0)")
+                self?.loginToServer(socialType: "KAKAO", userId: "\(user.id ?? 0)")
+            }
+        }
+    }
 }
 
 // MARK: - extension
@@ -141,7 +153,7 @@ extension LoginViewController: NaverThirdPartyLoginConnectionDelegate {
     func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
         if let accessToken = naverLoginInstance?.accessToken {
             print("Naver login Success. Access Token: \(accessToken)")
-            loginToServer(socialType: "NAVER", idToken: accessToken)
+            fetchNaverUserId(accessToken: accessToken)
         }
     }
     
@@ -158,6 +170,28 @@ extension LoginViewController: NaverThirdPartyLoginConnectionDelegate {
     func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: (any Error)!) {
         print("Naver login error: \(error.localizedDescription)")
         self.naverLoginInstance?.requestDeleteToken()
+    }
+    
+    // Naver 사용자 ID를 가져오는 함수
+    func fetchNaverUserId(accessToken: String) {
+        let url = "https://openapi.naver.com/v1/nid/me"
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)"
+        ]
+        
+        AF.request(url, method: .get, headers: headers).responseJSON { [weak self] response in
+            switch response.result {
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let response = json["response"] as? [String: Any],
+                   let id = response["id"] as? String {
+                    print("Naver User ID: \(id)")
+                    self?.loginToServer(socialType: "NAVER", userId: id)
+                }
+            case .failure(let error):
+                print("Failed to fetch Naver user info: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
