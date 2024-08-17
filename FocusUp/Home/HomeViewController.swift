@@ -28,7 +28,7 @@ class HomeViewController: UIViewController {
     private let routineId = 123     // 루틴 ID 설정
     
     var timer: Timer?
-    var timeElapsed: TimeInterval = 1790             // 경과 시간
+    var timeElapsed: TimeInterval = 0             // 경과 시간
     
     // 멈춤 시간 추적 타이머
     var pauseTimer: Timer?

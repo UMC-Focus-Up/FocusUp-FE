@@ -78,6 +78,8 @@ class LevelControlViewController: UIViewController {
         setupUI()
         setupLevelButtons()
         configureHeaderView()
+        
+        fetchUserLevel()
     }
     
     // MARK: - UI Setup
@@ -322,7 +324,7 @@ class LevelControlViewController: UIViewController {
                             let isUserLevelText = "isUserLevel \(result.isUserLevel)"
                             
                             if level == 0 {
-                                print("내 레벨임")
+                                print("사용자의 원래 레벨을 사용합니다.")
                             }
                             print(levelText)
                             print(isUserLevelText)
@@ -337,6 +339,36 @@ class LevelControlViewController: UIViewController {
         }
     }
 
+    // 서버에서 userLevel을 가져오는 함수 추가
+    private func fetchUserLevel() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        // API 호출 후, 서버에서 받아온 level 값을 사용하여 userLevel을 업데이트
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let mypageResponse):
+                if let mypageResult = mypageResponse.result {
+                    DispatchQueue.main.async {
+                        self.userLevel = mypageResult.level
+                        LevelControlViewController.sharedData.userLevel = self.userLevel
+                        print("서버에서 가져온 레벨은 \(LevelControlViewController.sharedData.userLevel)입니다.")
+                        self.setupLevelButtons() // 서버에서 가져온 userLevel로 버튼 생성
+                        self.configureHeaderView() // 헤더 뷰 업데이트
+                    }
+                } else {
+                    print("서버 응답은 성공했지만 result 데이터가 없습니다.")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -351,5 +383,5 @@ extension Notification.Name {
 
 // 공유 데이터 모델 정의
 class LevelControlSharedData {
-    var userLevel: Int = 4
+    var userLevel: Int = 1
 }
