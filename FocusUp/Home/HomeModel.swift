@@ -30,20 +30,7 @@ struct AlarmUserResult: Codable {
 }
 
 
-// 레벨 변경
-//struct LevelChangeResponse: Decodable {
-//    let isSuccess: Bool
-//    let message: String
-//    let result: LevelResult
-//}
-//
-//struct LevelResult: Decodable {
-//    let level: Int
-//    let isUserLevel: Bool
-//}
-
-
-// 루틴 정보
+// 홈 조회 
 struct HomeResponse: Decodable {
     let isSuccess: Bool
     let message: String
@@ -58,3 +45,22 @@ struct HomeResult: Decodable {
     let routineName: String
     let execTime: String
 }
+
+// 반복 루틴 완료
+struct ExecTime: Codable {
+    let hour: Int
+    let minute: Int
+    let second: Int
+    let nano: Int
+}
+
+struct PostRoutineRequest: Codable {
+    let execTime: ExecTime
+}
+
+struct PostRoutineResponse: Codable {
+    let isSuccess: Bool
+    let message: String
+    let result: Int
+}
+
