@@ -90,15 +90,13 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNotification()
         
         setupUI()
         setupCalendar()
         setupNotifications()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBoosterTimeEntry), name: .boosterTimeEntered, object: nil)
+
         updateLevelLabel()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleLevelProgressUpdate), name: .didPassMaxBoosterTime, object: nil)
         
         routineTableView.delegate = self
         routineTableView.dataSource = self
@@ -134,6 +132,18 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    // 부스터 타임 진입 시 호출되는 메서드
+    @objc private func handleBoosterTimeEntry() {
+        updateLevelProgress(by: 0.2) // progress를 0.2씩 증가
+
+        if levelProgress.progress >= 1.0 {
+            // progress가 1.0에 도달하면 레벨업
+            LevelControlViewController.sharedData.userLevel += 1
+            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
+            updateLevelLabel()
+        }
     }
     
     private func setupUI() {
@@ -407,7 +417,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             let bottomSheetVC = CalendarBottomSheetViewController()
             bottomSheetVC.modalPresentationStyle = .pageSheet
             bottomSheetVC.selectedDate = date
-            bottomSheetVC.timeElapsed = savedTimeElapsed // timeElapsed 값을 전달
             
             if let sheet = bottomSheetVC.sheetPresentationController {
                 let customDetent = UISheetPresentationController.Detent.custom { context in
@@ -435,6 +444,9 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     }
     
     // MARK: - 마이페이지 조회 - 날짜 연동
+    func fetchDate() {
+        
+    }
 
     
     @objc private func didTapPreviousMonthButton() {
@@ -522,20 +534,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
 }
 
 // MARK: - extension
-extension MyPageViewController {
-    private func setupNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleTimeElapsedUpdate(_:)), name: .didPassTimeElapsed, object: nil)
-    }
-    
-    @objc private func handleTimeElapsedUpdate(_ notification: Notification) {
-        if let timeElapsed = notification.userInfo?["timeElapsed"] as? TimeInterval {
-            savedTimeElapsed = timeElapsed
-        }
-    }
-}
-
 extension Notification.Name {
-    static let didPassMaxBoosterTime = Notification.Name("didPassMaxBoosterTime")
+    static let boosterTimeEntered = Notification.Name("boosterTimeEntered")
 }
 
 extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {

@@ -37,11 +37,12 @@ class HomeViewController: UIViewController {
     var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
-    private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
+    private var boosterTimeThreshold: TimeInterval = 600      // 기본값 설정: 레벨 1로 default
     let maxBoosterTime: TimeInterval = 2                     // 최대 부스터 시간 (3시간)
 //    var boosterTimeThreshold: TimeInterval = 600    // 10분 (600초) : 레벨 1로 default 값으로 둠
 //    let maxBoosterTime: TimeInterval = 10800        // 최대 부스터 시간 (3시간)
 
+    private var isInBoosterTime = false
     
 // MARK: - viewDidLoad()
     
@@ -108,19 +109,6 @@ class HomeViewController: UIViewController {
         let cancelButtonAlert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
-            
-            // Pass the timeElapsed value to CalendarBottomSheet
-            let timeElapsedToPass = self.timeElapsed
-            
-            // maxBoosterTime을 초과했는지 확인
-            let hasExceededMaxTime = timeElapsedToPass > self.maxBoosterTime
-            
-            // Post a notification with the timeElapsed value
-            NotificationCenter.default.post(name: .didPassTimeElapsed, object: nil, userInfo: ["timeElapsed": timeElapsedToPass])
-            
-            if hasExceededMaxTime {
-                NotificationCenter.default.post(name: .didPassMaxBoosterTime, object: nil)
-            }
             
             // 코인알림 표시
             self.showCoinAlert()
@@ -248,7 +236,7 @@ class HomeViewController: UIViewController {
     // 유저 레벨에 따른 부스터 시간 업데이트
     private func updateBoosterTimeThreshold(level: Int) {
         let boosterTimeMapping: [Int: TimeInterval] = [
-            1: 600,    // 10분
+            1: 1,    // 10분
             2: 1200,   // 20분
             3: 1800,   // 30분
             4: 2700,   // 45분
@@ -269,10 +257,24 @@ class HomeViewController: UIViewController {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
         updateTimeLabel()
     }
+    
+    private func notifyBoosterTimeEntry() {
+        NotificationCenter.default.post(name: .boosterTimeEntered, object: nil)
+    }
           
     @objc private func timerFired() {
         timeElapsed += 1
         updateTimeLabel()
+        
+        // 부스터 타임 진입 여부 확인
+        if timeElapsed >= boosterTimeThreshold && timeElapsed < maxBoosterTime {
+            if !isInBoosterTime {
+                notifyBoosterTimeEntry()  // 부스터 타임에 처음 진입한 경우에만 알림을 보냅니다.
+                isInBoosterTime = true    // 부스터 타임에 진입했음을 기록합니다.
+            }
+        } else {
+            isInBoosterTime = false  // 부스터 타임에서 벗어났음을 기록합니다.
+        }
     }
       
     
