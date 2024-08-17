@@ -47,20 +47,13 @@ struct HomeResult: Decodable {
 }
 
 // 반복 루틴 완료
-struct ExecTime: Codable {
-    let hour: Int
-    let minute: Int
-    let second: Int
-    let nano: Int
-}
-
 struct PostRoutineRequest: Codable {
-    let execTime: ExecTime
+    let execTime: String        // execTime을 문자열로 정의
 }
 
 struct PostRoutineResponse: Codable {
     let isSuccess: Bool
     let message: String
-    let result: Int
+    let result: Int?
 }
 
