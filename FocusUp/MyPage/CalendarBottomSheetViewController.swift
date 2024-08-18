@@ -309,22 +309,27 @@ class RoutineTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(button)
         button.addSubview(squareButton)
-        squareButton.addSubview(checkImageView) // Add checkImageView to squareButton
+        squareButton.addSubview(checkImageView)
         
         NSLayoutConstraint.activate([
+            // Button constraints
             button.widthAnchor.constraint(equalToConstant: 342),
             button.heightAnchor.constraint(equalToConstant: 51),
             button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20), // contentView의 하단 제약을 button 하단에 맞춤
             
+            // Square button constraints
             squareButton.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 10),
             squareButton.centerYAnchor.constraint(equalTo: button.centerYAnchor),
             squareButton.widthAnchor.constraint(equalToConstant: 25),
             squareButton.heightAnchor.constraint(equalToConstant: 25),
             
+            // Button title constraints
             button.titleLabel!.leadingAnchor.constraint(equalTo: squareButton.trailingAnchor, constant: 16),
             button.titleLabel!.centerYAnchor.constraint(equalTo: button.centerYAnchor),
             
+            // Check image view constraints
             checkImageView.centerXAnchor.constraint(equalTo: squareButton.centerXAnchor),
             checkImageView.centerYAnchor.constraint(equalTo: squareButton.centerYAnchor),
             checkImageView.widthAnchor.constraint(equalToConstant: 20),
@@ -345,6 +350,7 @@ class RoutineTableViewCell: UITableViewCell {
         squareButton.backgroundColor = isSelected ? (UIColor(named: "Primary4")?.withAlphaComponent(0.1) ?? UIColor.blue.withAlphaComponent(0.1)) : .clear
     }
 }
+
 
 extension Notification.Name {
     static let didPassTimeElapsed = Notification.Name("didPassTimeElapsed")
