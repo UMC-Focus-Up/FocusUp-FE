@@ -414,7 +414,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     // 특정 날짜에 테두리를 설정
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderDefaultColorFor date: Date) -> UIColor? {
         if routineDates.contains(date) {
-            return UIColor(red: 0.89, green: 0.95, blue: 0.98, alpha: 0.7) // 테두리 색상
+            return UIColor(red: 0.34, green: 0.56, blue: 0.66, alpha: 0.56) // 테두리 색상
         }
         return nil
     }
@@ -423,7 +423,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     // 날짜 선택 시에도 테두리 유지
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderSelectionColorFor date: Date) -> UIColor? {
         if routineDates.contains(date) {
-            return UIColor(red: 0.89, green: 0.95, blue: 0.98, alpha: 0.7) // 테두리 색상
+            return UIColor(red: 0.34, green: 0.56, blue: 0.66, alpha: 0.56) // 테두리 색상
+            
         }
         return nil
     }
