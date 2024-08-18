@@ -26,7 +26,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var playButtonOutlet: UIButton!
     
     private var routineId: Int?                   // 루틴 ID를 저장할 변수
-    
+
     var timer: Timer?
     var timeElapsed: TimeInterval = 0             // 경과 시간
     
@@ -37,10 +37,8 @@ class HomeViewController: UIViewController {
     var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
-    private var boosterTimeThreshold: TimeInterval = 600      // 기본값 설정: 레벨 1로 default
+    private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
     let maxBoosterTime: TimeInterval = 2                     // 최대 부스터 시간 (3시간)
-
-    private var isInBoosterTime = false
     
 // MARK: - viewDidLoad()
     
@@ -50,30 +48,19 @@ class HomeViewController: UIViewController {
         setAttribute()
         setFont()
         
-        // NotificationCenter를 사용하여 서버 데이터 업데이트 이벤트를 감지합니다.
-        NotificationCenter.default.addObserver(self, selector: #selector(handleServerDataUpdate), name: .serverDataUpdated, object: nil)
+        updateTimeLabel()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         // Fetching API
-        fetchLifeData()                                     // 생명 수 연동
         fetchHomeData { [weak self] level in                // 홈화면에 데이터 업데이트
             guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
         }
-        
-        updateTimeLabel()
     }
     
-    
-    // 서버 데이터 업데이트 알림을 받았을 때 실행되는 메서드
-    @objc private func handleServerDataUpdate() {
-        fetchHomeData { [weak self] level in  // 데이터를 다시 가져옴
-            guard let self = self else { return }
-            self.updateBoosterTimeThreshold(level: level)
-        }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: .serverDataUpdated, object: nil)
-    }
     
     
 // MARK: - Action
@@ -170,65 +157,45 @@ class HomeViewController: UIViewController {
     
 
 // MARK: - API
-    
-    // 생명 정보를 가져오기 위한 API 연동
-     private func fetchLifeData() {
-         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
-             print("Error: No access token found.")
-             return
-         }
-         
-         APIClient.getRequest(endpoint: "/api/alarm/user", token: token) { (result: Result<AlarmUserResponse, AFError>) in
-             switch result {
-             case .success(let response):
-                 let life = response.result.life
-                 DispatchQueue.main.async {
-                     self.shellNumber.text = "\(life)" // 생명 정보를 라벨에 표시
-                 }
-             case .failure(let error):
-                 print("Failed to fetch life data: \(error)")
-             }
-         }
-     }
-
 
     private func fetchHomeData(completion: @escaping (Int) -> Void) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
             return
         }
-        
         let endpoint = "/api/user/home"
         
         APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<HomeResponse, AFError>) in
             switch result {
-            case .success(let response):
-                if response.isSuccess {
-                    DispatchQueue.main.async {
-                        print("홈화면:\(response)")
-                    
-                        // 알림을 통해 서버 데이터 업데이트 이벤트를 전파합니다.
-                        NotificationCenter.default.post(name: .serverDataUpdated, object: nil)
-                        let result = response.result
-                        self.routineId = result.routineId       // 홈화면에서 조회되는 루틴 ID 저장 => 루틴 알람 완료에서 사용
-                        self.routineLabel.text = result.routineName.isEmpty ? "오늘의 루틴 없음" : result.routineName
-                        self.shellNumber.text = "\(result.life)"
-                        self.fishNumber.text = "\(result.point)"
+            case .success(let homeResponse):
+                if homeResponse.isSuccess {
+                    print("홈화면:\(homeResponse)")
+                       
+                    if let homeResult = homeResponse.result {
+                        self.routineId = homeResult.routineId  // 홈화면에서 조회되는 루틴 ID 저장
+                           
+                        self.routineLabel.text = homeResult.routineName.isEmpty ? "오늘의 루틴 없음" : homeResult.routineName
+                        self.shellNumber.text = "\(homeResult.life)"
+                        self.fishNumber.text = "\(homeResult.point)"
+                           
                         self.level.setAttributedTitle(nil, for: .normal)
-                        self.level.setTitle("Level \(result.level)", for: .normal)
+                        self.level.setTitle("Level \(homeResult.level)", for: .normal)
                         self.level.layoutIfNeeded()
-
+        
                         // 클로저를 통해 level 값 전달
-                        completion(result.level)
+                        completion(homeResult.level)
+                    } else {
+                        print("Error: 홈화면 결과 데이터가 없습니다.")
                     }
                 } else {
-                    print("API 호출 실패: \(response.message)")
+                    print("API 호출 실패: \(homeResponse.message)")
                 }
             case .failure(let error):
                 print("API 호출 실패: \(error.localizedDescription)")
             }
         }
     }
+
     
     
     private func sendCoinDataToAPI(totalCoins: Int) {
@@ -284,7 +251,7 @@ class HomeViewController: UIViewController {
     // 유저 레벨에 따른 부스터 시간 업데이트
     private func updateBoosterTimeThreshold(level: Int) {
         let boosterTimeMapping: [Int: TimeInterval] = [
-            1: 1,    // 10분
+            1: 600,    // 10분
             2: 1200,   // 20분
             3: 1800,   // 30분
             4: 2700,   // 45분
@@ -555,6 +522,3 @@ class HomeViewController: UIViewController {
     }
 }
 
-extension Notification.Name {
-    static let serverDataUpdated = Notification.Name("serverDataUpdated")
-}

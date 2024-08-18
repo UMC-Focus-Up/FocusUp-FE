@@ -34,7 +34,7 @@ struct AlarmUserResult: Codable {
 struct HomeResponse: Decodable {
     let isSuccess: Bool
     let message: String
-    let result: HomeResult
+    let result: HomeResult?
 }
 
 struct HomeResult: Decodable {
