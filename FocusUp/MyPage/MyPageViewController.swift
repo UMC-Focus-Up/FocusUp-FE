@@ -84,17 +84,12 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
     
-    private var savedTimeElapsed: TimeInterval = 0
-    private var uptoNext: Int?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         setupCalendar()
         setupNotifications()
-
-        updateLevelLabel()
         
         routineTableView.delegate = self
         routineTableView.dataSource = self
@@ -104,9 +99,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
         routineTableView.separatorStyle = .none
         routineTableView.isScrollEnabled = false
-        
-        fetchTopThreeRoutines()
-        fetchRoutineData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -118,10 +110,24 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         super.viewWillAppear(animated)
         configureNavigationBar()
         configureTabBar()
+
+        // 데이터 로드 전에 프로그레스바 초기화
+        levelProgress.setProgress(0.0, animated: false)
+        print("viewWillAppear: 프로그레스바 초기화됨")
+        
+        // 레벨 업데이트를 먼저 수행
+        updateLevelLabel()
+        
+        fetchTopThreeRoutines()
+
+        // fetchRoutineData를 호출하여 루틴 데이터를 로드하고,
+        // 프로그레스바가 잘못된 값으로 증가하는지 확인
+        fetchRoutineData()
         
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
     }
+
     
     func didDeleteRoutine(at index: Int) {
         RoutineDataModel.shared.deleteRoutine(at: index)
@@ -457,6 +463,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             switch result {
             case .success(let response):
                 if let routines = response.result?.routines {
+                    // 데이터 로드 후에만 프로그레스바 증가 여부를 결정
                     self.displayRoutines(routines)
                 }
             case .failure(let error):
@@ -470,6 +477,9 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         
         let currentDate = Date() // 현재 날짜
         
+        // 중복된 프로그레스 업데이트 방지를 위해 초기화
+        var progressIncremented = false
+        
         for routine in routines {
             guard let startDate = dateFromString(routine.date), startDate >= currentDate else {
                 continue // startDate가 현재 날짜보다 이전이면 무시
@@ -480,17 +490,22 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             for routineDetail in routine.routines {
                 print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
                 
-                // execTime이 targetTime과 같거나 클 때 프로그레스바를 증가시킵니다.
                 if let execTime = timeIntervalFromString(routineDetail.execTime),
                    let targetTime = timeIntervalFromString(routineDetail.targetTime) {
-                    if execTime >= targetTime {
+                    
+                    // execTime과 targetTime이 모두 0이 아닌 경우에만 프로그레스바 증가
+                    if execTime > 0 && targetTime > 0 && execTime >= targetTime && !progressIncremented {
                         // 프로그레스바 증가
                         updateLevelProgress(by: 0.2)
+                        print("displayRoutines: 프로그레스바가 증가함")
+                        progressIncremented = true
                     }
                 }
             }
         }
     }
+
+
 
     // 문자열 날짜를 Date로 변환하는 헬퍼 메서드
     func dateFromString(_ dateString: String) -> Date? {
@@ -517,30 +532,28 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let currentPage = calendarView.currentPage
         let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentPage)!
         calendarView.setCurrentPage(previousMonth, animated: true)
-        updateHeaderViewForCurrentMonth()  // Add this line
+        updateHeaderViewForCurrentMonth()
     }
 
     @objc private func didTapNextMonthButton() {
         let currentPage = calendarView.currentPage
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentPage)!
         calendarView.setCurrentPage(nextMonth, animated: true)
-        updateHeaderViewForCurrentMonth()  // Add this line
+        updateHeaderViewForCurrentMonth()
     }
     
     func updateLevelProgress(by increment: Float) {
         let newProgress = min(levelProgress.progress + increment, 1.0)
+        print("updateLevelProgress: 프로그레스바가 증가함. 현재 프로그레스: \(newProgress)")
         levelProgress.setProgress(newProgress, animated: true)
         updateLevelNoticeLabel()
         
         if newProgress >= 1.0 {
-            // 레벨이 7 이상이면 레벨 업을 하지 않음
             if LevelControlViewController.sharedData.userLevel < 7 {
                 LevelControlViewController.sharedData.userLevel += 1
             }
             levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
             updateLevelLabel()
-        } else {
-            levelProgress.setProgress(newProgress, animated: true)
         }
     }
     
@@ -656,8 +669,5 @@ extension MyPageViewController: RoutineUpdateDelegate {
     func didUpdateRoutine() {
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
-        
-        fetchRoutineData()
-        fetchTopThreeRoutines()
     }
 }
