@@ -24,6 +24,7 @@ class GoalRoutineSettingViewController: UIViewController {
     var startTime: String = ""
     var goalTime: String = ""
     var userRoutineId: Int64 = 0
+    var startDate: String = ""
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -43,7 +44,6 @@ class GoalRoutineSettingViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
     }
-    
     
     // MARK: - Function
     func setAttribute() {
@@ -158,10 +158,11 @@ class GoalRoutineSettingViewController: UIViewController {
         
         // 전송할 데이터 생성
         let convertedStartTime = convertTimeTo24HourFormat(time: startTime)
+        startDate = getCurrentDateString() // 현재 날짜를 시작 날짜로 설정
         
         let routineData: [String: Any] = [
             "routineName": goalRoutine,
-            "startDate": getCurrentDateString(), // 현재 날짜를 시작 날짜로 사용
+            "startDate": startDate, // 현재 날짜를 시작 날짜로 사용
             "repeatCycleDay": getRepeatCycleDays(),
             "startTime": convertedStartTime ?? "00:00",
             "endTime": goalTime
@@ -192,7 +193,7 @@ class GoalRoutineSettingViewController: UIViewController {
                         if let result = jsonResponse["result"] as? Int64 {
                             self.userRoutineId = result
                             print("\(self.userRoutineId)")
-                            self.addRoutineData()
+                            self.addRoutineData() // 로컬에 데이터 저장 시 startDate도 포함
                         }
                     }
                 case .failure(let error):
@@ -235,8 +236,6 @@ class GoalRoutineSettingViewController: UIViewController {
         }
         return nil
     }
-
-    
     
     // MARK: - Action
     private func setWeekStackViewButton() {
@@ -320,17 +319,16 @@ class GoalRoutineSettingViewController: UIViewController {
     // 루틴 데이터 저장 함수
     func addRoutineData() {
         // 요일 정보와 함께 루틴 추가
-        let data: (String, [Int], String, String, Int64) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime, self.userRoutineId)
+        let data: (String, [Int], String, String, Int64, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime, self.userRoutineId, self.startDate)
         
         // 루틴 데이터 추가
-        RoutineDataModel.shared.routineData.insert(data, at: 0)
+        RoutineDataModel.shared.addRoutine(data)
         
         // Delegate를 통해 목록 업데이트
         self.updateDelegate?.didUpdateRoutine()
         self.navigationController?.popViewController(animated: true)
     }
 
-    
     @objc func customButtonDidTap(_ sender: UIButton) {
         print("Information.")
         
@@ -384,7 +382,6 @@ class GoalRoutineSettingViewController: UIViewController {
         goalTimeLabel.textColor = UIColor.primary4
         goalTimeButton.setImage(UIImage(named: "clock_after"), for: .normal)
     }
-    
 }
 
 // MARK: - extension

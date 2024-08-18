@@ -4,7 +4,6 @@ import Alamofire
 
 // MARK: - Custom Calendar Header View
 class CustomHeaderView: UIView {
-    
     let previousButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "calendar_arrow_left"), for: .normal)
@@ -83,7 +82,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var levelDownLabel: UILabel?
     private var modifyNoticeLabel: UILabel?
     
-    var routineData: [(String, [Int], String, String, Int64)] = []
+    var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
     
     private var savedTimeElapsed: TimeInterval = 0
     private var uptoNext: Int?
@@ -611,7 +610,7 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
             let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
             editVC.delegate = self
             editVC.routineIndex = indexPath.row
-            editVC.routineData = routineData[indexPath.row]
+            editVC.routineData = routineData[indexPath.row] // 수정된 타입 반영
             navigationController?.pushViewController(editVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
@@ -621,8 +620,8 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MyPageViewController: RoutineDataDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String, Int64)) {
-        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
+    func didReceiveData(_ data: (String, [Int], String, String, Int64, String)) { // 수정된 타입 반영
+        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3), \(data.4), \(data.5)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
     }

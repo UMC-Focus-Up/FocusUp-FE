@@ -6,7 +6,7 @@ class GoalRoutineListViewController: UIViewController {
     @IBOutlet weak var goalRoutineLabel2: UILabel!
     @IBOutlet weak var routineTableView: UITableView!
     
-    var routineData: [(String, [Int], String, String, Int64)] = []
+    var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
     var isAddMode: Bool = true       // 추가 모드 여부 (HomeVC에서 추가모드는 포함 X)
 
     override func viewDidLoad() {
@@ -104,7 +104,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
             let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
             editVC.delegate = self
             editVC.routineIndex = indexPath.row
-            editVC.routineData = routineData[indexPath.row]
+            editVC.routineData = routineData[indexPath.row] // 여기서도 수정된 타입으로 전달
             navigationController?.pushViewController(editVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
@@ -115,7 +115,7 @@ extension GoalRoutineListViewController: UITableViewDelegate, UITableViewDataSou
 
 
 extension GoalRoutineListViewController: RoutineDataDelegate, RoutineDeleteDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String, Int64)) {
+    func didReceiveData(_ data: (String, [Int], String, String, Int64, String)) { // 타입 수정
         RoutineDataModel.shared.addRoutine(data)
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
