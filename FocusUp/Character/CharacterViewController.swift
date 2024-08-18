@@ -222,9 +222,25 @@ class CharacterViewController: UIViewController {
     }
     
     private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "확인", style: .default, handler: nil)
-        alert.addAction(action)
+        // "title"
+        let fullText = title
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+          
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
+          
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let confirm = UIAlertAction(title: "확인", style: .default) { action in
+            //
+        }
+        confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+        alert.addAction(confirm)
         present(alert, animated: true, completion: nil)
     }
     
