@@ -83,6 +83,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var modifyNoticeLabel: UILabel?
     
     var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
+    static var sharedRoutines: [Routines] = [] // 이 변수를 통해 다른 클래스에서 접근할 수 있도록 설정
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -458,12 +459,23 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         
         let endpoint = "/api/routine/mypage"
         
-        // APIClient의 getRequest 메서드를 사용하여 데이터 가져오기
+//        // APIClient의 getRequest 메서드를 사용하여 데이터 가져오기
+//        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+//            switch result {
+//            case .success(let response):
+//                if let routines = response.result?.routines {
+//                    // 데이터 로드 후에만 프로그레스바 증가 여부를 결정
+//                    self.displayRoutines(routines)
+//                }
+//            case .failure(let error):
+//                print("Error: \(error)")
+//            }
+//        }
         APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
             switch result {
             case .success(let response):
                 if let routines = response.result?.routines {
-                    // 데이터 로드 후에만 프로그레스바 증가 여부를 결정
+                    MyPageViewController.sharedRoutines = routines.flatMap { $0.routines } // 모든 루틴을 플랫맵으로 저장
                     self.displayRoutines(routines)
                 }
             case .failure(let error):

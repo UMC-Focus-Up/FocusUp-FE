@@ -60,7 +60,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
         return tableView
     }()
     
-    private var routinesByDay: [(String, [Int], String, String, Int64, String)] = [] // 차례대로 루틴이름, 반복주기, 시작시간, 목표시간
+    private var routinesByDay: [(String, [Int], String, String, Int64, String)] = [] // 차례대로 루틴이름, 반복주기, 시작시간, 목표시간, 루틴 ID, 시작 날짜
     private var dayOfWeek: Int = 0
     
     override func viewDidLoad() {
@@ -145,32 +145,30 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy년 MM월 dd일" // 원하는 날짜 포맷으로 설정
             let formattedDate = dateFormatter.string(from: selectedDate)
-            
-            // 목표 시간을 문자열에서 시간과 분으로 변환
-            let goalTimeString = selectedRoutine.3
-            let goalTimeComponents = goalTimeString.split(separator: ":")
-            
-            // 시간과 분을 정수로 변환
-            let hours = Int(goalTimeComponents.first ?? "0") ?? 0
-            let minutes = Int(goalTimeComponents.last ?? "0") ?? 0
-            
-            // 목표 시간을 시간 단위로 변환
-            let totalHours = hours + (minutes / 60)
-            
-            // 실제 소요 시간을 시간 단위로 변환
-            let timeElapsedInHours = Int(timeElapsed ?? 0) / 3600
-            
-            // 달성률 계산 (소수점 첫째자리까지 표시)
-            let totalGoalHours = Double(totalHours)
-            let achievementRate = totalGoalHours > 0 ? min(max((Double(timeElapsedInHours) / totalGoalHours) * 100, 0), 100) : 0
-            let formattedAchievementRate = String(format: "%.1f", achievementRate) // 소수점 첫째자리까지
-            
+
+            // 선택된 루틴의 ID를 사용하여 execTime과 achieveRate를 가져오기
+            var execTime = "00:00"  // 기본 값
+            var achieveRate = 0.0   // 기본 값
+
+            // MyPageViewController에서 불러온 서버 데이터를 사용
+            let storedRoutines = MyPageViewController.sharedRoutines
+
+            // 선택된 루틴 ID에 해당하는 execTime과 achieveRate를 찾기
+            if let routineDetail = storedRoutines.first(where: { $0.id == selectedRoutine.4 }) {
+                execTime = routineDetail.execTime // 해당 루틴의 execTime을 가져옴
+                achieveRate = routineDetail.achieveRate // 해당 루틴의 achieveRate를 가져옴
+            }
+
+            // 루틴 정보 출력
             let routineInfo = """
-            목표 시간 : \(totalHours)시간
-            실제 루틴 시간 : \(timeElapsedInHours)시간
-            달성률 : \(formattedAchievementRate)%
+            목표 시간: \(selectedRoutine.3)
+            실제 루틴 시간: \(execTime)
+            달성률: \(achieveRate)%
             """
-            
+
+            print("routine id: \(selectedRoutine.4)")
+            print(routineInfo)
+
             // 1. CalendarBottomSheetViewController를 먼저 사라지게 합니다.
             dismiss(animated: true) {
                 // 현재의 UIWindowScene을 가져옵니다.
@@ -200,8 +198,6 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             print("선택된 루틴이 없습니다.")
         }
     }
-
-
     
     private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String, Int64, String)] {
         var routinesForDay: [(String, [Int], String, String, Int64, String)] = []
@@ -259,9 +255,9 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             selectedRoutine = routinesByDay[indexPath.row]
         }
         
-        // 선택된 루틴의 이름을 출력합니다
+        // 선택된 루틴의 ID를 출력합니다
         if let selectedRoutine = selectedRoutine {
-            print("선택된 루틴: \(selectedRoutine.0)")
+            print("선택된 루틴 ID: \(selectedRoutine.4)") // 루틴 ID 출력
         }
     }
 }
