@@ -63,7 +63,7 @@ class CustomHeaderView: UIView {
 }
 
 // MARK: - MyPage ViewController
-class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
+class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     
     @IBOutlet weak var settingButton: UIBarButtonItem!
     @IBOutlet weak var goalRoutineLabel: UILabel!
@@ -83,9 +83,8 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var modifyNoticeLabel: UILabel?
     
     var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
-    
-    private var savedTimeElapsed: TimeInterval = 0
-    private var uptoNext: Int?
+    static var sharedRoutines: [Routines] = [] // 이 변수를 통해 다른 클래스에서 접근할 수 있도록 설정
+    var routineDates: [Date] = [] // 루틴이 있는 날짜를 저장하는 배열
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,8 +92,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         setupUI()
         setupCalendar()
         setupNotifications()
-
-        updateLevelLabel()
         
         routineTableView.delegate = self
         routineTableView.dataSource = self
@@ -104,9 +101,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
         routineTableView.separatorStyle = .none
         routineTableView.isScrollEnabled = false
-        
-        fetchTopThreeRoutines()
-        fetchRoutineData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -119,9 +113,16 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         configureNavigationBar()
         configureTabBar()
         
+        // 레벨 업데이트를 먼저 수행
+        updateLevelLabel()
+        
+        fetchTopThreeRoutines()
+        fetchRoutineData()
+        
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
     }
+
     
     func didDeleteRoutine(at index: Int) {
         RoutineDataModel.shared.deleteRoutine(at: index)
@@ -402,6 +403,48 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         showBottomSheet(for: date)
     }
     
+    // 특정 날짜에 원형을 그리도록 설정
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
+        if routineDates.contains(date) {
+            return UIColor.clear // 내부는 비워둠
+        }
+        return nil
+    }
+
+    // 특정 날짜에 테두리를 설정
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderDefaultColorFor date: Date) -> UIColor? {
+        if routineDates.contains(date) {
+            return UIColor(red: 0.89, green: 0.95, blue: 0.98, alpha: 0.7) // 테두리 색상
+        }
+        return nil
+    }
+    
+
+    // 날짜 선택 시에도 테두리 유지
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderSelectionColorFor date: Date) -> UIColor? {
+        if routineDates.contains(date) {
+            return UIColor(red: 0.89, green: 0.95, blue: 0.98, alpha: 0.7) // 테두리 색상
+        }
+        return nil
+    }
+
+    // 날짜 선택 시 내부 색상을 설정하지 않음
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillSelectionColorFor date: Date) -> UIColor? {
+        if routineDates.contains(date) {
+            return UIColor.clear // 선택된 날짜의 내부 색상
+        }
+        return nil
+    }
+
+    // 날짜 선택 시 텍스트 색상을 설정하지 않음 (선택 전과 동일하게 유지)
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleSelectionColorFor date: Date) -> UIColor? {
+        if routineDates.contains(date) {
+            return UIColor.black // 선택된 날짜의 텍스트 색상 유지
+        }
+        return nil
+    }
+
+    
     private func showBottomSheet(for date: Date) {
         let dayOfWeek = Calendar.current.component(.weekday, from: date) - 1
         let currentDate = Date()
@@ -452,11 +495,12 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         
         let endpoint = "/api/routine/mypage"
         
-        // APIClient의 getRequest 메서드를 사용하여 데이터 가져오기
         APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
             switch result {
             case .success(let response):
-                if let routines = response.result?.routines {
+                if let routines = response.result?.routines, let successCount = response.result?.successCount {
+                    MyPageViewController.sharedRoutines = routines.flatMap { $0.routines } // 모든 루틴을 플랫맵으로 저장
+                    self.updateLevelProgress(bySuccessCount: successCount)
                     self.displayRoutines(routines)
                 }
             case .failure(let error):
@@ -470,26 +514,50 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         
         let currentDate = Date() // 현재 날짜
         
+        // 루틴 날짜를 초기화
+        routineDates.removeAll()
+        
         for routine in routines {
             guard let startDate = dateFromString(routine.date), startDate >= currentDate else {
                 continue // startDate가 현재 날짜보다 이전이면 무시
             }
             
+            // 루틴 날짜를 배열에 추가
+            routineDates.append(startDate)
+            
             print("date: \(routine.date)")
             
             for routineDetail in routine.routines {
                 print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
-                
-                // execTime이 targetTime과 같거나 클 때 프로그레스바를 증가시킵니다.
-                if let execTime = timeIntervalFromString(routineDetail.execTime),
-                   let targetTime = timeIntervalFromString(routineDetail.targetTime) {
-                    if execTime >= targetTime {
-                        // 프로그레스바 증가
-                        updateLevelProgress(by: 0.2)
-                    }
-                }
             }
         }
+        
+        // 캘린더를 다시 그려 루틴 날짜에 원형을 표시
+        calendarView.reloadData()
+    }
+
+
+    func updateLevelProgress(bySuccessCount successCount: Int) {
+        let progress: Float
+        
+        switch successCount {
+        case 1:
+            progress = 0.2
+        case 2:
+            progress = 0.4
+        case 3:
+            progress = 0.6
+        case 4:
+            progress = 0.8
+        case 5:
+            progress = 1.0
+        default:
+            progress = 0.0
+        }
+        
+        print("updateLevelProgress: successCount \(successCount)에 따라 프로그레스바가 \(progress * 100)%로 설정되었습니다.")
+        levelProgress.setProgress(progress, animated: true)
+        updateLevelNoticeLabel()
     }
 
     // 문자열 날짜를 Date로 변환하는 헬퍼 메서드
@@ -517,48 +585,38 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         let currentPage = calendarView.currentPage
         let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentPage)!
         calendarView.setCurrentPage(previousMonth, animated: true)
-        updateHeaderViewForCurrentMonth()  // Add this line
+        updateHeaderViewForCurrentMonth()
     }
 
     @objc private func didTapNextMonthButton() {
         let currentPage = calendarView.currentPage
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentPage)!
         calendarView.setCurrentPage(nextMonth, animated: true)
-        updateHeaderViewForCurrentMonth()  // Add this line
-    }
-    
-    func updateLevelProgress(by increment: Float) {
-        let newProgress = min(levelProgress.progress + increment, 1.0)
-        levelProgress.setProgress(newProgress, animated: true)
-        updateLevelNoticeLabel()
-        
-        if newProgress >= 1.0 {
-            // 레벨이 7 이상이면 레벨 업을 하지 않음
-            if LevelControlViewController.sharedData.userLevel < 7 {
-                LevelControlViewController.sharedData.userLevel += 1
-            }
-            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
-            updateLevelLabel()
-        } else {
-            levelProgress.setProgress(newProgress, animated: true)
-        }
+        updateHeaderViewForCurrentMonth()
     }
     
     private func updateLevelNoticeLabel() {
-        // progress에 따라 표시할 숫자 계산
-        let progressValues: [Float: Int] = [
-            0.0: 5,
-            0.2: 4,
-            0.4: 3,
-            0.6: 2,
-            0.8: 1,
-            1.0: 5
-        ]
-        // 현재 progress 값에 해당하는 숫자를 가져와 presentLevelLabel에 표시
-        let currentProgress = round(levelProgress.progress * 5) / 5 // 가장 가까운 0.2 단위로 반올림
-        let currentLabelValue = progressValues[currentProgress] ?? 0
-        levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(currentLabelValue)번 남았어요!"
+        // 현재 progress 값에 따라 남은 횟수 계산
+        let remainingCount: Int
+        switch levelProgress.progress {
+        case 0.0:
+            remainingCount = 5
+        case 0.2:
+            remainingCount = 4
+        case 0.4:
+            remainingCount = 3
+        case 0.6:
+            remainingCount = 2
+        case 0.8:
+            remainingCount = 1
+        case 1.0:
+            remainingCount = 0
+        default:
+            remainingCount = 5
+        }
+        levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(remainingCount)번 남았어요!"
     }
+
     
     // MARK: - 마이페이지 조회 - 상위 루틴 3개 조회 연동
     func fetchTopThreeRoutines() {
@@ -656,8 +714,5 @@ extension MyPageViewController: RoutineUpdateDelegate {
     func didUpdateRoutine() {
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
-        
-        fetchRoutineData()
-        fetchTopThreeRoutines()
     }
 }
