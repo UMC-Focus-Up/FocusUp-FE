@@ -159,10 +159,14 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
                 achieveRate = routineDetail.achieveRate // 해당 루틴의 achieveRate를 가져옴
             }
 
+            // 목표 시간을 시간 단위로 변환
+            let targetTimeInHours = convertTimeStringToHours(selectedRoutine.3)
+            let execTimeInHours = convertTimeStringToHours(execTime)
+
             // 루틴 정보 출력
             let routineInfo = """
-            목표 시간: \(selectedRoutine.3)
-            실제 루틴 시간: \(execTime)
+            목표 시간: \(targetTimeInHours)
+            실제 루틴 시간: \(execTimeInHours)
             달성률: \(achieveRate)%
             """
 
@@ -198,6 +202,15 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
             print("선택된 루틴이 없습니다.")
         }
     }
+
+    // Helper function to convert "HH:MM" string to hours as a string value
+    private func convertTimeStringToHours(_ timeString: String) -> String {
+        let timeComponents = timeString.split(separator: ":")
+        let hours = Int(timeComponents[0]) ?? 0
+        return "\(hours)시간"
+    }
+
+
     
     private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String, Int64, String)] {
         var routinesForDay: [(String, [Int], String, String, Int64, String)] = []
