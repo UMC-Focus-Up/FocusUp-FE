@@ -4,7 +4,6 @@ import Alamofire
 
 // MARK: - Custom Calendar Header View
 class CustomHeaderView: UIView {
-    
     let previousButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "calendar_arrow_left"), for: .normal)
@@ -83,7 +82,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var levelDownLabel: UILabel?
     private var modifyNoticeLabel: UILabel?
     
-    var routineData: [(String, [Int], String, String, Int64)] = []
+    var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
     
     private var savedTimeElapsed: TimeInterval = 0
     private var uptoNext: Int?
@@ -405,7 +404,13 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     private func showBottomSheet(for date: Date) {
         let dayOfWeek = Calendar.current.component(.weekday, from: date) - 1
-        let routinesForDay = RoutineDataModel.shared.routineData.filter { $0.1.contains(dayOfWeek) }
+        let currentDate = Date()
+        
+        // 현재 날짜 이후의 날짜에만 해당하는 루틴을 필터링
+        let routinesForDay = RoutineDataModel.shared.routineData.filter { routine in
+            guard let routineStartDate = dateFromString(routine.5) else { return false }
+            return routine.1.contains(dayOfWeek) && routineStartDate <= date && date >= currentDate
+        }
         
         if !routinesForDay.isEmpty {
             let bottomSheetVC = CalendarBottomSheetViewController()
@@ -436,6 +441,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             present(alert, animated: true, completion: nil)
         }
     }
+
     
     // MARK: - 마이페이지 조회 - 캘린더 연동
     func fetchRoutineData() {
@@ -461,11 +467,19 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
 
     func displayRoutines(_ routines: [RoutineDetails]) {
         print("서버에서 데이터를 성공적으로 불러왔습니다.")
+        
+        let currentDate = Date() // 현재 날짜
+        
         for routine in routines {
+            guard let startDate = dateFromString(routine.date), startDate >= currentDate else {
+                continue // startDate가 현재 날짜보다 이전이면 무시
+            }
+            
             print("date: \(routine.date)")
+            
             for routineDetail in routine.routines {
                 print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
-
+                
                 // execTime이 targetTime과 같거나 클 때 프로그레스바를 증가시킵니다.
                 if let execTime = timeIntervalFromString(routineDetail.execTime),
                    let targetTime = timeIntervalFromString(routineDetail.targetTime) {
@@ -477,6 +491,14 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             }
         }
     }
+
+    // 문자열 날짜를 Date로 변환하는 헬퍼 메서드
+    func dateFromString(_ dateString: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd" // 날짜 형식에 맞게 수정
+        return dateFormatter.date(from: dateString)
+    }
+
 
     // 문자열 시간을 TimeInterval로 변환하는 헬퍼 메서드
     func timeIntervalFromString(_ timeString: String) -> TimeInterval? {
@@ -611,7 +633,7 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
             let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
             editVC.delegate = self
             editVC.routineIndex = indexPath.row
-            editVC.routineData = routineData[indexPath.row]
+            editVC.routineData = routineData[indexPath.row] // 수정된 타입 반영
             navigationController?.pushViewController(editVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
@@ -621,8 +643,8 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MyPageViewController: RoutineDataDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String, Int64)) {
-        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
+    func didReceiveData(_ data: (String, [Int], String, String, Int64, String)) { // 수정된 타입 반영
+        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3), \(data.4), \(data.5)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
     }

@@ -18,7 +18,7 @@ class GoalRoutineEditViewController: UIViewController {
     @IBOutlet weak var goalTimeButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
     
-    var routineData: (String, [Int], String, String, Int64)?
+    var routineData: (String, [Int], String, String, Int64, String)?
     weak var delegate: RoutineDeleteDelegate?
     var routineIndex: Int?
 
