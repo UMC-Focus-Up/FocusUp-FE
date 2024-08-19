@@ -1,4 +1,5 @@
 import UIKit
+import Alamofire
 
 class GoalRoutineSettingViewController: UIViewController {
     // MARK: - Properties
@@ -22,6 +23,8 @@ class GoalRoutineSettingViewController: UIViewController {
     var repeatPeriodTags: [Int] = []
     var startTime: String = ""
     var goalTime: String = ""
+    var userRoutineId: Int64 = 0
+    var startDate: String = ""
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -41,7 +44,6 @@ class GoalRoutineSettingViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
     }
-    
     
     // MARK: - Function
     func setAttribute() {
@@ -147,6 +149,112 @@ class GoalRoutineSettingViewController: UIViewController {
         view.endEditing(true)
     }
     
+    // MARK: - API
+    var accessToken: String = ""
+    
+    func createRoutine() {
+        // 요청할 URL 생성
+        let url = "http://15.165.198.110:80/api/routine/user/create"
+        
+        // 전송할 데이터 생성
+        let convertedStartTime = convertTimeTo24HourFormat(time: startTime)
+        let currentDate = Date()
+        let currentDayOfWeek = Calendar.current.component(.weekday, from: currentDate) - 1 // 일요일이 0부터 시작
+        
+        // 현재 날짜가 반복 주기 요일에 포함되어 있는지 확인
+        if repeatPeriodTags.contains(currentDayOfWeek) {
+            startDate = getCurrentDateString(from: currentDate) // 현재 날짜를 시작 날짜로 설정
+        } else {
+            // 포함되지 않으면 다음 반복 주기 날짜로 설정
+            startDate = getNextAvailableDate(for: repeatPeriodTags, from: currentDate)
+        }
+        
+        let routineData: [String: Any] = [
+            "routineName": goalRoutine,
+            "startDate": startDate,
+            "repeatCycleDay": getRepeatCycleDays(),
+            "startTime": convertedStartTime ?? "00:00",
+            "endTime": goalTime
+        ]
+        print("보내는 데이터: \(routineData)")
+
+        // 헤더 설정
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+            accessToken = token
+        } else {
+            print("accessToken이 없습니다.")
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Content-Type": "application/json"
+        ]
+        print("헤더: \(headers)")
+        
+        // API 요청
+        AF.request(url, method: .post, parameters: routineData, encoding: JSONEncoding.default, headers: headers)
+            .validate(statusCode: 200..<300)
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    if let jsonResponse = value as? [String: Any], let result = jsonResponse["result"] as? Int64 {
+                        self.userRoutineId = result
+                        print("루틴 ID: \(self.userRoutineId)")
+                        self.addRoutineData() // 루틴 데이터 저장
+                    }
+                case .failure(let error):
+                    print("API 요청 실패: \(error)")
+                }
+            }
+    }
+    
+    func getNextAvailableDate(for daysOfWeek: [Int], from startDate: Date) -> String {
+        let calendar = Calendar.current
+        var nextDate = startDate
+        
+        while true {
+            let dayOfWeek = calendar.component(.weekday, from: nextDate) - 1
+            if daysOfWeek.contains(dayOfWeek) {
+                return getCurrentDateString(from: nextDate)
+            }
+            nextDate = calendar.date(byAdding: .day, value: 1, to: nextDate)!
+        }
+    }
+
+    func getCurrentDateString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+    
+    // 선택된 반복 요일을 반환
+    func getRepeatCycleDays() -> [String] {
+        let dayMapping: [Int: String] = [
+            1: "MONDAY",
+            2: "TUESDAY",
+            3: "WEDNESDAY",
+            4: "THURSDAY",
+            5: "FRIDAY",
+            6: "SATURDAY",
+            0: "SUNDAY"
+        ]
+        
+        return repeatPeriodTags.compactMap { dayMapping[$0] }
+    }
+    
+    // 시간 형식 변경
+    func convertTimeTo24HourFormat(time: String) -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a" // 현재의 12시간 형식
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        if let date = formatter.date(from: time) {
+            formatter.dateFormat = "HH:mm" // 24시간 형식으로 변환
+            return formatter.string(from: date)
+        }
+        return nil
+    }
+    
     // MARK: - Action
     private func setWeekStackViewButton() {
         for case let button as UIButton in weekStackButton.arrangedSubviews {
@@ -215,15 +323,8 @@ class GoalRoutineSettingViewController: UIViewController {
             self.startTime = self.startTimeLabel.text ?? ""
             self.goalTime = self.goalTimeLabel.text ?? ""
             
-            // 요일 정보와 함께 루틴 추가
-            let data: (String, [Int], String, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime)
-            
-            // 루틴 데이터 추가
-            RoutineDataModel.shared.routineData.insert(data, at: 0)
-            
-            // Delegate를 통해 목록 업데이트
-            self.updateDelegate?.didUpdateRoutine()
-            self.navigationController?.popViewController(animated: true)
+            // API 요청 호출
+            self.createRoutine()
         }
         alert.addAction(confirmAction)
         confirmAction.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
@@ -233,8 +334,18 @@ class GoalRoutineSettingViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
 
+    func addRoutineData() {
+        // 요일 정보와 함께 루틴 추가
+        let data: (String, [Int], String, String, Int64, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime, self.userRoutineId, self.startDate)
+        
+        // 루틴 데이터 추가
+        RoutineDataModel.shared.addRoutine(data)
+        
+        // Delegate를 통해 목록 업데이트
+        self.updateDelegate?.didUpdateRoutine()
+        self.navigationController?.popViewController(animated: true)
+    }
 
-    
     @objc func customButtonDidTap(_ sender: UIButton) {
         print("Information.")
         
@@ -254,15 +365,27 @@ class GoalRoutineSettingViewController: UIViewController {
     }
     
     private func showCustomStartTimePicker() {
-        let customPickerView = CustomStartTimePickerView(frame: self.view.bounds)
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else { return }
+
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        let customPickerView = CustomStartTimePickerView(frame: window.bounds)
         customPickerView.delegate = self
-        self.view.addSubview(customPickerView)
+        window.addSubview(customPickerView)
     }
-    
+
     private func showCustomGoalTimePicker() {
-        let customPickerView = CustomGoalTimePickerView(frame: self.view.bounds)
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else { return }
+
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        let customPickerView = CustomGoalTimePickerView(frame: window.bounds)
         customPickerView.delegate = self
-        self.view.addSubview(customPickerView)
+        window.addSubview(customPickerView)
     }
     
     private func updateStartTimeUI() {
@@ -276,7 +399,6 @@ class GoalRoutineSettingViewController: UIViewController {
         goalTimeLabel.textColor = UIColor.primary4
         goalTimeButton.setImage(UIImage(named: "clock_after"), for: .normal)
     }
-    
 }
 
 // MARK: - extension

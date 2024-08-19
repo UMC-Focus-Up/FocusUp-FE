@@ -1,9 +1,9 @@
 import UIKit
 import FSCalendar
+import Alamofire
 
 // MARK: - Custom Calendar Header View
 class CustomHeaderView: UIView {
-    
     let previousButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "calendar_arrow_left"), for: .normal)
@@ -63,7 +63,7 @@ class CustomHeaderView: UIView {
 }
 
 // MARK: - MyPage ViewController
-class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
+class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     
     @IBOutlet weak var settingButton: UIBarButtonItem!
     @IBOutlet weak var goalRoutineLabel: UILabel!
@@ -82,22 +82,16 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     private var levelDownLabel: UILabel?
     private var modifyNoticeLabel: UILabel?
     
-    var routineData: [(String, [Int], String, String)] = []
-    
-    private var savedTimeElapsed: TimeInterval = 0
-    private var uptoNext: Int?
+    var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
+    static var sharedRoutines: [Routines] = [] // 이 변수를 통해 다른 클래스에서 접근할 수 있도록 설정
+    var routineDates: [Date] = [] // 루틴이 있는 날짜를 저장하는 배열
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNotification()
         
         setupUI()
         setupCalendar()
         setupNotifications()
-        
-        updateLevelLabel()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleLevelProgressUpdate), name: .didPassMaxBoosterTime, object: nil)
         
         routineTableView.delegate = self
         routineTableView.dataSource = self
@@ -116,11 +110,60 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        fetchMyPageRoutineData()
+        
         configureNavigationBar()
         configureTabBar()
         
+        // 레벨 업데이트를 먼저 수행
+        updateLevelLabel()
+        
+        fetchTopThreeRoutines()
+        fetchRoutineData()
+        
         routineData = RoutineDataModel.shared.routineData
         routineTableView.reloadData()
+    }
+
+    // MARK: - function
+    func fetchMyPageRoutineData() {
+        let url = "http://15.165.198.110:80/api/routine/mypage"
+
+        // 헤더 설정
+        var accessToken: String = ""
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+                accessToken = token
+            } else {
+                print("accessToken이 없습니다.")
+            }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Content-Type": "application/json"
+        ]
+        print("헤더: \(headers)")
+        
+        AF.request(url, method: .get, headers: headers).responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let result = json["result"] as? [String: Any],
+                   let userRoutines = result["userRoutines"] as? [[String: Any]] {
+                    self.routineData = userRoutines.compactMap { routine in
+                        if let id = routine["id"] as? Int64,
+                           let name = routine["name"] as? String {
+                            // 필요에 따라 (String, [Int], String, String, Int64, String) 형식으로 변환
+                            return (name, [], "", "", id, "")
+                        }
+                        return nil
+                    }
+                    self.routineTableView.reloadData()
+                }
+            case .failure(let error):
+                print("Error fetching routine data: \(error)")
+            }
+        }
     }
     
     func didDeleteRoutine(at index: Int) {
@@ -207,6 +250,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
+    // MARK: - action
     @IBAction func didTapSettingBtn(_ sender: Any) {
         guard let toSettingVC = storyboard?.instantiateViewController(identifier: "SettingViewController") else { return }
         navigationController?.pushViewController(toSettingVC, animated: true)
@@ -218,7 +262,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     }
     
     @objc private func handleNotification(_ notification: Notification) {
-        if let buttonType = notification.userInfo?["buttonType"] as? String, buttonType == "levelButton" {
+        if let buttonType = notification.userInfo?["buttonType"] as? String, buttonType.contains("levelButton") {
             handleLevelSelectionCompletion()
         }
     }
@@ -320,10 +364,42 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
+    // MARK: - 마이페이지 조회 - 레벨 연동
     private func updateLevelLabel() {
-        let userLevel = LevelControlViewController.sharedData.userLevel
-        presentLevelLabel.text = "현재 Level \(userLevel)"
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        // API 호출 후, 서버에서 받아온 level 값을 사용하여 UI를 업데이트
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let mypageResponse):
+                if let mypageResult = mypageResponse.result {
+                    // 서버에서 받아온 level 값으로 presentLevelLabel 업데이트
+                    var serverLevel = mypageResult.level
+                    
+                    // 레벨이 7 이상이면 7로 제한
+                    if serverLevel > 7 {
+                        serverLevel = 7
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.presentLevelLabel.text = "현재 Level \(serverLevel)"
+                    }
+                    print("서버에서 데이터를 성공적으로 불러왔습니다.")
+                    print("level: \(serverLevel)")
+                } else {
+                    print("서버 응답은 성공했지만 result 데이터가 없습니다.")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
     }
+
     
     
     private func setWeekdayLabels() {
@@ -372,13 +448,25 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     private func showBottomSheet(for date: Date) {
         let dayOfWeek = Calendar.current.component(.weekday, from: date) - 1
-        let routinesForDay = RoutineDataModel.shared.routineData.filter { $0.1.contains(dayOfWeek) }
+        
+        // **선택한 날짜와 루틴의 시작 날짜와 반복 주기를 기준으로 루틴을 필터링**
+        let routinesForDay = RoutineDataModel.shared.routineData.filter { routine in
+            guard let routineStartDate = dateFromString(routine.5) else { return false }
+            
+            // startDate가 현재 선택된 날짜와 동일하거나 이전인지 확인
+            let isStartDateValid = routineStartDate <= date
+            
+            // 해당 요일이 반복 주기에 포함되는지 확인
+            let isDayOfWeekValid = routine.1.contains(dayOfWeek)
+            
+            return isStartDateValid && isDayOfWeekValid
+        }
         
         if !routinesForDay.isEmpty {
             let bottomSheetVC = CalendarBottomSheetViewController()
             bottomSheetVC.modalPresentationStyle = .pageSheet
             bottomSheetVC.selectedDate = date
-            bottomSheetVC.timeElapsed = savedTimeElapsed // timeElapsed 값을 전달
+            bottomSheetVC.routinesForDay = routinesForDay // 선택한 날짜에 해당하는 루틴 전달
             
             if let sheet = bottomSheetVC.sheetPresentationController {
                 let customDetent = UISheetPresentationController.Detent.custom { context in
@@ -405,74 +493,167 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
 
+
+    
+    // MARK: - 마이페이지 조회 - 캘린더 연동
+    func fetchRoutineData() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if let routines = response.result?.routines, let successCount = response.result?.successCount {
+                    MyPageViewController.sharedRoutines = routines.flatMap { $0.routines } // 모든 루틴을 플랫맵으로 저장
+                    self.updateLevelProgress(bySuccessCount: successCount)
+                    self.displayRoutines(routines)
+                }
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
+    }
+
+    func displayRoutines(_ routines: [RoutineDetails]) {
+        print("서버에서 데이터를 성공적으로 불러왔습니다.")
+        
+        let currentDate = Date() // 현재 날짜
+        
+        for routine in routines {
+            guard let startDate = dateFromString(routine.date), startDate >= currentDate else {
+                continue // startDate가 현재 날짜보다 이전이면 무시
+            }
+            
+            // 루틴 날짜를 배열에 추가
+            routineDates.append(startDate)
+            
+            print("date: \(routine.date)")
+            
+            for routineDetail in routine.routines {
+                print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)  target time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)  achieve rate: \(routineDetail.achieveRate)")
+            }
+        }
+    }
+
+
+    func updateLevelProgress(bySuccessCount successCount: Int) {
+        let progress: Float
+        
+        switch successCount {
+        case 1:
+            progress = 0.2
+        case 2:
+            progress = 0.4
+        case 3:
+            progress = 0.6
+        case 4:
+            progress = 0.8
+        case 5:
+            progress = 1.0
+        default:
+            progress = 0.0
+        }
+        
+        print("updateLevelProgress: successCount \(successCount)에 따라 프로그레스바가 \(progress * 100)%로 설정되었습니다.")
+        levelProgress.setProgress(progress, animated: true)
+        updateLevelNoticeLabel()
+    }
+
+    // 문자열 날짜를 Date로 변환하는 헬퍼 메서드
+    func dateFromString(_ dateString: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd" // 날짜 형식에 맞게 수정
+        return dateFormatter.date(from: dateString)
+    }
+
+
+    // 문자열 시간을 TimeInterval로 변환하는 헬퍼 메서드
+    func timeIntervalFromString(_ timeString: String) -> TimeInterval? {
+        let components = timeString.split(separator: ":")
+        guard components.count == 2,
+              let hours = Double(components[0]),
+              let minutes = Double(components[1]) else {
+            return nil
+        }
+        
+        return (hours * 3600) + (minutes * 60)
+    }
+
     
     @objc private func didTapPreviousMonthButton() {
         let currentPage = calendarView.currentPage
         let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentPage)!
         calendarView.setCurrentPage(previousMonth, animated: true)
+        updateHeaderViewForCurrentMonth()
     }
-    
+
     @objc private func didTapNextMonthButton() {
         let currentPage = calendarView.currentPage
         let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentPage)!
         calendarView.setCurrentPage(nextMonth, animated: true)
-    }
-    
-    @objc func handleLevelProgressUpdate() {
-        // progress를 0.2씩 증가
-        updateLevelProgress(by: 0.2)
-    }
-    
-    // progress 값을 업데이트하는 메소드
-    func updateLevelProgress(by increment: Float) {
-        let newProgress = min(levelProgress.progress + increment, 1.0)
-        levelProgress.setProgress(newProgress, animated: true)
-        updateLevelNoticeLabel()
-        
-        if newProgress >= 1.0 {
-            // progress가 1.0에 도달하면 userLevel 증가 및 progress 초기화
-            LevelControlViewController.sharedData.userLevel += 1
-            levelProgress.setProgress(0.0, animated: false) // progress를 0으로 초기화
-            updateLevelLabel()
-        } else {
-            levelProgress.setProgress(newProgress, animated: true)
-        }
+        updateHeaderViewForCurrentMonth()
     }
     
     private func updateLevelNoticeLabel() {
-        // progress에 따라 표시할 숫자 계산
-        let progressValues: [Float: Int] = [
-            0.0: 5,
-            0.2: 4,
-            0.4: 3,
-            0.6: 2,
-            0.8: 1,
-            1.0: 5
-        ]
-        // 현재 progress 값에 해당하는 숫자를 가져와 presentLevelLabel에 표시
-        let currentProgress = round(levelProgress.progress * 5) / 5 // 가장 가까운 0.2 단위로 반올림
-        let currentLabelValue = progressValues[currentProgress] ?? 0
-        levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(currentLabelValue)번 남았어요!"
+        // 현재 progress 값에 따라 남은 횟수 계산
+        let remainingCount: Int
+        switch levelProgress.progress {
+        case 0.0:
+            remainingCount = 5
+        case 0.2:
+            remainingCount = 4
+        case 0.4:
+            remainingCount = 3
+        case 0.6:
+            remainingCount = 2
+        case 0.8:
+            remainingCount = 1
+        case 1.0:
+            remainingCount = 0
+        default:
+            remainingCount = 5
+        }
+        levelNoticeLabel.text = "다음 레벨업 도달 횟수까지 \(remainingCount)번 남았어요!"
     }
+
+    
+    // MARK: - 마이페이지 조회 - 상위 루틴 3개 조회 연동
+    func fetchTopThreeRoutines() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        let endpoint = "/api/routine/mypage"
+        
+        // API 호출 후, 상위 3개의 루틴을 가져와 출력
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<MyPageResponse, AFError>) in
+            switch result {
+            case .success(let mypageResponse):
+                if let mypageResult = mypageResponse.result {
+                    // API에서 가져온 루틴 중 상위 3개의 루틴을 출력
+                    print("서버에서 데이터를 성공적으로 불러왔습니다.")
+                    print("최근 추가한 순 상위 3개의 루틴:")
+                    let topThreeRoutines = mypageResult.userRoutines.prefix(3)
+                    for routine in topThreeRoutines {
+                        print("id: \(routine.id), name: \(routine.name)")
+                    }
+                } else {
+                    print("서버 응답은 성공했지만 result 데이터가 없습니다.")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+
 }
 
 // MARK: - extension
-extension MyPageViewController {
-    private func setupNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleTimeElapsedUpdate(_:)), name: .didPassTimeElapsed, object: nil)
-    }
-    
-    @objc private func handleTimeElapsedUpdate(_ notification: Notification) {
-        if let timeElapsed = notification.userInfo?["timeElapsed"] as? TimeInterval {
-            savedTimeElapsed = timeElapsed
-        }
-    }
-}
-
-extension Notification.Name {
-    static let didPassMaxBoosterTime = Notification.Name("didPassMaxBoosterTime")
-}
-
 extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -513,7 +694,7 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
             let editVC = storyboard?.instantiateViewController(withIdentifier: "GoalRoutineEditViewController") as! GoalRoutineEditViewController
             editVC.delegate = self
             editVC.routineIndex = indexPath.row
-            editVC.routineData = routineData[indexPath.row]
+            editVC.routineData = routineData[indexPath.row] // 수정된 타입 반영
             navigationController?.pushViewController(editVC, animated: true)
         } else {
             guard let GoalRoutineSettingVC = self.storyboard?.instantiateViewController(identifier: "GoalRoutineSettingViewController") else { return }
@@ -523,8 +704,8 @@ extension MyPageViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MyPageViewController: RoutineDataDelegate {
-    func didReceiveData(_ data: (String, [Int], String, String)) {
-        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3)")
+    func didReceiveData(_ data: (String, [Int], String, String, Int64, String)) { // 수정된 타입 반영
+        print("Received Data: \(data.0), \(data.1), \(data.2), \(data.3), \(data.4), \(data.5)")
         routineData.insert(data, at: 0)
         routineTableView.reloadData()
     }

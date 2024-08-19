@@ -7,9 +7,14 @@
 
 import UIKit
 import UserNotifications
+import Alamofire
 
 class AlarmViewController: UIViewController {
 
+    
+    @IBOutlet weak var shellNum: UILabel!
+    @IBOutlet weak var fishNum: UILabel!
+    
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var textLabel: UILabel!
     @IBOutlet var contentLabel: UILabel!
@@ -25,22 +30,13 @@ class AlarmViewController: UIViewController {
     var name: String?
     var startTime: Date?
     var alarmID: Int?
+    var userInfo: [String: Any]?
+    
+    var life: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
-        timeLabel.font = UIFont.pretendardSemibold(size: 48)
-        textLabel.font = UIFont.pretendardRegular(size: 16)
-        contentLabel.font = UIFont.pretendardBold(size: 20)
-        
-        goButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        laterButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        noButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
-        
-        goNum.font = UIFont.pretendardMedium(size: 15)
-        laterNum.font = UIFont.pretendardMedium(size: 15)
-        noNum.font = UIFont.pretendardMedium(size: 15)
+        setupUI()
         
         if let name = name, let startTime = startTime {
             let timeFormatter = DateFormatter()
@@ -54,6 +50,21 @@ class AlarmViewController: UIViewController {
         } else {
             print("알람 ID가 설정되지 않았습니다.") // 디버깅 메시지 추가
         }
+        
+        // 생명, 코인 수 API 연동
+        fetchLifeAndPoints()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMinusSelecteddNotification), name: .minusSelected, object: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchLifeAndPoints()
+    }
+
+    
+    @objc private func handleMinusSelecteddNotification() {
+        fetchLifeAndPoints()
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
@@ -84,7 +95,13 @@ class AlarmViewController: UIViewController {
         alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
-            print("5분 뒤 알람")
+            
+            // Option 1로 설정하고 서버에 POST 요청 전송
+            self.sendAlarmActionRequest(option: .later)
+            NotificationCenter.default.post(name: .minusSelected, object: nil)
+            
+            // 현재 화면을 닫고 메인 뷰 컨트롤러로
+            self.navigateToMainViewController()
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -93,6 +110,7 @@ class AlarmViewController: UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
+    
     
     @IBAction func noBtnClick(_ sender: Any) {
         // "title"
@@ -118,14 +136,51 @@ class AlarmViewController: UIViewController {
         alert.setValue(attributedTitle, forKey: "attributedTitle")
         
         let confirm = UIAlertAction(title: "확인", style: .default) { action in
-            self.navigateToMainViewController()
-            print("조개 차감")
+            
+            // Option 2로 설정하고 서버에 POST 요청 전송
+            self.sendAlarmActionRequest(option: .no)
+            NotificationCenter.default.post(name: .minusSelected, object: nil)
+            
+            // 현재 화면을 닫고 메인 뷰 컨트롤러로
+            if self.life ?? 0 > 0 {
+                self.navigateToMainViewController()
+            } else {
+                self.navigateToCharacterViewController()
+                NotificationCenter.default.post(name: .zeroAlert, object: nil)
+            }
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
         alert.addAction(confirm)
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    
+    private func sendAlarmActionRequest(option: AlarmOption) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        guard let alarmID = alarmID else {
+            print("알람 ID가 없습니다.")
+            return
+        }
+        
+        let parameters = AlarmRequestModel(routineId: alarmID, option: option)
+        
+        let endpoint = "/api/alarm/user/\(alarmID)?option=\(option.rawValue)"
+        
+        APIClient.postRequest(endpoint: endpoint, parameters: parameters, token: token) { (result: Result<AlarmResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                print("알람 버튼 클릭 성공")
+                let life = response.result?.life
+            case .failure(let error):
+                print("알람 버튼 클릭 실패: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func scheduleNotification(minutes: Int) {
@@ -150,6 +205,13 @@ class AlarmViewController: UIViewController {
         }
         
         content.sound = .default
+        
+        // userInfo를 기존 알람의 userInfo로 설정
+        if let userInfo = userInfo {
+            content.userInfo = userInfo
+        } else {
+            content.userInfo = ["alarmID": alarmID ?? -1, "name": name ?? "알림", "startTime": startTime ?? Date(), "targetScene": "Alarm"]
+        }
 
         // 고유 식별자를 가진 알람 요청 생성
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
@@ -163,8 +225,24 @@ class AlarmViewController: UIViewController {
             }
         }
     }
-
-
+    
+    private func navigateToCharacterViewController() {
+        // 스토리보드에서 CustomTabBarController 인스턴스 생성
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let tabBarController = storyboard.instantiateViewController(withIdentifier: "CustomTabBarController") as? CustomTabBarController else {
+            print("CustomTabBarController를 찾을 수 없습니다.")
+            return
+        }
+        
+        // 원하는 탭 인덱스로 이동 (예: 캐릭터 뷰가 2번째 탭이라면 index는 1)
+        tabBarController.selectedIndex = 1
+        
+        // 화면을 완전히 대체하도록 modalPresentationStyle 설정
+        tabBarController.modalPresentationStyle = .fullScreen
+        
+        // MainViewController로 이동
+        self.present(tabBarController, animated: true, completion: nil)
+    }
     
     private func navigateToMainViewController() {
         // 스토리보드에서 MainViewController 인스턴스 생성
@@ -181,4 +259,70 @@ class AlarmViewController: UIViewController {
         self.present(mainVC, animated: true, completion: nil)
     }
     
+    private func setupUI() {
+        // Do any additional setup after loading the view.
+
+        shellNum.font = UIFont.pretendardMedium(size: 16)
+        fishNum.font = UIFont.pretendardMedium(size: 16)
+        
+        timeLabel.font = UIFont.pretendardSemibold(size: 48)
+        textLabel.font = UIFont.pretendardRegular(size: 16)
+        contentLabel.font = UIFont.pretendardBold(size: 20)
+        
+        goButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        laterButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        noButton.titleLabel?.font = UIFont.pretendardMedium(size: 15)
+        
+        goNum.font = UIFont.pretendardMedium(size: 15)
+        laterNum.font = UIFont.pretendardMedium(size: 15)
+        noNum.font = UIFont.pretendardMedium(size: 15)
+    }
+    
+    // 생명과 코인 API 연동
+    private func fetchLifeAndPoints() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        APIClient.getRequest(endpoint: "/api/alarm/user", token: token) { (result: Result<AlarmUserResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                let life = response.result.life
+                let point = response.result.point
+                DispatchQueue.main.async {
+                    self.shellNum.text = "\(life)" // 생명 정보를 라벨에 표시
+                    self.fishNum.text = "\(point)"
+                }
+            case .failure(let error):
+                print("Failed to fetch life data: \(error)")
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .minusSelected, object: nil)
+    }
+}
+
+extension Notification.Name {
+    static let minusSelected = Notification.Name("minusSelected")
+    static let zeroAlert = Notification.Name("zeroAlert")
+}
+
+extension UIApplication {
+    class func topViewController(base: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let nav = base as? UINavigationController {
+            return topViewController(base: nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController {
+            if let selected = tab.selectedViewController {
+                return topViewController(base: selected)
+            }
+        }
+        if let presented = base?.presentedViewController {
+            return topViewController(base: presented)
+        }
+        return base
+    }
 }

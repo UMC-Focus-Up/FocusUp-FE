@@ -46,6 +46,7 @@ class CharacterViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemPurchasedNotification), name: .itemPurchased, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemSelectedNotification), name: .itemSelected, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleZeroAlertNotification), name: .zeroAlert, object: nil)
         
         // 캐릭터 화면 접속시 알람 설정
         SetupRoutineAlarms.setupRoutineAlarms()
@@ -62,6 +63,10 @@ class CharacterViewController: UIViewController {
     
     @objc private func handleItemSelectedNotification() {
         fetchCharacterInfo()
+    }
+    
+    @objc private func handleZeroAlertNotification() {
+        showOutOfLifeAlert()
     }
     
     private var shouldShowAlert = false
@@ -217,9 +222,25 @@ class CharacterViewController: UIViewController {
     }
     
     private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "확인", style: .default, handler: nil)
-        alert.addAction(action)
+        // "title"
+        let fullText = title
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+          
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
+          
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let confirm = UIAlertAction(title: "확인", style: .default) { action in
+            //
+        }
+        confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+        alert.addAction(confirm)
         present(alert, animated: true, completion: nil)
     }
     
@@ -256,9 +277,40 @@ class CharacterViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    // MARK: - 게임 오버 alert창
+    func showOutOfLifeAlert() {
+        // "title"
+        let fullText = "모든 조개(생명)가 소진되었습니다."
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+          
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+          
+        // "title"에 EmphasizeError 색상 적용
+        let textRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.foregroundColor, value: UIColor(named: "EmphasizeError")!, range: textRange)
+
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: "모든 조개(생명)를 소진해 캐릭터가 먹을 것을 찾아 떠났습니다. 상점에서 부활권을 구매하여 캐릭터를 다시 불러오세요!", preferredStyle: .alert)
+          
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+          
+        let confirm = UIAlertAction(title: "확인", style: .default) { action in
+            //
+        }
+        confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+          
+        alert.addAction(confirm)
+          
+        present(alert, animated: true, completion: nil)
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self, name: .itemPurchased, object: nil)
         NotificationCenter.default.removeObserver(self, name: .itemSelected, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .zeroAlert, object: nil)
     }
 }
 
