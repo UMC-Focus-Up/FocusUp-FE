@@ -9,11 +9,13 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKUser
 import NaverThirdPartyLogin
+import Alamofire
 
 class SettingViewController: UIViewController {
     // MARK: - property
     @IBOutlet weak var levelManageButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
+    @IBOutlet var withdrawButton: UIButton!
     
     let naverLoginInstance = NaverThirdPartyLoginConnection.getSharedInstance()
     
@@ -46,11 +48,23 @@ class SettingViewController: UIViewController {
     
     // MARK: - action
     @IBAction func didTapLogOutBtn(_ sender: Any) {
-        let alert = UIAlertController(title: "로그아웃 하시겠습니까?", message: "", preferredStyle: .alert)
         
-        let Cancel = UIAlertAction(title: "취소", style: .default, handler: { (action) -> Void in})
-        alert.addAction(Cancel)
-        Cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
+        // "title"
+        let fullText = "로그아웃 하시겠습니까?"
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+          
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+          
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+        cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
         
         let logout = UIAlertAction(title: "로그아웃", style: .default, handler: { (action) in
             // 로그인 상태 확인
@@ -74,11 +88,12 @@ class SettingViewController: UIViewController {
             }
         })
         
-        alert.addAction(logout)
         logout.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
-        alert.preferredAction = logout
+        alert.addAction(cancel)
+        alert.addAction(logout)
         
+        alert.preferredAction = logout
         present(alert, animated: true, completion: nil)
     }
     
@@ -114,6 +129,84 @@ class SettingViewController: UIViewController {
     @objc func completeButtonDidTap(_ sender: UIBarButtonItem) {
         self.navigationController?.popViewController(animated: true)
     }
+    
+    // MARK: - 회원 탈퇴
+    @IBAction func didTapWithdrawBtn(_ sender: Any) {
+        showAlertWithDraw(title: "탈퇴하시겠습니까?", message: nil)
+    }
+    
+    private func showAlertWithDraw(title: String, message: String?) {
+        // "title"
+        let fullText = title
+        let attributedTitle = NSMutableAttributedString(string: fullText)
+          
+        // "title"에 Semibold 16px 적용
+        let titleRange = (fullText as NSString).range(of: fullText)
+        attributedTitle.addAttribute(.font, value: UIFont.pretendardSemibold(size: 16), range: titleRange)
+
+        // UIAlertController 생성
+        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
+          
+        // NSAttributedString을 title에 설정
+        alert.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let cancel = UIAlertAction(title: "취소", style: .default, handler: nil)
+        cancel.setValue(UIColor(named: "BlueGray7"), forKey: "titleTextColor")
+        
+        let confirm = UIAlertAction(title: "탈퇴", style: .default) { action in
+            self.withdrawUser()
+        }
+        confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
+        
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    // 회원 탈퇴 요청 함수
+    private func withdrawUser() {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+        
+        // 회원 탈퇴 요청
+        APIClient.deleteRequest(endpoint: "/api/user/withdraw", token: token) { (result: Result<WithdrawResponse, AFError>) in
+            switch result {
+            case .success:
+                print("회원 탈퇴 성공.")
+                // 사용자 데이터 제거 및 로그인 화면으로 이동
+                // 로그인 상태 확인
+                let loginSocialType = UserDefaults.standard.string(forKey: "loginSocialType")
+
+                // 네이버
+                if loginSocialType == "NAVER" {
+                    self.naverLoginInstance?.requestDeleteToken()
+                }
+                
+                // 카카오
+                if loginSocialType == "KAKAO" {
+                    UserApi.shared.logout {(error) in
+                        if let error = error {
+                            print(error)
+                        }
+                        
+                        print("Kakao withdraw Success.")
+                        self.clearUserDataAndGoToLogin()
+                    }
+                }
+            case .failure(let error):
+                print("회원 탈퇴 실패: \(error.localizedDescription)")
+                // 필요에 따라 사용자에게 에러 메시지를 표시
+            }
+        }
+    }
+}
+
+struct WithdrawResponse: Decodable {
+    let isSuccess: Bool
+    let message: String
+    let result: String?
 }
 
 // MARK: - extension
