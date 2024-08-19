@@ -158,24 +158,32 @@ class GoalRoutineSettingViewController: UIViewController {
         
         // 전송할 데이터 생성
         let convertedStartTime = convertTimeTo24HourFormat(time: startTime)
-        startDate = getCurrentDateString() // 현재 날짜를 시작 날짜로 설정
+        let currentDate = Date()
+        let currentDayOfWeek = Calendar.current.component(.weekday, from: currentDate) - 1 // 일요일이 0부터 시작
+        
+        // 현재 날짜가 반복 주기 요일에 포함되어 있는지 확인
+        if repeatPeriodTags.contains(currentDayOfWeek) {
+            startDate = getCurrentDateString(from: currentDate) // 현재 날짜를 시작 날짜로 설정
+        } else {
+            // 포함되지 않으면 다음 반복 주기 날짜로 설정
+            startDate = getNextAvailableDate(for: repeatPeriodTags, from: currentDate)
+        }
         
         let routineData: [String: Any] = [
             "routineName": goalRoutine,
-            "startDate": startDate, // 현재 날짜를 시작 날짜로 사용
+            "startDate": startDate,
             "repeatCycleDay": getRepeatCycleDays(),
             "startTime": convertedStartTime ?? "00:00",
             "endTime": goalTime
         ]
         print("보내는 데이터: \(routineData)")
 
-        
         // 헤더 설정
         if let token = UserDefaults.standard.string(forKey: "accessToken") {
-                accessToken = token
-            } else {
-                print("accessToken이 없습니다.")
-            }
+            accessToken = token
+        } else {
+            print("accessToken이 없습니다.")
+        }
         
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(accessToken)",
@@ -183,18 +191,16 @@ class GoalRoutineSettingViewController: UIViewController {
         ]
         print("헤더: \(headers)")
         
+        // API 요청
         AF.request(url, method: .post, parameters: routineData, encoding: JSONEncoding.default, headers: headers)
-            .validate(statusCode: 200..<300) // 응답 상태 코드 검증
+            .validate(statusCode: 200..<300)
             .responseJSON { response in
                 switch response.result {
                 case .success(let value):
-                    if let jsonResponse = value as? [String: Any] {
-                        print("응답: \(jsonResponse)")
-                        if let result = jsonResponse["result"] as? Int64 {
-                            self.userRoutineId = result
-                            print("\(self.userRoutineId)")
-                            self.addRoutineData() // 로컬에 데이터 저장 시 startDate도 포함
-                        }
+                    if let jsonResponse = value as? [String: Any], let result = jsonResponse["result"] as? Int64 {
+                        self.userRoutineId = result
+                        print("루틴 ID: \(self.userRoutineId)")
+                        self.addRoutineData() // 루틴 데이터 저장
                     }
                 case .failure(let error):
                     print("API 요청 실패: \(error)")
@@ -202,11 +208,23 @@ class GoalRoutineSettingViewController: UIViewController {
             }
     }
     
-    // 현재 날짜를 문자열로 반환
-    func getCurrentDateString() -> String {
+    func getNextAvailableDate(for daysOfWeek: [Int], from startDate: Date) -> String {
+        let calendar = Calendar.current
+        var nextDate = startDate
+        
+        while true {
+            let dayOfWeek = calendar.component(.weekday, from: nextDate) - 1
+            if daysOfWeek.contains(dayOfWeek) {
+                return getCurrentDateString(from: nextDate)
+            }
+            nextDate = calendar.date(byAdding: .day, value: 1, to: nextDate)!
+        }
+    }
+
+    func getCurrentDateString(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: Date())
+        return formatter.string(from: date)
     }
     
     // 선택된 반복 요일을 반환
@@ -316,7 +334,6 @@ class GoalRoutineSettingViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
 
-    // 루틴 데이터 저장 함수
     func addRoutineData() {
         // 요일 정보와 함께 루틴 추가
         let data: (String, [Int], String, String, Int64, String) = (self.goalRoutine, self.repeatPeriodTags, self.startTime, self.goalTime, self.userRoutineId, self.startDate)

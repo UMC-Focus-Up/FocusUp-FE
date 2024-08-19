@@ -62,6 +62,8 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
     
     private var routinesByDay: [(String, [Int], String, String, Int64, String)] = [] // 차례대로 루틴이름, 반복주기, 시작시간, 목표시간, 루틴 ID, 시작 날짜
     private var dayOfWeek: Int = 0
+    var routinesForDay: [(String, [Int], String, String, Int64, String)] = []
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
