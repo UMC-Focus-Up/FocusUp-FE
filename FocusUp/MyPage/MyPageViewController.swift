@@ -446,63 +446,27 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         showBottomSheet(for: date)
     }
     
-    // 특정 날짜에 원형을 그리도록 설정
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
-        if routineDates.contains(date) {
-            return UIColor.clear // 내부는 비워둠
-        }
-        return nil
-    }
-
-    // 특정 날짜에 테두리를 설정
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderDefaultColorFor date: Date) -> UIColor? {
-        if routineDates.contains(date) {
-            return UIColor(red: 0.34, green: 0.56, blue: 0.66, alpha: 0.56) // 테두리 색상
-        }
-        return nil
-    }
-    
-
-    // 날짜 선택 시에도 테두리 유지
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderSelectionColorFor date: Date) -> UIColor? {
-        if routineDates.contains(date) {
-            return UIColor(red: 0.34, green: 0.56, blue: 0.66, alpha: 0.56) // 테두리 색상
-            
-        }
-        return nil
-    }
-
-    // 날짜 선택 시 내부 색상을 설정하지 않음
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillSelectionColorFor date: Date) -> UIColor? {
-        if routineDates.contains(date) {
-            return UIColor.clear // 선택된 날짜의 내부 색상
-        }
-        return nil
-    }
-
-    // 날짜 선택 시 텍스트 색상을 설정하지 않음 (선택 전과 동일하게 유지)
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleSelectionColorFor date: Date) -> UIColor? {
-        if routineDates.contains(date) {
-            return UIColor.black // 선택된 날짜의 텍스트 색상 유지
-        }
-        return nil
-    }
-
-    
     private func showBottomSheet(for date: Date) {
         let dayOfWeek = Calendar.current.component(.weekday, from: date) - 1
-        let currentDate = Date()
         
-        // 현재 날짜 이후의 날짜에만 해당하는 루틴을 필터링
+        // **선택한 날짜와 루틴의 시작 날짜와 반복 주기를 기준으로 루틴을 필터링**
         let routinesForDay = RoutineDataModel.shared.routineData.filter { routine in
             guard let routineStartDate = dateFromString(routine.5) else { return false }
-            return routine.1.contains(dayOfWeek) && routineStartDate <= date && date >= currentDate
+            
+            // startDate가 현재 선택된 날짜와 동일하거나 이전인지 확인
+            let isStartDateValid = routineStartDate <= date
+            
+            // 해당 요일이 반복 주기에 포함되는지 확인
+            let isDayOfWeekValid = routine.1.contains(dayOfWeek)
+            
+            return isStartDateValid && isDayOfWeekValid
         }
         
         if !routinesForDay.isEmpty {
             let bottomSheetVC = CalendarBottomSheetViewController()
             bottomSheetVC.modalPresentationStyle = .pageSheet
             bottomSheetVC.selectedDate = date
+            bottomSheetVC.routinesForDay = routinesForDay // 선택한 날짜에 해당하는 루틴 전달
             
             if let sheet = bottomSheetVC.sheetPresentationController {
                 let customDetent = UISheetPresentationController.Detent.custom { context in
@@ -528,6 +492,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             present(alert, animated: true, completion: nil)
         }
     }
+
 
     
     // MARK: - 마이페이지 조회 - 캘린더 연동
@@ -558,9 +523,6 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         
         let currentDate = Date() // 현재 날짜
         
-        // 루틴 날짜를 초기화
-        routineDates.removeAll()
-        
         for routine in routines {
             guard let startDate = dateFromString(routine.date), startDate >= currentDate else {
                 continue // startDate가 현재 날짜보다 이전이면 무시
@@ -572,12 +534,9 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
             print("date: \(routine.date)")
             
             for routineDetail in routine.routines {
-                print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)\ntarget time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)\nachieve rate: \(routineDetail.achieveRate)")
+                print("routine id: \(routineDetail.id)\nroutine: \(routineDetail.name)  target time: \(routineDetail.targetTime)\nexec time: \(routineDetail.execTime)  achieve rate: \(routineDetail.achieveRate)")
             }
         }
-        
-        // 캘린더를 다시 그려 루틴 날짜에 원형을 표시
-        calendarView.reloadData()
     }
 
 
