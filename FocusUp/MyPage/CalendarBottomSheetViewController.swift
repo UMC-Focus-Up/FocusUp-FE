@@ -210,8 +210,6 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
         return "\(hours)시간"
     }
 
-
-    
     private func getRoutines(for dayOfWeek: Int) -> [(String, [Int], String, String, Int64, String)] {
         var routinesForDay: [(String, [Int], String, String, Int64, String)] = []
         
@@ -241,7 +239,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
         
         let routine = routinesByDay[indexPath.row]
         let isSelected = selectedIndexPath == indexPath
-        cell.configure(with: routine.0, isSelected: isSelected)
+        cell.configure(with: routine.0, isSelected: isSelected, isFirstCell: indexPath.row == 0)
         
         // 버튼에 액션 추가
         cell.button.tag = indexPath.row
@@ -256,7 +254,7 @@ class CalendarBottomSheetViewController: UIViewController, UITableViewDataSource
         // 현재 선택된 셀의 상태를 토글합니다
         let isSelected = selectedIndexPath == indexPath
         if let cell = tableView.cellForRow(at: indexPath) as? RoutineTableViewCell {
-            cell.configure(with: routinesByDay[indexPath.row].0, isSelected: !isSelected)
+            cell.configure(with: routinesByDay[indexPath.row].0, isSelected: !isSelected, isFirstCell: indexPath.row == 0)
         }
         
         // 선택된 인덱스 패스를 업데이트합니다
@@ -310,14 +308,29 @@ class RoutineTableViewCell: UITableViewCell {
         contentView.addSubview(button)
         button.addSubview(squareButton)
         squareButton.addSubview(checkImageView)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(with title: String, isSelected: Bool, isFirstCell: Bool) {
+        button.setTitle(title, for: .normal)
+        checkImageView.isHidden = !isSelected
+        let borderColor: UIColor = isSelected ? UIColor(named: "Primary4") ?? .blue : UIColor(red: 0.89, green: 0.9, blue: 0.9, alpha: 1)
+        button.layer.borderColor = borderColor.cgColor
+        squareButton.layer.borderColor = borderColor.cgColor
+        squareButton.backgroundColor = isSelected ? (UIColor(named: "Primary4")?.withAlphaComponent(0.1) ?? UIColor.blue.withAlphaComponent(0.1)) : .clear
+        
+        let topConstraint = isFirstCell ? button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30) : button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
         
         NSLayoutConstraint.activate([
             // Button constraints
             button.widthAnchor.constraint(equalToConstant: 342),
             button.heightAnchor.constraint(equalToConstant: 51),
-            button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            topConstraint,
             button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20), // contentView의 하단 제약을 button 하단에 맞춤
+            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6), // 다른 셀은 6pt 패딩
             
             // Square button constraints
             squareButton.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 10),
@@ -336,21 +349,7 @@ class RoutineTableViewCell: UITableViewCell {
             checkImageView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(with title: String, isSelected: Bool) {
-        button.setTitle(title, for: .normal)
-        checkImageView.isHidden = !isSelected
-        let borderColor: UIColor = isSelected ? UIColor(named: "Primary4") ?? .blue : UIColor(red: 0.89, green: 0.9, blue: 0.9, alpha: 1)
-        button.layer.borderColor = borderColor.cgColor
-        squareButton.layer.borderColor = borderColor.cgColor
-        squareButton.backgroundColor = isSelected ? (UIColor(named: "Primary4")?.withAlphaComponent(0.1) ?? UIColor.blue.withAlphaComponent(0.1)) : .clear
-    }
 }
-
 
 extension Notification.Name {
     static let didPassTimeElapsed = Notification.Name("didPassTimeElapsed")
