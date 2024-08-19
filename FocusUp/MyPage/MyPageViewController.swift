@@ -110,6 +110,9 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        fetchMyPageRoutineData()
+        
         configureNavigationBar()
         configureTabBar()
         
@@ -123,6 +126,45 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         routineTableView.reloadData()
     }
 
+    // MARK: - function
+    func fetchMyPageRoutineData() {
+        let url = "http://15.165.198.110:80/api/routine/mypage"
+
+        // 헤더 설정
+        var accessToken: String = ""
+        if let token = UserDefaults.standard.string(forKey: "accessToken") {
+                accessToken = token
+            } else {
+                print("accessToken이 없습니다.")
+            }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(accessToken)",
+            "Content-Type": "application/json"
+        ]
+        print("헤더: \(headers)")
+        
+        AF.request(url, method: .get, headers: headers).responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                if let json = value as? [String: Any],
+                   let result = json["result"] as? [String: Any],
+                   let userRoutines = result["userRoutines"] as? [[String: Any]] {
+                    self.routineData = userRoutines.compactMap { routine in
+                        if let id = routine["id"] as? Int64,
+                           let name = routine["name"] as? String {
+                            // 필요에 따라 (String, [Int], String, String, Int64, String) 형식으로 변환
+                            return (name, [], "", "", id, "")
+                        }
+                        return nil
+                    }
+                    self.routineTableView.reloadData()
+                }
+            case .failure(let error):
+                print("Error fetching routine data: \(error)")
+            }
+        }
+    }
     
     func didDeleteRoutine(at index: Int) {
         RoutineDataModel.shared.deleteRoutine(at: index)
@@ -208,6 +250,7 @@ class MyPageViewController: UIViewController, FSCalendarDelegate, FSCalendarData
         }
     }
     
+    // MARK: - action
     @IBAction func didTapSettingBtn(_ sender: Any) {
         guard let toSettingVC = storyboard?.instantiateViewController(identifier: "SettingViewController") else { return }
         navigationController?.pushViewController(toSettingVC, animated: true)
