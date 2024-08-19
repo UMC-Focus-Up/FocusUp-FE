@@ -12,8 +12,8 @@ struct SendCoinData: Codable {
     let point: Int
 }
 
+// 서버에서 반환하는 응답이 없거나 비어있는 경우
 struct EmptyResponse: Decodable {
-    // 서버에서 반환하는 응답이 없거나 비어있는 경우
 }
 
 
@@ -41,9 +41,11 @@ struct HomeResult: Decodable {
     let life: Int
     let point: Int
     let level: Int
+    let isUserLevel: Bool
     let routineId: Int
     let routineName: String
     let execTime: String
+    let goalTime: String
 }
 
 // 반복 루틴 완료
