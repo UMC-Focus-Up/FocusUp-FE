@@ -31,10 +31,10 @@ struct MyPageResponse: Codable {
 }
 
 struct MyPageResult: Codable {
-    let userRoutines: [UserRoutines]
+    let userRoutines: [UserRoutines]        // 사용자별 루틴 Id
     let level: Int
     let successCount: Int
-    let routines: [RoutineDetails]
+    let routines: [RoutineDetails]          // 루틴 전체 Id
 }
 
 struct UserRoutines: Codable {

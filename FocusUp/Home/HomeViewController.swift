@@ -26,6 +26,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var playButtonOutlet: UIButton!
     
     private var routineId: Int?                   // 루틴 ID를 저장할 변수
+    private var goalTime: String = ""             // 루틴 목표 시간을 나타내는 변수
 
     var timer: Timer?
     var timeElapsed: TimeInterval = 0             // 경과 시간
@@ -34,7 +35,7 @@ class HomeViewController: UIViewController {
     var pauseTimer: Timer?
     var pauseTimeElapsed: TimeInterval = 0
     let pauseTimeLimit: TimeInterval = 600
-    var pauseMessage: UILabel?                      // 멈춤 메시지를 저장할 변수
+    var pauseMessage: UILabel?                    // 멈춤 메시지를 저장할 변수
 
     // 부스터 시간
     private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
@@ -177,10 +178,18 @@ class HomeViewController: UIViewController {
                         self.routineLabel.text = homeResult.routineName.isEmpty ? "오늘의 루틴 없음" : homeResult.routineName
                         self.shellNumber.text = "\(homeResult.life)"
                         self.fishNumber.text = "\(homeResult.point)"
-                           
-                        self.level.setAttributedTitle(nil, for: .normal)
-                        self.level.setTitle("Level \(homeResult.level)", for: .normal)
-                        self.level.layoutIfNeeded()
+                        
+                        // 저장된 goalTime 업데이트
+                        self.goalTime = homeResult.goalTime
+                        
+                        // 버튼 설정
+                        var config = UIButton.Configuration.plain()
+                        config.title = "Level \(homeResult.level)"
+                        config.baseForegroundColor = homeResult.isUserLevel ? .black : UIColor(named: "Primary4")
+                        self.level.configuration = config
+                        
+                        // 레벨 업데이트 호출
+                        self.updateLevelButtonUI()
         
                         // 클로저를 통해 level 값 전달
                         completion(homeResult.level)
@@ -319,7 +328,7 @@ class HomeViewController: UIViewController {
     // 코인 알람
     // 집중시간: 집중한 시간만큼 적립된 코인 (부스터 타임 포함)
     // 루틴시간: 목표 시간 이상 집중했을 때 지급하는 코인 (고정값 30)
-    // 보너스:  루틴 알람을 통해 들어왔을 때 지급하는 코인 (고정값 30). => 서버쪽에서 구현이 된 상태이기에 빼
+    // 보너스:  루틴 알람을 통해 들어왔을 때 지급하는 코인 (고정값 30)
     // 부스터 타임은 1분에 n배의 코인 휙득 (레벨에 따라 배수가 달라짐) -> 부스터 타임에만 1분에 n배씩 휙득
    
     // 코인 API 연동시 집중시간이랑, 루틴시간만 포함하도록 (보너스는 이미 30코인 추가가 되었기에 값을 넘겨줄 필요가 없음)
@@ -330,24 +339,45 @@ class HomeViewController: UIViewController {
         let boosterMultiplier = 2                   // 레벨에 따른 부스터 타임 배수
         
         var focusCoins = 0
+        var earnedRoutineCoins = 0
         
+        let boosterTimeThresholdInMinutes = Double(boosterTimeThreshold)
+        let maxBoosterTimeInMinutes = Double(maxBoosterTime)
+        let timeElapsedInMinutes = timeElapsed / 60.0
+
         // 집중 시간 코인 계산
         if timeElapsed >= boosterTimeThreshold && timeElapsed <= maxBoosterTime {
             // 부스터 타임 적용
-            let normalTimeCoins = Int(boosterTimeThreshold / 60) * normalCoinRate
-            let boosterTimeCoins = Int((timeElapsed - boosterTimeThreshold) / 60) * normalCoinRate * boosterMultiplier
+            let normalTimeCoins = Int(boosterTimeThresholdInMinutes) * normalCoinRate
+            let boosterTimeCoins = Int((timeElapsedInMinutes - boosterTimeThresholdInMinutes)) * normalCoinRate * boosterMultiplier
             focusCoins += normalTimeCoins + boosterTimeCoins
-        } else if timeElapsed < boosterTimeThreshold {
+        } else if timeElapsedInMinutes < boosterTimeThresholdInMinutes {
             // 부스터 타임 전 일반 시간 적용
-            focusCoins += Int(timeElapsed / 60) * normalCoinRate
-        } else if timeElapsed > maxBoosterTime {
+            focusCoins += Int(timeElapsedInMinutes) * normalCoinRate
+        } else if timeElapsedInMinutes > maxBoosterTimeInMinutes {
             // 최대 부스터 시간 이후
-            let normalTimeCoins = Int(boosterTimeThreshold / 60) * normalCoinRate
-            let boosterTimeCoins = Int((maxBoosterTime - boosterTimeThreshold) / 60) * normalCoinRate * boosterMultiplier
+            let normalTimeCoins = Int(boosterTimeThresholdInMinutes) * normalCoinRate
+            let boosterTimeCoins = Int((maxBoosterTimeInMinutes - boosterTimeThresholdInMinutes)) * normalCoinRate * boosterMultiplier
             focusCoins += normalTimeCoins + boosterTimeCoins
         }
-
-        return (focusCoins, routineCoins)
+        
+        // goalTime을 분 단위로 변환
+        let goalTimeInMinutes = convertTimeToMinutes(goalTime)
+        
+        // timeElapsed가 goalTime보다 클 경우에만 루틴 코인 획득
+        if timeElapsed >= goalTimeInMinutes {
+            earnedRoutineCoins = routineCoins
+        }
+        
+        return (focusCoins, earnedRoutineCoins)
+    }
+    
+    // 시간 문자열을 분 단위로 변환하는 함수
+    private func convertTimeToMinutes(_ timeString: String) -> Double {
+        let components = timeString.split(separator: ":").map { Double($0) ?? 0 }
+        let hours = components.count > 0 ? components[0] : 0
+        let minutes = components.count > 1 ? components[1] : 0
+        return (hours * 60) + minutes
     }
     
     // 코인 정산알람창
@@ -503,14 +533,33 @@ class HomeViewController: UIViewController {
         
         boosterLabel.isHidden = true        // boosterLabel 숨김처리
         
-        // level 버튼 언더라인 추가
-        if let title = level.title(for: .normal) {
-            let attributedString = NSMutableAttributedString(string: title)
-            attributedString.addAttribute(.underlineStyle,
-                                          value: NSUnderlineStyle.single.rawValue,
-                                          range: NSRange(location: 0, length: title.count))
-            level.setAttributedTitle(attributedString, for: .normal)
+//        // level 버튼 언더라인 추가
+//        if let title = level.title(for: .normal) {
+//            let attributedString = NSMutableAttributedString(string: title)
+//            attributedString.addAttribute(.underlineStyle,
+//                                          value: NSUnderlineStyle.single.rawValue,
+//                                          range: NSRange(location: 0, length: title.count))
+//            level.setAttributedTitle(attributedString, for: .normal)
         }
+    
+    // 레벨 버튼 UI 업데이트 함수
+    private func updateLevelButtonUI() {
+        guard let config = level.configuration else { return }
+        let levelTitle = config.title ?? "Level 1"
+        
+        // 기본적인 폰트와 텍스트 설정
+        let attributedString = NSMutableAttributedString(string: levelTitle)
+        attributedString.addAttribute(.font, value: UIFont(name: "Pretendard-Regular", size: 17)!, range: NSRange(location: 0, length: levelTitle.count))
+        
+        // 언더라인 설정
+        attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: levelTitle.count))
+        
+        // Primary4 색상 적용 여부
+        let textColor = config.baseForegroundColor == UIColor(named: "Primary4") ? UIColor(named: "Primary4")! : UIColor.black
+        attributedString.addAttribute(.foregroundColor, value: textColor, range: NSRange(location: 0, length: levelTitle.count))
+        
+        // 설정된 속성을 버튼에 적용
+        level.setAttributedTitle(attributedString, for: .normal)
     }
     
     private func setFont() {
