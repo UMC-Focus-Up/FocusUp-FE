@@ -18,6 +18,7 @@ class GoalRoutineSettingViewController: UIViewController {
     
     weak var delegate: RoutineDataDelegate?
     weak var updateDelegate: RoutineUpdateDelegate?
+    var selectedButton: UIButton?
     
     var goalRoutine: String = ""
     var repeatPeriodTags: [Int] = []
@@ -47,8 +48,6 @@ class GoalRoutineSettingViewController: UIViewController {
     
     // MARK: - Function
     func setAttribute() {
-        customTitleView()
-        
         goalRoutineTextField.layer.borderColor = UIColor.blueGray3.cgColor
         goalRoutineTextField.layer.borderWidth = 1
         goalRoutineTextField.layer.cornerRadius = 8
@@ -78,6 +77,8 @@ class GoalRoutineSettingViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        customTitleView()
+        
         // 커스텀 폰트 설정
         if let customFont = UIFont(name: "Pretendard-Regular", size: 18) {
             let textAttributes = [
@@ -100,8 +101,27 @@ class GoalRoutineSettingViewController: UIViewController {
             rightBarButton.setTitleTextAttributes([.font: buttonFont], for: .highlighted)
         }
         
+        rightBarButton.isEnabled = false
         rightBarButton.tintColor = UIColor(named: "Primary4")
         self.navigationItem.rightBarButtonItem = rightBarButton
+    }
+    
+    func checkValid() {
+        let isGoalRoutineValid = !goalRoutineTextField.text!.isEmpty
+        let isRepeatPeriodValid = !repeatPeriodTags.isEmpty
+        let isStartTimeValid = startTimeLabel.text != "00:00 AM"
+        let isGoalTimeValid = goalTimeLabel.text != "00:00"
+        
+        print("Goal Routine Valid: \(isGoalRoutineValid)")
+        print("Repeat Period Valid: \(isRepeatPeriodValid)")
+        print("Start Time Valid: \(isStartTimeValid)")
+        print("Goal Time Valid: \(isGoalTimeValid)")
+        
+        if isGoalRoutineValid && isRepeatPeriodValid && isStartTimeValid && isGoalTimeValid {
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
+        }
     }
     
     func customTitleView() {
@@ -290,6 +310,7 @@ class GoalRoutineSettingViewController: UIViewController {
                 repeatPeriodTags.append(sender.tag)
             }
             sender.layoutIfNeeded()
+            checkValid()
         }
     }
     
@@ -357,35 +378,31 @@ class GoalRoutineSettingViewController: UIViewController {
     }
     
     @IBAction func setRoutineStartTime(_ sender: Any) {
+        selectedButton = startTimeButton
         showCustomStartTimePicker()
     }
     
     @IBAction func setGoalTime(_ sender: Any) {
+        selectedButton = goalTimeButton
         showCustomGoalTimePicker()
     }
     
     private func showCustomStartTimePicker() {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }) else { return }
+        guard let pickerViewController = self.storyboard?.instantiateViewController(identifier: "CustomTimePickerViewController") as? CustomTimePickerViewController else { return }
+        pickerViewController.is24HourFormat = false // 12시간제
+        pickerViewController.delegate = self
 
-        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
-
-        let customPickerView = CustomStartTimePickerView(frame: window.bounds)
-        customPickerView.delegate = self
-        window.addSubview(customPickerView)
+        let bottomSheetViewController = BottomSheetViewController(contentViewController: pickerViewController, defaultHeight: 300, cornerRadius: 8, dimmedAlpha: 1, isPannedable: false)
+        self.present(bottomSheetViewController, animated: true, completion: nil)
     }
 
     private func showCustomGoalTimePicker() {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }) else { return }
+        guard let pickerViewController = self.storyboard?.instantiateViewController(identifier: "CustomTimePickerViewController") as? CustomTimePickerViewController else { return }
+        pickerViewController.is24HourFormat = true // 24시간제
+        pickerViewController.delegate = self
 
-        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
-
-        let customPickerView = CustomGoalTimePickerView(frame: window.bounds)
-        customPickerView.delegate = self
-        window.addSubview(customPickerView)
+        let bottomSheetViewController = BottomSheetViewController(contentViewController: pickerViewController, defaultHeight: 300, cornerRadius: 8, dimmedAlpha: 1, isPannedable: false)
+        self.present(bottomSheetViewController, animated: true, completion: nil)
     }
     
     private func updateStartTimeUI() {
@@ -415,26 +432,28 @@ extension GoalRoutineSettingViewController: UITextFieldDelegate {
         if textField == goalRoutineTextField {
             textField.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).cgColor
         }
+        checkValid()
     }
 }
 
-extension GoalRoutineSettingViewController: CustomStartTimePickerDelegate {
-    func didSelectStartTime(_ time: String) {
-        startTimeLabel.text = time
-    }
-    
+extension GoalRoutineSettingViewController: CustomTimePickerDelegate {
     func didSelectStartTimeAndUpdateUI() {
         updateStartTimeUI()
-    }
-}
-
-extension GoalRoutineSettingViewController: CustomGoalTimePickerDelegate {
-    func didGoalSelectTime(_ time: String) {
-        goalTimeLabel.text = time
     }
     
     func didSelectGoalTimeAndUpdateUI() {
         updateGoalTimeUI()
+    }
+    
+    func didSelectTime(_ time: String) {
+        // 시간 설정 처리
+        if selectedButton == startTimeButton {
+            startTimeLabel.text = time
+            checkValid()
+        } else if selectedButton == goalTimeButton {
+            goalTimeLabel.text = time
+            checkValid()
+        }
     }
 }
 
