@@ -31,7 +31,6 @@ class AlarmViewController: UIViewController {
     var startTime: Date?
     var alarmID: Int?
     var userInfo: [String: Any]?
-    
     var life: Int?
     
     override func viewDidLoad() {
@@ -68,7 +67,14 @@ class AlarmViewController: UIViewController {
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
-        self.navigateToMainViewController()
+        // `alarmID`가 nil인지 확인
+        guard let alarmID = alarmID else {
+            print("Error: alarmID is nil.")
+            return
+        }
+        
+        sendAlarmIDToServer(alarmID: alarmID)          // `alarmID`를 서버에 전송
+        self.navigateToMainViewController()             // 홈화면으로 이동
     }
     
     @IBAction func laterBtnClick(_ sender: Any) {
@@ -277,6 +283,33 @@ class AlarmViewController: UIViewController {
         laterNum.font = UIFont.pretendardMedium(size: 15)
         noNum.font = UIFont.pretendardMedium(size: 15)
     }
+    
+// MARK: API 연동
+    // 홈화면으로 넘어갈떄 서버에 AlarmID 전송하기 위한 API 연동
+    private func sendAlarmIDToServer(alarmID: Int) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+
+        let endpoint = "/api/user/home"
+        let parameters = ["alarmID": alarmID] // 요청 본문에 포함될 데이터
+
+        APIClient.postRequest(endpoint: endpoint, parameters: parameters, token: token) { (result: Result<HomeResponse, AFError>) in
+            switch result {
+            case .success(let homeResponse):
+                if homeResponse.isSuccess {
+                    print("API 호출 성공: \(homeResponse)")
+                    // 성공적으로 호출된 후 필요한 작업 수행
+                } else {
+                    print("API 호출 실패: \(homeResponse.message)")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     
     // 생명과 코인 API 연동
     private func fetchLifeAndPoints() {

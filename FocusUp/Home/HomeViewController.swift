@@ -25,6 +25,9 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var addButtonOutlet: UIButton!
     @IBOutlet weak var playButtonOutlet: UIButton!
     
+    private var tableView: UITableView!
+    var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
+    
     private var routineId: Int?                   // 루틴 ID를 저장할 변수
     private var goalTime: String = ""             // 루틴 목표 시간을 나타내는 변수
 
@@ -146,27 +149,30 @@ class HomeViewController: UIViewController {
     // 루틴 조회를 위한 addButton
     @IBAction func addButton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let goalRoutineVC = storyboard.instantiateViewController(withIdentifier: "GoalRoutineListViewController") as? GoalRoutineListViewController {
-            goalRoutineVC.isAddMode = false // 추가 모드가 아니도록 설정
-            
-            if let sheet = goalRoutineVC.sheetPresentationController {
-                sheet.detents = [.medium(), .large()]
-            }
-            self.present(goalRoutineVC, animated: true, completion: nil)
+        guard let routineTableVC = storyboard.instantiateViewController(withIdentifier: "RoutineTableViewController") as? RoutineTableViewController else {
+                  return
         }
+              
+        routineTableVC.modalPresentationStyle = .pageSheet
+        if let sheet = routineTableVC.sheetPresentationController {
+            sheet.detents = [.medium(), .large()] // Adjust as needed
+        }
+        self.present(routineTableVC, animated: true, completion: nil)
     }
+
     
 
 // MARK: - API
-
+    
     private func fetchHomeData(completion: @escaping (Int) -> Void) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
             print("Error: No access token found.")
             return
         }
         let endpoint = "/api/user/home"
+        let parameters = ["routineId": self.routineId]
         
-        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<HomeResponse, AFError>) in
+        APIClient.postRequest(endpoint: endpoint, parameters: parameters, token: token) { (result: Result<HomeResponse, AFError>) in
             switch result {
             case .success(let homeResponse):
                 if homeResponse.isSuccess {
@@ -176,6 +182,7 @@ class HomeViewController: UIViewController {
                         self.routineId = homeResult.routineId  // 홈화면에서 조회되는 루틴 ID 저장
                            
                         self.routineLabel.text = homeResult.routineName.isEmpty ? "오늘의 루틴 없음" : homeResult.routineName
+                       
                         self.shellNumber.text = "\(homeResult.life)"
                         self.fishNumber.text = "\(homeResult.point)"
                         
@@ -205,7 +212,6 @@ class HomeViewController: UIViewController {
         }
     }
 
-    
     
     private func sendCoinDataToAPI(totalCoins: Int) {
         guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
@@ -255,8 +261,9 @@ class HomeViewController: UIViewController {
         }
     }
     
-// MARK: Function
     
+// MARK: Function
+
     // 유저 레벨에 따른 부스터 시간 업데이트
     private func updateBoosterTimeThreshold(level: Int) {
         let boosterTimeMapping: [Int: TimeInterval] = [
@@ -532,14 +539,7 @@ class HomeViewController: UIViewController {
         timerInline.clipsToBounds = true
         
         boosterLabel.isHidden = true        // boosterLabel 숨김처리
-        
-//        // level 버튼 언더라인 추가
-//        if let title = level.title(for: .normal) {
-//            let attributedString = NSMutableAttributedString(string: title)
-//            attributedString.addAttribute(.underlineStyle,
-//                                          value: NSUnderlineStyle.single.rawValue,
-//                                          range: NSRange(location: 0, length: title.count))
-//            level.setAttributedTitle(attributedString, for: .normal)
+
         }
     
     // 레벨 버튼 UI 업데이트 함수
@@ -571,3 +571,22 @@ class HomeViewController: UIViewController {
     }
 }
 
+extension HomeViewController {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return routineData.count
+    }
+        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "RoutineCell", for: indexPath)
+        let routine = routineData[indexPath.row]
+        cell.textLabel?.text = routine.0  // Display routine name
+        return cell
+    }
+        
+    // 사용자가 셀을 선택했을 때의 동작
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 셀 선택 시 동작 처리
+        let selectedRoutine = routineData[indexPath.row]
+        print("Selected routine: \(selectedRoutine)")
+    }
+}

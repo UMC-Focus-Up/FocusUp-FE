@@ -512,7 +512,7 @@
                                             <constraint firstAttribute="trailing" secondItem="1LL-8D-zIg" secondAttribute="trailing" constant="27" id="ssT-fK-MGk"/>
                                             <constraint firstItem="BfA-Gi-1s8" firstAttribute="leading" secondItem="Uf4-Ok-XJY" secondAttribute="leading" constant="16" id="vTV-X6-ZGx"/>
                                             <constraint firstItem="auZ-L3-eIX" firstAttribute="top" secondItem="UQ9-Tl-e2J" secondAttribute="bottom" constant="8" id="wDe-cM-TuX"/>
-                                            <constraint firstItem="ix6-FM-mec" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="auZ-L3-eIX" secondAttribute="trailing" symbolic="YES" id="x5c-eB-hZa"/>
+                                            <constraint firstItem="ix6-FM-mec" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="auZ-L3-eIX" secondAttribute="trailing" constant="8" symbolic="YES" id="x5c-eB-hZa"/>
                                             <constraint firstAttribute="bottom" secondItem="BfA-Gi-1s8" secondAttribute="bottom" constant="60" id="yYg-qS-lYL"/>
                                             <constraint firstItem="KdO-sb-syT" firstAttribute="top" secondItem="auZ-L3-eIX" secondAttribute="bottom" constant="19" id="yaa-XR-khJ"/>
                                         </constraints>
@@ -657,7 +657,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iDi-0T-9uf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3555" y="1267"/>
+            <point key="canvasLocation" x="3531" y="1267"/>
         </scene>
         <!--Goal Routine Setting View Controller-->
         <scene sceneID="eaa-aI-yBx">
@@ -1761,7 +1761,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="De3-tb-9eY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-512" y="1255"/>
+            <point key="canvasLocation" x="-502" y="1267"/>
         </scene>
         <!--Home-->
         <scene sceneID="zVL-KZ-sG2">
@@ -2403,6 +2403,52 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HBi-CM-ViJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1109" y="2020"/>
+        </scene>
+        <!--Routine Table View Controller-->
+        <scene sceneID="pmr-uX-ej5">
+            <objects>
+                <viewController storyboardIdentifier="RoutineTableViewController" id="ddk-os-O7M" customClass="RoutineTableViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5S6-w0-Kyx">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XtQ-d6-IoC">
+                                <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <items>
+                                    <navigationItem title="목표 루틴 리스트 조회" id="lJL-O7-ece"/>
+                                </items>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="J7q-Dv-riM">
+                                <rect key="frame" x="0.0" y="118" width="393" height="700"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="frh-KL-tob"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="frh-KL-tob" firstAttribute="bottom" secondItem="J7q-Dv-riM" secondAttribute="bottom" id="1lF-PT-lf7"/>
+                            <constraint firstItem="J7q-Dv-riM" firstAttribute="leading" secondItem="frh-KL-tob" secondAttribute="leading" id="8Li-dY-RGs"/>
+                            <constraint firstItem="XtQ-d6-IoC" firstAttribute="leading" secondItem="frh-KL-tob" secondAttribute="leading" id="8uz-IN-axz"/>
+                            <constraint firstItem="XtQ-d6-IoC" firstAttribute="top" secondItem="frh-KL-tob" secondAttribute="top" id="9Ab-uG-aOd"/>
+                            <constraint firstItem="J7q-Dv-riM" firstAttribute="top" secondItem="XtQ-d6-IoC" secondAttribute="bottom" constant="15" id="AD0-MP-Gf4"/>
+                            <constraint firstItem="frh-KL-tob" firstAttribute="trailing" secondItem="J7q-Dv-riM" secondAttribute="trailing" id="AqZ-tz-rey"/>
+                            <constraint firstItem="XtQ-d6-IoC" firstAttribute="trailing" secondItem="frh-KL-tob" secondAttribute="trailing" id="gcA-xD-DXM"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="routineListBar" destination="XtQ-d6-IoC" id="h2k-GV-Vda"/>
+                        <outlet property="routineTableView" destination="J7q-Dv-riM" id="J6z-Bi-I9B"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Che-4x-dGL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1955" y="1255"/>
         </scene>
     </scenes>
     <resources>
