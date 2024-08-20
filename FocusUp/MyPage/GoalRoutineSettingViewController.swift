@@ -292,6 +292,7 @@ class GoalRoutineSettingViewController: UIViewController {
     
     @objc private func buttonTapped(_ sender: UIButton) {
         UIView.performWithoutAnimation {
+            dismissKeyboard()
             if sender.isSelected {
                 sender.isSelected = false
                 sender.backgroundColor = UIColor.white
