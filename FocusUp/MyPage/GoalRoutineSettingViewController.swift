@@ -18,6 +18,7 @@ class GoalRoutineSettingViewController: UIViewController {
     
     weak var delegate: RoutineDataDelegate?
     weak var updateDelegate: RoutineUpdateDelegate?
+    var selectedButton: UIButton?
     
     var goalRoutine: String = ""
     var repeatPeriodTags: [Int] = []
@@ -377,35 +378,31 @@ class GoalRoutineSettingViewController: UIViewController {
     }
     
     @IBAction func setRoutineStartTime(_ sender: Any) {
+        selectedButton = startTimeButton
         showCustomStartTimePicker()
     }
     
     @IBAction func setGoalTime(_ sender: Any) {
+        selectedButton = goalTimeButton
         showCustomGoalTimePicker()
     }
     
     private func showCustomStartTimePicker() {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }) else { return }
+        guard let pickerViewController = self.storyboard?.instantiateViewController(identifier: "CustomTimePickerViewController") as? CustomTimePickerViewController else { return }
+        pickerViewController.is24HourFormat = false // 12시간제
+        pickerViewController.delegate = self
 
-        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
-
-        let customPickerView = CustomStartTimePickerView(frame: window.bounds)
-        customPickerView.delegate = self
-        window.addSubview(customPickerView)
+        let bottomSheetViewController = BottomSheetViewController(contentViewController: pickerViewController, defaultHeight: 300, cornerRadius: 8, dimmedAlpha: 1, isPannedable: false)
+        self.present(bottomSheetViewController, animated: true, completion: nil)
     }
 
     private func showCustomGoalTimePicker() {
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }) else { return }
+        guard let pickerViewController = self.storyboard?.instantiateViewController(identifier: "CustomTimePickerViewController") as? CustomTimePickerViewController else { return }
+        pickerViewController.is24HourFormat = true // 24시간제
+        pickerViewController.delegate = self
 
-        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
-
-        let customPickerView = CustomGoalTimePickerView(frame: window.bounds)
-        customPickerView.delegate = self
-        window.addSubview(customPickerView)
+        let bottomSheetViewController = BottomSheetViewController(contentViewController: pickerViewController, defaultHeight: 300, cornerRadius: 8, dimmedAlpha: 1, isPannedable: false)
+        self.present(bottomSheetViewController, animated: true, completion: nil)
     }
     
     private func updateStartTimeUI() {
@@ -439,25 +436,24 @@ extension GoalRoutineSettingViewController: UITextFieldDelegate {
     }
 }
 
-extension GoalRoutineSettingViewController: CustomStartTimePickerDelegate {
-    func didSelectStartTime(_ time: String) {
-        startTimeLabel.text = time
-        checkValid()
-    }
-    
+extension GoalRoutineSettingViewController: CustomTimePickerDelegate {
     func didSelectStartTimeAndUpdateUI() {
         updateStartTimeUI()
-    }
-}
-
-extension GoalRoutineSettingViewController: CustomGoalTimePickerDelegate {
-    func didGoalSelectTime(_ time: String) {
-        goalTimeLabel.text = time
-        checkValid()
     }
     
     func didSelectGoalTimeAndUpdateUI() {
         updateGoalTimeUI()
+    }
+    
+    func didSelectTime(_ time: String) {
+        // 시간 설정 처리
+        if selectedButton == startTimeButton {
+            startTimeLabel.text = time
+            checkValid()
+        } else if selectedButton == goalTimeButton {
+            goalTimeLabel.text = time
+            checkValid()
+        }
     }
 }
 
