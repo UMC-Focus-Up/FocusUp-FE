@@ -100,8 +100,27 @@ class GoalRoutineSettingViewController: UIViewController {
             rightBarButton.setTitleTextAttributes([.font: buttonFont], for: .highlighted)
         }
         
+        rightBarButton.isEnabled = false
         rightBarButton.tintColor = UIColor(named: "Primary4")
         self.navigationItem.rightBarButtonItem = rightBarButton
+    }
+    
+    func checkValid() {
+        let isGoalRoutineValid = !goalRoutineTextField.text!.isEmpty
+        let isRepeatPeriodValid = !repeatPeriodTags.isEmpty
+        let isStartTimeValid = startTimeLabel.text != "00:00 AM"
+        let isGoalTimeValid = goalTimeLabel.text != "00:00"
+        
+        print("Goal Routine Valid: \(isGoalRoutineValid)")
+        print("Repeat Period Valid: \(isRepeatPeriodValid)")
+        print("Start Time Valid: \(isStartTimeValid)")
+        print("Goal Time Valid: \(isGoalTimeValid)")
+        
+        if isGoalRoutineValid && isRepeatPeriodValid && isStartTimeValid && isGoalTimeValid {
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
+        }
     }
     
     func customTitleView() {
@@ -290,6 +309,7 @@ class GoalRoutineSettingViewController: UIViewController {
                 repeatPeriodTags.append(sender.tag)
             }
             sender.layoutIfNeeded()
+            checkValid()
         }
     }
     
@@ -415,12 +435,14 @@ extension GoalRoutineSettingViewController: UITextFieldDelegate {
         if textField == goalRoutineTextField {
             textField.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).cgColor
         }
+        checkValid()
     }
 }
 
 extension GoalRoutineSettingViewController: CustomStartTimePickerDelegate {
     func didSelectStartTime(_ time: String) {
         startTimeLabel.text = time
+        checkValid()
     }
     
     func didSelectStartTimeAndUpdateUI() {
@@ -431,6 +453,7 @@ extension GoalRoutineSettingViewController: CustomStartTimePickerDelegate {
 extension GoalRoutineSettingViewController: CustomGoalTimePickerDelegate {
     func didGoalSelectTime(_ time: String) {
         goalTimeLabel.text = time
+        checkValid()
     }
     
     func didSelectGoalTimeAndUpdateUI() {
