@@ -573,10 +573,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="31" translatesAutoresizingMaskIntoConstraints="NO" id="irL-Sw-OG8">
-                                <rect key="frame" x="16" y="91" width="361" height="110"/>
+                                <rect key="frame" x="16" y="91" width="361" height="169"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wWG-OW-d5A">
-                                        <rect key="frame" x="0.0" y="0.0" width="361" height="39.666666666666664"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="361" height="35.666666666666664"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="arrow_right_black" imagePlacement="trailing" title="레벨 조정" imagePadding="248">
                                             <fontDescription key="titleFontDescription" type="system" pointSize="16"/>
@@ -587,7 +587,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p1k-5h-5PS">
-                                        <rect key="frame" x="0.0" y="70.666666666666657" width="361" height="39.333333333333343"/>
+                                        <rect key="frame" x="0.0" y="66.666666666666657" width="361" height="35.666666666666657"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="arrow_right_black" imagePlacement="trailing" title="로그아웃" imagePadding="252">
                                             <fontDescription key="titleFontDescription" type="system" pointSize="16"/>
@@ -597,9 +597,20 @@
                                             <action selector="didTapLogOutBtn:" destination="4hW-hq-CbL" eventType="touchUpInside" id="V02-mO-siS"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4ER-4f-iy2">
+                                        <rect key="frame" x="0.0" y="133.33333333333334" width="361" height="35.666666666666657"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="arrow_right_black" imagePlacement="trailing" title="탈퇴" imagePadding="279">
+                                            <fontDescription key="titleFontDescription" type="system" pointSize="16"/>
+                                            <color key="baseForegroundColor" systemColor="labelColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="didTapWithdrawBtn:" destination="4hW-hq-CbL" eventType="touchUpInside" id="I18-Qz-1sS"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="110" id="YBa-vG-Sco"/>
+                                    <constraint firstAttribute="height" constant="169" id="YBa-vG-Sco"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -614,6 +625,7 @@
                     <connections>
                         <outlet property="levelManageButton" destination="wWG-OW-d5A" id="n7a-DB-H15"/>
                         <outlet property="logoutButton" destination="p1k-5h-5PS" id="aPP-tI-FH8"/>
+                        <outlet property="withdrawButton" destination="4ER-4f-iy2" id="Kh9-1H-kql"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DSb-EO-Lap" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1231,6 +1243,75 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fyv-Al-vj4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4348.8549618320612" y="2019.7183098591549"/>
+        </scene>
+        <!--Custom Time Picker View Controller-->
+        <scene sceneID="HE1-Me-EK1">
+            <objects>
+                <viewController storyboardIdentifier="CustomTimePickerViewController" id="m6e-Fm-xCh" customClass="CustomTimePickerViewController" customModule="FocusUp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="HHl-Mj-MU7">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XXy-eE-hLg">
+                                <rect key="frame" x="20" y="10" width="30" height="32"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="취소">
+                                    <color key="titleColor" name="BlueGray7"/>
+                                </state>
+                                <connections>
+                                    <action selector="cancelButtonTapped:" destination="m6e-Fm-xCh" eventType="touchUpInside" id="8da-31-daF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ajp-HQ-osI">
+                                <rect key="frame" x="343" y="10" width="30" height="32"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="확인">
+                                    <color key="titleColor" name="Primary4"/>
+                                </state>
+                                <connections>
+                                    <action selector="doneButtonTapped:" destination="m6e-Fm-xCh" eventType="touchUpInside" id="4fA-LH-RMs"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G20-yf-eD5">
+                                <rect key="frame" x="0.0" y="52" width="393" height="1"/>
+                                <color key="backgroundColor" name="BlueGray4"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="2W5-an-BwA"/>
+                                </constraints>
+                            </view>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="hMy-Mj-yay">
+                                <rect key="frame" x="15" y="68" width="363" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="NeO-d1-R1c"/>
+                                </constraints>
+                            </datePicker>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="H3x-lr-wHS"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="G20-yf-eD5" firstAttribute="top" secondItem="XXy-eE-hLg" secondAttribute="bottom" constant="10" id="2Eg-U7-7Xt"/>
+                            <constraint firstItem="H3x-lr-wHS" firstAttribute="trailing" secondItem="G20-yf-eD5" secondAttribute="trailing" id="2Vy-IL-m6f"/>
+                            <constraint firstAttribute="trailing" secondItem="hMy-Mj-yay" secondAttribute="trailing" constant="15" id="3WX-Zx-jWd"/>
+                            <constraint firstItem="hMy-Mj-yay" firstAttribute="leading" secondItem="HHl-Mj-MU7" secondAttribute="leading" constant="15" id="8W2-Pf-mxa"/>
+                            <constraint firstItem="XXy-eE-hLg" firstAttribute="top" secondItem="HHl-Mj-MU7" secondAttribute="top" constant="10" id="BUC-8K-2ca"/>
+                            <constraint firstItem="XXy-eE-hLg" firstAttribute="leading" secondItem="H3x-lr-wHS" secondAttribute="leading" constant="20" id="M8i-25-5lW"/>
+                            <constraint firstItem="H3x-lr-wHS" firstAttribute="trailing" secondItem="ajp-HQ-osI" secondAttribute="trailing" constant="20" id="gKi-y7-4QD"/>
+                            <constraint firstItem="ajp-HQ-osI" firstAttribute="top" secondItem="HHl-Mj-MU7" secondAttribute="top" constant="10" id="ozC-ZL-Y1Q"/>
+                            <constraint firstItem="G20-yf-eD5" firstAttribute="leading" secondItem="H3x-lr-wHS" secondAttribute="leading" id="p8O-b2-efi"/>
+                            <constraint firstItem="hMy-Mj-yay" firstAttribute="top" secondItem="G20-yf-eD5" secondAttribute="bottom" constant="15" id="x6w-Yn-drJ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="cancelButton" destination="XXy-eE-hLg" id="hT6-Gq-lSn"/>
+                        <outlet property="confirmButton" destination="ajp-HQ-osI" id="F8i-C2-Caj"/>
+                        <outlet property="picker" destination="hMy-Mj-yay" id="u0t-Ik-L5v"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ntZ-wA-ukG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5126" y="2020"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="Tax-2N-Bge">
@@ -2433,6 +2514,12 @@
         <image name="speechBubble_letter" width="215" height="165"/>
         <image name="ui_character" width="360" height="558"/>
         <image name="waterdrop" width="40" height="57"/>
+        <namedColor name="BlueGray4">
+            <color red="0.85882352941176465" green="0.8666666666666667" blue="0.8784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="BlueGray7">
+            <color red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="EmphasizeError">
             <color red="0.93725490196078431" green="0.29803921568627451" blue="0.29803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
