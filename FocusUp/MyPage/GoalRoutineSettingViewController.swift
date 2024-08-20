@@ -48,8 +48,6 @@ class GoalRoutineSettingViewController: UIViewController {
     
     // MARK: - Function
     func setAttribute() {
-        customTitleView()
-        
         goalRoutineTextField.layer.borderColor = UIColor.blueGray3.cgColor
         goalRoutineTextField.layer.borderWidth = 1
         goalRoutineTextField.layer.cornerRadius = 8
@@ -78,6 +76,8 @@ class GoalRoutineSettingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        customTitleView()
         
         // 커스텀 폰트 설정
         if let customFont = UIFont(name: "Pretendard-Regular", size: 18) {

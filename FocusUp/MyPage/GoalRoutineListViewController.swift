@@ -20,10 +20,6 @@ class GoalRoutineListViewController: UIViewController {
         let addNib = UINib(nibName: "GoalRoutineAddTableViewCell", bundle: nil)
         routineTableView.register(addNib, forCellReuseIdentifier: "GoalRoutineAddTableViewCell")
         routineTableView.separatorStyle = .none
-
-        self.navigationController?.navigationBar.tintColor = UIColor.black
-        self.navigationController?.navigationBar.topItem?.title = ""
-        self.title = "목표 루틴 리스트"
         
         self.goalRoutineLabel2.font = UIFont(name: "Pretendard-Medium", size: 15)
     }
@@ -31,6 +27,7 @@ class GoalRoutineListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        customTitleView()
         fetchRoutineData()
         
         if let customFont = UIFont(name: "Pretendard-Regular", size: 18) {
@@ -93,6 +90,12 @@ class GoalRoutineListViewController: UIViewController {
                 print("Error fetching routine data: \(error)")
             }
         }
+    }
+    
+    func customTitleView() {
+        self.navigationController?.navigationBar.tintColor = UIColor.black
+        self.navigationController?.navigationBar.topItem?.title = ""
+        self.title = "목표 루틴 리스트"
     }
     
     // MARK: - action
