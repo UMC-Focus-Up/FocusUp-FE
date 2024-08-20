@@ -364,6 +364,10 @@ class GoalRoutineSettingViewController: UIViewController {
         
         // Delegate를 통해 목록 업데이트
         self.updateDelegate?.didUpdateRoutine()
+        
+        SetupRoutineAlarms.setupRoutineAlarms()
+        print("setup")
+        
         self.navigationController?.popViewController(animated: true)
     }
 
