@@ -55,6 +55,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         updateTimeLabel()
     }
     
+    // 다른 화면에서 현재 화면으로 돌아올 때만 처리되는 메서드
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -66,6 +67,17 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         }
     }
     
+    // 같은 화면에서 UI 업데이트나 데이터 갱신할 때 사용
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // 기본값으로 0을 전달하여 루틴이 없을 경우를 처리
+        fetchHomeData(routineId: 0) { [weak self] level in
+            guard let self = self else { return }
+            self.updateBoosterTimeThreshold(level: level)
+            self.updateLevelButtonUI()  // level 버튼 UI 업데이트 호출
+        }
+    }
     
     
 // MARK: - Action
@@ -205,6 +217,8 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
                             self.routineId = homeResult.routineId
                             self.routineLabel.text = "\(homeResult.routineName)"
                         }
+                        
+                        self.goalTime = homeResult.goalTime
                         
                         var config = UIButton.Configuration.plain()
                         config.title = "Level \(homeResult.level)"
@@ -400,7 +414,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         }
         
         // goalTime을 분 단위로 변환
-        let goalTimeInMinutes = convertTimeToMinutes(goalTime)
+        let goalTimeInMinutes = convertTimeToMinutes(self.goalTime)
         
         // timeElapsed가 goalTime보다 클 경우에만 루틴 코인 획득
         if timeElapsed >= goalTimeInMinutes {
