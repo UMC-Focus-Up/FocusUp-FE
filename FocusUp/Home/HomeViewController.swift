@@ -8,8 +8,8 @@
 import UIKit
 import Alamofire
 
-class HomeViewController: UIViewController {
-    
+class HomeViewController: UIViewController, RoutineTableViewControllerDelegate {
+
     @IBOutlet weak var shellfishView: UIView!
     @IBOutlet weak var shellNumber: UILabel!
     @IBOutlet weak var fishNumber: UILabel!
@@ -27,6 +27,7 @@ class HomeViewController: UIViewController {
     
     private var tableView: UITableView!
     var routineData: [(String, [Int], String, String, Int64, String)] = [] // 타입 수정
+    var routineResult: PostHomeResult?
     
     private var routineId: Int?                   // 루틴 ID를 저장할 변수
     private var goalTime: String = ""             // 루틴 목표 시간을 나타내는 변수
@@ -44,6 +45,7 @@ class HomeViewController: UIViewController {
     private var boosterTimeThreshold: TimeInterval = 1      // 기본값 설정: 레벨 1로 default
     let maxBoosterTime: TimeInterval = 2                     // 최대 부스터 시간 (3시간)
     
+    
 // MARK: - viewDidLoad()
     
     override func viewDidLoad() {
@@ -57,7 +59,6 @@ class HomeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         // Fetching API
         fetchHomeData { [weak self] level in                // 홈화면에 데이터 업데이트
             guard let self = self else { return }
@@ -68,7 +69,8 @@ class HomeViewController: UIViewController {
     
     
 // MARK: - Action
-    
+
+    // MARK: levelButton
     @IBAction func levelButton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let levelVC = storyboard.instantiateViewController(withIdentifier: "levelVC") as? LevelViewController else {
@@ -100,7 +102,8 @@ class HomeViewController: UIViewController {
         }
     }
     
-    
+
+    // MARK: cancelButton
     // cancel 알림 표시
     @IBAction func cancelButton(_ sender: Any) {
         // title 폰트 설정
@@ -130,8 +133,10 @@ class HomeViewController: UIViewController {
             self.showCoinAlert()
             // 타이머 초기화
             self.resetTimer()
-            self.routineLabel.isHidden = true
             
+            // 홈스크린 업데이트 
+            self.updateHomeScreen()
+ 
             // 루틴 종료시 timeElapsed 값 전송하기 위한 API 연동
             self.sendRoutineEndToAPI(routineId: routineId, timeElapsed: timeElapsedToPass)
         }
@@ -145,19 +150,17 @@ class HomeViewController: UIViewController {
         self.present(cancelButtonAlert, animated: true, completion: nil)
     }
     
-    
+    // MARK: addButton
     // 루틴 조회를 위한 addButton
     @IBAction func addButton(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let routineTableVC = storyboard.instantiateViewController(withIdentifier: "RoutineTableViewController") as? RoutineTableViewController else {
-                  return
+        let routineVC = RoutineTableViewController()
+        routineVC.delegate = self
+
+        routineVC.modalPresentationStyle = .pageSheet
+        if let sheet = routineVC.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
         }
-              
-        routineTableVC.modalPresentationStyle = .pageSheet
-        if let sheet = routineTableVC.sheetPresentationController {
-            sheet.detents = [.medium(), .large()] // Adjust as needed
-        }
-        self.present(routineTableVC, animated: true, completion: nil)
+        self.present(routineVC, animated: true, completion: nil)
     }
 
     
@@ -170,29 +173,22 @@ class HomeViewController: UIViewController {
             return
         }
         let endpoint = "/api/user/home"
-        let parameters = ["routineId": self.routineId]
-        
-        APIClient.postRequest(endpoint: endpoint, parameters: parameters, token: token) { (result: Result<HomeResponse, AFError>) in
+
+        APIClient.getRequest(endpoint: endpoint, token: token) { (result: Result<GetHomeResponse, AFError>) in
             switch result {
             case .success(let homeResponse):
                 if homeResponse.isSuccess {
                     print("홈화면:\(homeResponse)")
                        
                     if let homeResult = homeResponse.result {
-                        self.routineId = homeResult.routineId  // 홈화면에서 조회되는 루틴 ID 저장
-                           
-                        self.routineLabel.text = homeResult.routineName.isEmpty ? "오늘의 루틴 없음" : homeResult.routineName
                        
                         self.shellNumber.text = "\(homeResult.life)"
                         self.fishNumber.text = "\(homeResult.point)"
                         
-                        // 저장된 goalTime 업데이트
-                        self.goalTime = homeResult.goalTime
-                        
                         // 버튼 설정
                         var config = UIButton.Configuration.plain()
                         config.title = "Level \(homeResult.level)"
-                        config.baseForegroundColor = homeResult.isUserLevel ? .black : UIColor(named: "Primary4")
+                        config.baseForegroundColor = homeResult.userLevel ? .black : UIColor(named: "Primary4")
                         self.level.configuration = config
                         
                         // 레벨 업데이트 호출
@@ -263,7 +259,27 @@ class HomeViewController: UIViewController {
     
     
 // MARK: Function
+    func updateHomeScreen()  {
+        // 루틴이 업데이트되면 먼저 라벨을 초기화
+        self.routineLabel.text = "오늘의 루틴 없음"
+    }
+    
+    // RoutineTableViewVC로 데이터를 받기 위한 메소드
+    func didSelectRoutine(_ routine: PostHomeResult) {
+        print("Received routine data: \(routine)")
 
+        // routineId = 0 인 경우, "오늘의 루틴 없음" 출력
+        if routine.routineId == 0 {
+            self.routineId = 0
+            routineLabel.text = "오늘의 루틴 없음"
+        } else {
+            // 그 외 루틴에 대한 정보 UI 업데이트
+            self.routineId = routine.routineId
+            routineLabel.text = routine.routineName
+        }
+    }
+    
+    
     // 유저 레벨에 따른 부스터 시간 업데이트
     private func updateBoosterTimeThreshold(level: Int) {
         let boosterTimeMapping: [Int: TimeInterval] = [

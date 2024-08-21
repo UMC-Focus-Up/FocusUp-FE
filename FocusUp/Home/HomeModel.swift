@@ -30,18 +30,28 @@ struct AlarmUserResult: Codable {
 }
 
 
-// 홈 조회 
-struct HomeResponse: Decodable {
+// 홈 화면 유저 정보 조회 (GET)
+struct GetHomeResponse: Decodable {
     let isSuccess: Bool
     let message: String
-    let result: HomeResult?
+    let result: GetHomResult?
 }
 
-struct HomeResult: Decodable {
+struct GetHomResult: Decodable {
     let life: Int
     let point: Int
     let level: Int
-    let isUserLevel: Bool
+    let userLevel: Bool
+}
+
+// 홈화면 루틴 전송 (POST)
+struct PostHomeResponse: Decodable {
+    let isSuccess: Bool
+    let message: String
+    let result: PostHomeResult?
+}
+
+struct PostHomeResult: Decodable {
     let routineId: Int
     let routineName: String
     let execTime: String
