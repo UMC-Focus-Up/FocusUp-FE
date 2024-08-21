@@ -292,6 +292,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
             guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
         }
+        print("알람통해서 들어온 루틴아이디: \(routineId)")
     }
     
     // 유저 레벨에 따른 부스터 시간 업데이트
