@@ -27,7 +27,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
     
     private var tableView: UITableView!
     
-    private var routineId: Int?                   // 루틴 ID를 저장할 변수
+    private var routineId: Int = 0                // 루틴 ID를 저장할 변수
     private var goalTime: String = ""             // 루틴 목표 시간을 나타내는 변수
 
     var timer: Timer?
@@ -63,19 +63,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         fetchHomeData(routineId: 0) { [weak self] level in
             guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
-            self.updateLevelButtonUI()  // level 버튼 UI 업데이트 호출
-        }
-    }
-    
-    // 같은 화면에서 UI 업데이트나 데이터 갱신할 때 사용
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        // 기본값으로 0을 전달하여 루틴이 없을 경우를 처리
-        fetchHomeData(routineId: 0) { [weak self] level in
-            guard let self = self else { return }
-            self.updateBoosterTimeThreshold(level: level)
-            self.updateLevelButtonUI()  // level 버튼 UI 업데이트 호출
+            self.updateLevelButtonUI()              // level 버튼 UI 업데이트 호출
         }
     }
     
@@ -128,12 +116,13 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         let cancelButtonAlert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
+            print("끝: \(self.routineId)")
             
-            // Ensure routineId has a value
-            guard let routineId = self.routineId else {
-                print("Error: routineId is nil.")
-                return
-            }
+//            // Ensure routineId has a value
+//            guard let routineId = self.routineId else {
+//                print("Error: routineId is nil.")
+//                return
+//            }
             
             // Pass the timeElapsed value to CalendarBottomSheet
             let timeElapsedToPass = self.timeElapsed
@@ -147,14 +136,11 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
             self.resetTimer()
             
             // 루틴 종료시 timeElapsed 값 전송하기 위한 API 연동
-            self.sendRoutineEndToAPI(routineId: routineId, timeElapsed: timeElapsedToPass)
+            self.sendRoutineEndToAPI(routineId: self.routineId, timeElapsed: timeElapsedToPass)
             
-            // 루틴이 종료된 것으로 간주하고 routineId를 0으로 설정
-            let routineIdForFetch = 0
-            print("루틴아이디 0으로 초기화")
 
             // fetchHomeData 호출
-            self.fetchHomeData(routineId: routineIdForFetch) { result in
+            self.fetchHomeData(routineId: 0) { result in
                 // 데이터 로드 완료 후 처리
                 print("Home data fetch completed with result: \(result)")
                 
@@ -206,11 +192,11 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
                     print("홈화면:\(homeResponse)")
                     
                     if let homeResult = homeResponse.result {
-                        
+
                         self.shellNumber.text = "\(homeResult.life)"
                         self.fishNumber.text = "\(homeResult.point)"
                         
-                        if homeResult.routineId == 0 {
+                        if routineId == 0 {
                             self.routineId = 0
                             self.routineLabel.text = "오늘의 루틴 없음"
                         } else {
@@ -374,7 +360,6 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
          updateTimeLabel()          // UI 업데이트
          stopPauseTimer()           // 멈춤 타이머 중지 및 초기화
          removePauseMessage()       // 멈춤 메시지 제거
-         routineLabel.isHidden = true
      }
      
 // MARK: 코인 알람

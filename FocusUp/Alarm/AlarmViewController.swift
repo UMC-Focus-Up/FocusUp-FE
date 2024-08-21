@@ -14,7 +14,9 @@ protocol AlarmViewControllerDelegate: AnyObject {
 }
 
 class AlarmViewController: UIViewController {
-
+    
+    weak var delegate: AlarmViewControllerDelegate?
+    
     @IBOutlet weak var shellNum: UILabel!
     @IBOutlet weak var fishNum: UILabel!
     
@@ -36,8 +38,6 @@ class AlarmViewController: UIViewController {
     var userInfo: [String: Any]?
     var life: Int?
     
-    weak var delegate: AlarmViewControllerDelegate?
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -79,7 +79,7 @@ class AlarmViewController: UIViewController {
         }
         
         delegate?.didSelectRoutineIdfromAlarmVC(alarmID)
-        navigateToMainViewController()             // 홈화면으로 이동
+        navigateToMainViewController()                      // 홈화면으로 이동
     }
     
     @IBAction func laterBtnClick(_ sender: Any) {
