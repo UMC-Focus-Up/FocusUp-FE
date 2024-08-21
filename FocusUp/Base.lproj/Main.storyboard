@@ -512,7 +512,7 @@
                                             <constraint firstAttribute="trailing" secondItem="1LL-8D-zIg" secondAttribute="trailing" constant="27" id="ssT-fK-MGk"/>
                                             <constraint firstItem="BfA-Gi-1s8" firstAttribute="leading" secondItem="Uf4-Ok-XJY" secondAttribute="leading" constant="16" id="vTV-X6-ZGx"/>
                                             <constraint firstItem="auZ-L3-eIX" firstAttribute="top" secondItem="UQ9-Tl-e2J" secondAttribute="bottom" constant="8" id="wDe-cM-TuX"/>
-                                            <constraint firstItem="ix6-FM-mec" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="auZ-L3-eIX" secondAttribute="trailing" symbolic="YES" id="x5c-eB-hZa"/>
+                                            <constraint firstItem="ix6-FM-mec" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="auZ-L3-eIX" secondAttribute="trailing" constant="8" symbolic="YES" id="x5c-eB-hZa"/>
                                             <constraint firstAttribute="bottom" secondItem="BfA-Gi-1s8" secondAttribute="bottom" constant="60" id="yYg-qS-lYL"/>
                                             <constraint firstItem="KdO-sb-syT" firstAttribute="top" secondItem="auZ-L3-eIX" secondAttribute="bottom" constant="19" id="yaa-XR-khJ"/>
                                         </constraints>
@@ -669,7 +669,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iDi-0T-9uf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3555" y="1267"/>
+            <point key="canvasLocation" x="3531" y="1267"/>
         </scene>
         <!--Goal Routine Setting View Controller-->
         <scene sceneID="eaa-aI-yBx">
@@ -1842,7 +1842,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="De3-tb-9eY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-512" y="1255"/>
+            <point key="canvasLocation" x="-502" y="1267"/>
         </scene>
         <!--Home-->
         <scene sceneID="zVL-KZ-sG2">
@@ -2016,8 +2016,8 @@
                                                         </attributedString>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="매일 30분 독서하기" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zHq-Z4-qIO">
-                                                        <rect key="frame" x="52.333333333333329" y="60" width="124.99999999999999" height="19"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="오늘의 루틴 없음" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zHq-Z4-qIO">
+                                                        <rect key="frame" x="62.333333333333336" y="60" width="105.33333333333329" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="lIr-FZ-npa"/>
                                                         </constraints>

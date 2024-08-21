@@ -9,9 +9,14 @@ import UIKit
 import UserNotifications
 import Alamofire
 
+protocol AlarmViewControllerDelegate: AnyObject {
+    func didSelectRoutine(_ routine: PostHomeResult)
+}
+
 class AlarmViewController: UIViewController {
 
-    
+    weak var delegate: AlarmViewControllerDelegate?
+
     @IBOutlet weak var shellNum: UILabel!
     @IBOutlet weak var fishNum: UILabel!
     
@@ -31,7 +36,6 @@ class AlarmViewController: UIViewController {
     var startTime: Date?
     var alarmID: Int?
     var userInfo: [String: Any]?
-    
     var life: Int?
     
     override func viewDidLoad() {
@@ -68,7 +72,14 @@ class AlarmViewController: UIViewController {
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
-        self.navigateToMainViewController()
+        // `alarmID`가 nil인지 확인
+        guard let alarmID = alarmID else {
+            print("Error: alarmID is nil.")
+            return
+        }
+        
+        sendAlarmIDToServer(alarmID: alarmID)          // `alarmID`를 서버에 전송
+        self.navigateToMainViewController()             // 홈화면으로 이동
     }
     
     @IBAction func laterBtnClick(_ sender: Any) {
@@ -277,6 +288,40 @@ class AlarmViewController: UIViewController {
         laterNum.font = UIFont.pretendardMedium(size: 15)
         noNum.font = UIFont.pretendardMedium(size: 15)
     }
+    
+// MARK: API 연동
+    // 홈화면으로 넘어갈떄 서버에 AlarmID 전송하기 위한 API 연동
+    private func sendAlarmIDToServer(alarmID: Int) {
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Error: No access token found.")
+            return
+        }
+
+        // 서버로 선택한 루틴의 ID 전송
+        let endpoint = "/api/user/home/routine"
+        let parameters = ["routineId": alarmID]  // 루틴 ID를 파라미터로 설정
+
+        APIClient.postRequest(endpoint: endpoint, parameters: parameters, token: token) { (result: Result<PostHomeResponse, AFError>) in
+            switch result {
+            case .success(let response):
+                if response.isSuccess, let routineResult = response.result {
+                    print("루틴 전송 성공: \(response.result?.routineName ?? "알 수 없음")")
+                    print("\(String(describing: response.result))")
+                    
+                    // delegate 메서드 호출
+                    self.delegate?.didSelectRoutine(routineResult)
+                    print("delegate 호출")
+                    self.dismiss(animated: true, completion: nil)
+
+                } else {
+                    print("루틴 전송 실패: \(response.message)")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     
     // 생명과 코인 API 연동
     private func fetchLifeAndPoints() {

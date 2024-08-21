@@ -61,7 +61,6 @@ class GoalRoutineListViewController: UIViewController {
             "Authorization": "Bearer \(accessToken)",
             "Content-Type": "application/json"
         ]
-        print("헤더: \(headers)")
         
         AF.request(url, method: .get, headers: headers).responseJSON { response in
             switch response.result {
