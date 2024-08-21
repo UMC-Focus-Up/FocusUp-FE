@@ -8,7 +8,7 @@
 import UIKit
 import Alamofire
 
-class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, AlarmViewControllerDelegate {
+class HomeViewController: UIViewController, RoutineTableViewControllerDelegate {
 
     @IBOutlet weak var shellfishView: UIView!
     @IBOutlet weak var shellNumber: UILabel!
@@ -65,10 +65,36 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
             self.updateBoosterTimeThreshold(level: level)
             self.updateLevelButtonUI()              // level 버튼 UI 업데이트 호출
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleGoSelectedNotification), name: .goSelected, object: nil)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        // 모든 옵저버 제거
+        NotificationCenter.default.removeObserver(self)
+    }
     
 // MARK: - Action
+    @objc private func handleGoSelectedNotification(_ notification: Notification) {
+        DispatchQueue.main.async {
+//            print("알람 -> 홈")
+            
+            guard let userInfo = notification.userInfo else {return}
+            guard let alarmID = userInfo["alarmID"] as? Int? else {return}
+            guard let routineID = userInfo["routineID"] as? Int? else {return}
+            
+//            print("받기", alarmID ?? -1, routineID ?? -1)
+            self.routineId = routineID ?? -1
+            
+            // 새로운 routineId로 홈 데이터 조회
+            self.fetchHomeData(routineId: self.routineId) { [weak self] level in
+                guard let self = self else { return }
+                self.updateBoosterTimeThreshold(level: level)
+                self.updateLevelButtonUI()  // level 버튼 UI 업데이트 호출
+            }
+        }
+    }
 
     // MARK: levelButton
     @IBAction func levelButton(_ sender: Any) {
@@ -283,16 +309,6 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
             guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
         }
-    }
-    
-    // AlarmViewControllerDelegate 메서드
-    func didSelectRoutineIdfromAlarmVC(_ routineId: Int) {
-        self.routineId = routineId
-        fetchHomeData(routineId: routineId) { [weak self] level in
-            guard let self = self else { return }
-            self.updateBoosterTimeThreshold(level: level)
-        }
-        print("알람통해서 들어온 루틴아이디: \(routineId)")
     }
     
     // 유저 레벨에 따른 부스터 시간 업데이트
@@ -599,6 +615,10 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         level.titleLabel?.font = UIFont(name: "Pretendard-Regular", size: 17)!
         timerLabel.font = UIFont(name: "Pretendard-Semibold", size: 40)
         boosterLabel.font = UIFont(name: "Pretendard-Semibold", size: 16)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .goSelected, object: nil)
     }
 }
 
