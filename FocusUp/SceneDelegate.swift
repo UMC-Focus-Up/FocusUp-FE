@@ -44,11 +44,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let userInfo = notification.userInfo,
               let name = userInfo["name"] as? String,
               let startTime = userInfo["startTime"] as? Date,
-              let alarmID = userInfo["alarmID"] as? Int else { return }
+              let alarmID = userInfo["alarmID"] as? Int,
+              let routineID = userInfo["routineID"] as? Int else { return }
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let alarmViewController = storyboard.instantiateViewController(withIdentifier: "AlarmViewController") as? AlarmViewController {
             alarmViewController.alarmID = alarmID
+            alarmViewController.routineID = routineID
             alarmViewController.name = name
             alarmViewController.startTime = startTime
             window?.rootViewController = alarmViewController

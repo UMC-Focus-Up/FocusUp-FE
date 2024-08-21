@@ -47,9 +47,6 @@ class CharacterViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemPurchasedNotification), name: .itemPurchased, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleItemSelectedNotification), name: .itemSelected, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleZeroAlertNotification), name: .zeroAlert, object: nil)
-        
-        // 캐릭터 화면 접속시 알람 설정
-        SetupRoutineAlarms.setupRoutineAlarms()
     }
     
     override func viewWillAppear(_ animated: Bool) {
