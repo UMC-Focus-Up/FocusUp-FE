@@ -59,8 +59,8 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // 기본값으로 0을 전달하여 루틴이 없을 경우를 처리
-        fetchHomeData(routineId: 0) { [weak self] level in
+        // routineId 값을 전달하여 처리
+        fetchHomeData(routineId: routineId) { [weak self] level in
             guard let self = self else { return }
             self.updateBoosterTimeThreshold(level: level)
             self.updateLevelButtonUI()              // level 버튼 UI 업데이트 호출
@@ -117,12 +117,6 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
         
         let confirm = UIAlertAction(title: "끝내기 ", style: .default) { _ in
             print("끝: \(self.routineId)")
-            
-//            // Ensure routineId has a value
-//            guard let routineId = self.routineId else {
-//                print("Error: routineId is nil.")
-//                return
-//            }
             
             // Pass the timeElapsed value to CalendarBottomSheet
             let timeElapsedToPass = self.timeElapsed
@@ -211,6 +205,9 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
                         config.baseForegroundColor = homeResult.userLevel ? .black : UIColor(named: "Primary4")
                         self.level.configuration = config
                         
+                        self.updateBoosterTimeThreshold(level: homeResult.level)
+                        self.updateLevelButtonUI()              // level 버튼 UI 업데이트 호출
+                        
                         completion(homeResult.level)
                     } else {
                         print("Error: 홈화면 결과 데이터가 없습니다.")
@@ -287,6 +284,7 @@ class HomeViewController: UIViewController, RoutineTableViewControllerDelegate, 
     
     // AlarmViewControllerDelegate 메서드
     func didSelectRoutineIdfromAlarmVC(_ routineId: Int) {
+        print("델리게이트 메서드 호출됨")
         self.routineId = routineId
         fetchHomeData(routineId: routineId) { [weak self] level in
             guard let self = self else { return }

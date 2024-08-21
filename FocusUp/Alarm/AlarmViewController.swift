@@ -78,6 +78,8 @@ class AlarmViewController: UIViewController {
             return
         }
         
+        // Option 0으로 설정하고 서버에 POST 요청 전송
+        self.sendAlarmActionRequest(option: .now)
         delegate?.didSelectRoutineIdfromAlarmVC(alarmID)
         navigateToMainViewController()                      // 홈화면으로 이동
     }
