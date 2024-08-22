@@ -29,8 +29,7 @@ struct AlarmUserResult: Codable {
     let point: Int
 }
 
-
-// 홈 조회 
+// 홈 화면 정보 조회
 struct HomeResponse: Decodable {
     let isSuccess: Bool
     let message: String
@@ -41,11 +40,11 @@ struct HomeResult: Decodable {
     let life: Int
     let point: Int
     let level: Int
-    let isUserLevel: Bool
     let routineId: Int
     let routineName: String
     let execTime: String
     let goalTime: String
+    let userLevel: Bool
 }
 
 // 반복 루틴 완료

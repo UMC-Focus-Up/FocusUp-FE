@@ -10,7 +10,6 @@ import UserNotifications
 import Alamofire
 
 class AlarmViewController: UIViewController {
-
     
     @IBOutlet weak var shellNum: UILabel!
     @IBOutlet weak var fishNum: UILabel!
@@ -30,8 +29,8 @@ class AlarmViewController: UIViewController {
     var name: String?
     var startTime: Date?
     var alarmID: Int?
+    var routineID: Int?
     var userInfo: [String: Any]?
-    
     var life: Int?
     
     override func viewDidLoad() {
@@ -46,9 +45,15 @@ class AlarmViewController: UIViewController {
         }
         
         if let alarmID = alarmID {
-            print("알람 ID: \(alarmID)") // ID를 UI에서 사용할 수 있습니다.
+            print("상세 ID: \(alarmID)") // ID를 UI에서 사용할 수 있습니다.
         } else {
-            print("알람 ID가 설정되지 않았습니다.") // 디버깅 메시지 추가
+            print("상세 ID가 설정되지 않았습니다.") // 디버깅 메시지 추가
+        }
+        
+        if let routineID = routineID {
+            print("루틴 ID: \(routineID)") // ID를 UI에서 사용할 수 있습니다.
+        } else {
+            print("루틴 ID가 설정되지 않았습니다.") // 디버깅 메시지 추가
         }
         
         // 생명, 코인 수 API 연동
@@ -68,7 +73,17 @@ class AlarmViewController: UIViewController {
     }
     
     @IBAction func goBtnClick(_ sender: Any) {
-        self.navigateToMainViewController()
+        // `alarmID`가 nil인지 확인
+        guard let alarmID = alarmID else {
+            print("Error: alarmID is nil.")
+            return
+        }
+        
+        // Option 0으로 설정하고 서버에 POST 요청 전송
+        self.sendAlarmActionRequest(option: .now)
+        
+        NotificationCenter.default.post(name: .goSelected, object: nil)
+        self.navigateToMainViewController()                      // 홈화면으로 이동
     }
     
     @IBAction func laterBtnClick(_ sender: Any) {
@@ -98,10 +113,6 @@ class AlarmViewController: UIViewController {
             
             // Option 1로 설정하고 서버에 POST 요청 전송
             self.sendAlarmActionRequest(option: .later)
-            NotificationCenter.default.post(name: .minusSelected, object: nil)
-            
-            // 현재 화면을 닫고 메인 뷰 컨트롤러로
-            self.navigateToMainViewController()
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -139,15 +150,6 @@ class AlarmViewController: UIViewController {
             
             // Option 2로 설정하고 서버에 POST 요청 전송
             self.sendAlarmActionRequest(option: .no)
-            NotificationCenter.default.post(name: .minusSelected, object: nil)
-            
-            // 현재 화면을 닫고 메인 뷰 컨트롤러로
-            if self.life ?? 0 > 0 {
-                self.navigateToMainViewController()
-            } else {
-                self.navigateToCharacterViewController()
-                NotificationCenter.default.post(name: .zeroAlert, object: nil)
-            }
         }
         confirm.setValue(UIColor(named: "Primary4"), forKey: "titleTextColor")
         
@@ -176,7 +178,30 @@ class AlarmViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("알람 버튼 클릭 성공")
-                let life = response.result?.life
+                self.life = response.result?.life
+                
+                if option == .now {
+                    // .now 옵션일 때
+//                    print("보내기 : ", self.alarmID, self.routineID)
+                    NotificationCenter.default.post(name: .goSelected, object: nil, userInfo: ["alarmID" : self.alarmID ?? -1, "routineID" : self.routineID ?? -1])
+                    self.navigateToMainViewController() // 홈화면으로 이동
+                } else if option == .later {
+                    // .later 옵션일 때
+                    NotificationCenter.default.post(name: .minusSelected, object: nil)
+                    self.navigateToMainViewController() // 홈화면으로 이동
+                } else {
+                    // 그 외의 옵션일 때
+                    NotificationCenter.default.post(name: .minusSelected, object: nil)
+                    
+                    // 현재 화면을 닫고 메인 뷰 컨트롤러로
+                    if self.life ?? 0 > 0 {
+                        self.navigateToMainViewController()
+                    } else {
+                        self.navigateToCharacterViewController()
+                        NotificationCenter.default.post(name: .zeroAlert, object: nil)
+                    }
+                }
+                
             case .failure(let error):
                 print("알람 버튼 클릭 실패: \(error.localizedDescription)")
             }
@@ -210,7 +235,7 @@ class AlarmViewController: UIViewController {
         if let userInfo = userInfo {
             content.userInfo = userInfo
         } else {
-            content.userInfo = ["alarmID": alarmID ?? -1, "name": name ?? "알림", "startTime": startTime ?? Date(), "targetScene": "Alarm"]
+            content.userInfo = ["alarmID": alarmID ?? -1, "routineID": routineID ?? -1, "name": name ?? "알림", "startTime": startTime ?? Date(), "targetScene": "Alarm"]
         }
 
         // 고유 식별자를 가진 알람 요청 생성
@@ -245,18 +270,21 @@ class AlarmViewController: UIViewController {
     }
     
     private func navigateToMainViewController() {
-        // 스토리보드에서 MainViewController 인스턴스 생성
+        // 스토리보드에서 CustomTabBarController 인스턴스 생성
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let mainVC = storyboard.instantiateViewController(withIdentifier: "CustomTabBarController") as? CustomTabBarController else {
+        guard let tabBarController = storyboard.instantiateViewController(withIdentifier: "CustomTabBarController") as? CustomTabBarController else {
             print("CustomTabBarController를 찾을 수 없습니다.")
             return
         }
         
+        // 원하는 탭 인덱스로 이동 (예: 홈 뷰가 1번째 탭이라면 index는 0)
+        tabBarController.selectedIndex = 0
+        
         // 화면을 완전히 대체하도록 modalPresentationStyle 설정
-        mainVC.modalPresentationStyle = .fullScreen
+        tabBarController.modalPresentationStyle = .fullScreen
         
         // MainViewController로 이동
-        self.present(mainVC, animated: true, completion: nil)
+        self.present(tabBarController, animated: true, completion: nil)
     }
     
     private func setupUI() {
@@ -277,6 +305,8 @@ class AlarmViewController: UIViewController {
         laterNum.font = UIFont.pretendardMedium(size: 15)
         noNum.font = UIFont.pretendardMedium(size: 15)
     }
+    
+// MARK: API 연동
     
     // 생명과 코인 API 연동
     private func fetchLifeAndPoints() {
@@ -308,6 +338,7 @@ class AlarmViewController: UIViewController {
 extension Notification.Name {
     static let minusSelected = Notification.Name("minusSelected")
     static let zeroAlert = Notification.Name("zeroAlert")
+    static let goSelected = Notification.Name("goSelected")
 }
 
 extension UIApplication {

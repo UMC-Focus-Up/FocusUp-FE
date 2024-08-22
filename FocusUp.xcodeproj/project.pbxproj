@@ -56,6 +56,7 @@
 		8BBD00822C50DCC0008E1E0C /* GoalRoutineListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00812C50DCC0008E1E0C /* GoalRoutineListViewController.swift */; };
 		8BBD00842C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */; };
 		8BE3FC0E2C50066C00B2AF0D /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */; };
+		9705BBC02C735935005C8603 /* RoutineTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9705BBBF2C735935005C8603 /* RoutineTableViewController.swift */; };
 		97601AE32C6B879300B52214 /* AlarmButtonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97601AE22C6B879300B52214 /* AlarmButtonModel.swift */; };
 		976A91012C6E4D6000771AB5 /* HomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 976A91002C6E4D6000771AB5 /* HomeModel.swift */; };
 		97DD90912C65D90D0072C677 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DD90902C65D90D0072C677 /* HomeViewController.swift */; };
@@ -114,6 +115,7 @@
 		8BBD00832C50DDAE008E1E0C /* GoalRoutineSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRoutineSettingViewController.swift; sourceTree = "<group>"; };
 		8BE3FC0D2C50066C00B2AF0D /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		8D1B833C104F55B63CF9B484 /* Pods-FocusUp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FocusUp.release.xcconfig"; path = "Target Support Files/Pods-FocusUp/Pods-FocusUp.release.xcconfig"; sourceTree = "<group>"; };
+		9705BBBF2C735935005C8603 /* RoutineTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineTableViewController.swift; sourceTree = "<group>"; };
 		97601AE22C6B879300B52214 /* AlarmButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmButtonModel.swift; sourceTree = "<group>"; };
 		976A91002C6E4D6000771AB5 /* HomeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeModel.swift; sourceTree = "<group>"; };
 		97DD90902C65D90D0072C677 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 			children = (
 				976A91002C6E4D6000771AB5 /* HomeModel.swift */,
 				97DD90902C65D90D0072C677 /* HomeViewController.swift */,
+				9705BBBF2C735935005C8603 /* RoutineTableViewController.swift */,
 				97DD90922C65D9250072C677 /* LevelViewController.swift */,
 			);
 			path = Home;
@@ -437,6 +440,7 @@
 				976A91012C6E4D6000771AB5 /* HomeModel.swift in Sources */,
 				1961F9472C5113FB000D9652 /* ContentViewController.swift in Sources */,
 				23E51D982C46DD210099C44B /* CustomTabBarController.swift in Sources */,
+				9705BBC02C735935005C8603 /* RoutineTableViewController.swift in Sources */,
 				8BBD00802C50DB99008E1E0C /* SettingViewController.swift in Sources */,
 				23163CC92C63A3EF00961A1C /* GoalRoutineTableViewCell.swift in Sources */,
 				97DD90912C65D90D0072C677 /* HomeViewController.swift in Sources */,

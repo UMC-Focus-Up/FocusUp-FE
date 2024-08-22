@@ -25,7 +25,7 @@ class SetupRoutineAlarms {
                     for routine in response.result.routines {
                         for specRoutine in routine.specRoutine {
                             if let date = SetupRoutineAlarms.combineDateAndTime(dateStr: specRoutine.date, timeStr: specRoutine.startTime) {
-                                SetupRoutineAlarms.scheduleNotification(for: routine.id, name: routine.name, at: date)
+                                SetupRoutineAlarms.scheduleNotification(for: specRoutine.id, routineID: routine.id, name: routine.name, at: date)
                             }
                         }
                     }
@@ -44,12 +44,12 @@ class SetupRoutineAlarms {
     }
     
     // 알람 설정 함수
-    static func scheduleNotification(for id: Int, name: String, at date: Date) {
+    static func scheduleNotification(for specRoutineID: Int, routineID: Int, name: String, at date: Date) {
         let content = UNMutableNotificationContent()
         content.title = "루틴 실행할 시간이에요! ⏰️"
         content.body = "< \(name) >"
         content.sound = .default
-        content.userInfo = ["alarmID": id, "name": name, "startTime": date, "targetScene": "Alarm"]
+        content.userInfo = ["alarmID": specRoutineID, "routineID": routineID, "name": name, "startTime": date, "targetScene": "Alarm"]
 
         let component = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
         let trigger = UNCalendarNotificationTrigger(dateMatching: component, repeats: false)
